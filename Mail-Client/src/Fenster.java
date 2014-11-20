@@ -19,7 +19,7 @@ public class Fenster {
 	}
 	
 	public void kommandos(){
-		System.out.println("Sie haben die Möglichkeit folgende Kommandos einzugeben: ");
+		System.out.println("Sie haben die Mï¿½glichkeit folgende Kommandos einzugeben: ");
 		for(int i=0;i<kommandoliste.size();i++){
 			System.out.print(kommandoliste.get(i)+", ");
 		}
@@ -47,5 +47,15 @@ public class Fenster {
 				System.out.println(i+"\t"+tmp.getAdresse()+"\t"+tmp.getBetreff()+"\t"+tmp.getEmpfangsdatum());
 			}
 		}
+	}
+
+
+
+	public Fenster getAktuell(){
+		return aktuell;
+	}
+
+	public Fenster setAktuell(Fenster f){
+		aktuell=f;
 	}
 	}

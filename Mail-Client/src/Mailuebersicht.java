@@ -2,6 +2,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
+import org.jdom.*;
+import org.jdom.output.*;
 
 
 public class Mailuebersicht extends Fenster {
@@ -10,7 +12,7 @@ public class Mailuebersicht extends Fenster {
 	private int aktuelleSeite;
 	
 	public Mailuebersicht() {
-		mails= new ArrayList<Mail>(); //Mails müssen vom Server geholt werden
+		mails= new ArrayList<Mail>(); //Mails mï¿½ssen vom Server geholt werden
 		
 		// Initalisierung der kommandoliste
 		kommandoliste.add("kommandos");
@@ -44,16 +46,19 @@ public class Mailuebersicht extends Fenster {
 	public void speichern(int nummer){
 		FileWriter fw;
 		try{
-			fw=new FileWriter(offlineMails);
 			Mail tmp=mails.get(nummer);
-			fw.append("<mail nummer="+nummer+" >\n"
-					+ "\t<adresse> "+tmp.getAdresse()+" <\\adresse>\n"
-					+ "\t<betreff> "+tmp.getBetreff()+" <\\betreff>\n"
-					+ "\t<nachricht>"+tmp.getNachricht()+" <\\nachricht>\n"
-					+ "<\\mail>\n\n");
+			Element root = new Element("konten");
+			Document doc = new Document(root);
+			root.addContent(new Element("person")
+					.addContent(new Element("adresse").addContent(tmp.getAdresse()))
+					.addContent(new Element("betreff").addContent(tmp.getBetreff()))
+					.addContent(new Element("nachricht").addContent(tmp.getNachricht()))
+					.addContent(new Element("empfangsdatum").addContent(tmp.getEmpfangsdatum()));
+			XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
+			out.output(doc, new FileOutputStream("konten.xml"));
 			fw.close();			
 		}catch(Exception e){
-			System.out.println("Der Spamfilter konnte nicht geöffnet werden.");
+			System.out.println("Der Spamfilter konnte nicht geï¿½ffnet werden.");
 		}		
 	}
 	
@@ -82,8 +87,24 @@ public class Mailuebersicht extends Fenster {
 		for(int i=(aktuelleSeite-1)*25;i<mails.size()&&i<i+25;i++){
 			Mail tmp=mails.get(i);
 			System.out.println(i+"\t"+tmp.getAdresse()+"\t"+tmp.getBetreff()+"\t"+tmp.getEmpfangsdatum());
+
 		}
 	}
-	
+
+	public void aktualisieren(){
+
+	}
+
+	public void loeschen(){
+
+	}
+
+	public void verfassen(){
+
+	}
+
+	public void ausloggen(){
+
+	}
 
 }

@@ -21,7 +21,10 @@ public class Spamfilter extends Fenster {
 		
 	}
 	
-	public void hinzufuegen(String adresse){
+	public void hinzufuegen(){
+		Scanner sc=new Scanner(System.in);
+		System.out.println("Bitte geben Sie die Adresse ein, die Sie hinzufuegen wollen.");
+		String adresse=sc.next(); //Bedingungen fÃ¼r die Adresse ergaenzen
 		adressen.add(adresse);
 		FileWriter fw;
 		try{
@@ -29,19 +32,24 @@ public class Spamfilter extends Fenster {
 			fw.append(adresse);
 			fw.close();
 		}catch(Exception e){
-			System.out.println("Der Spamfilter konnte nicht geöffnet werden.");
+			System.out.println("Der Spamfilter konnte nicht geï¿½ffnet werden.");
 		}
+		sc.close();
 	}
 	
-	public void loeschen(int nummer){
+	public void loeschen(){
+		Scanner sc=new Scanner(System.in);
+		System.out.println("Bitte geben Sie die Nummer der Mail ein, die Sie loeschen wollen.");
+		int nummer=sc.nextInt(); //Bedingungen fÃ¼r die Nummer ergaenzen
 		adressen.remove(nummer);
 		FileWriter fw;
 		try{
 			Scanner sc=new Scanner(output);
 			//in der Datei die richtige zeile loeschen
 		}catch(Exception e){
-			System.out.println("Der Spamfilter konnte nicht geöffnet werden.");
+			System.out.println("Der Spamfilter konnte nicht geï¿½ffnet werden.");
 		}
+		sc.close();
 	}
 	
 	public ArrayList<String> getAdressen() {

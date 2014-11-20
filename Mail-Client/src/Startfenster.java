@@ -12,9 +12,11 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter; 
 
 public class Startfenster extends Fenster{
+
 	private ArrayList<Konto> konten;
 	private File inFile;
 	private File inXML;
+
 	public Startfenster(){
 		konten=new ArrayList<Konto>();
 		inFile=new File("Konten.txt");
@@ -22,7 +24,7 @@ public class Startfenster extends Fenster{
 		makeList();
 		
 		// Initalisierung der kommandoliste
-		kommandoliste.add("waehle");
+		kommandoliste.add("waehlen");
 		kommandoliste.add("loeschen");
 		kommandoliste.add("kommandos");
 		kommandoliste.add("aendern");
@@ -50,7 +52,7 @@ public class Startfenster extends Fenster{
 	}
 	
 	private void neuesKonto(){
-		//hole daten für das zu speicherne Konto
+		//hole daten fï¿½r das zu speicherne Konto
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Bitte geben Sie Ihren Namen ein:");
 		String name = sc.next();
@@ -95,7 +97,7 @@ public class Startfenster extends Fenster{
 //			fw.append(adresse + ";" +  + ";" + protocol);
 			fw.close();
 		}catch(Exception e){
-			System.out.println("Der Spamfilter konnte nicht geöffnet werden.");
+			System.out.println("Der Spamfilter konnte nicht geï¿½ffnet werden.");
 		}
 	}
 	
@@ -133,5 +135,17 @@ public class Startfenster extends Fenster{
         catch(Exception e){
         	System.out.println("Datei Fehlerhaft oder nicht gefunden");
         }
+	}
+
+	public void waehlen(){
+
+	}
+
+	public void loeschen(){
+
+	}
+
+	public void beenden(){
+
 	}
 }
