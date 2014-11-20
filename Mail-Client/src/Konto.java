@@ -1,16 +1,21 @@
 
 public class Konto {
+	private String name;
 	private String adress;
 	private String password;
 	private String server;
 	private String smtpServer;
-	private String typ; 
+	private String protocol; 
+	private double refRate;
 	
-	public Konto(String myA, String server, String smtp, String typ){
+	public Konto(String name, String myA, String server, String smtp, String protocol, double refRate){
+		this.name = name;
 		this.adress = myA;
 		this.server = server;
 		this.smtpServer = smtp;
-		this.typ = typ;
+		this.protocol = protocol;
+		this.refRate = refRate;;
+		
 	}
 	
 	public String getAdress() {
@@ -31,17 +36,33 @@ public class Konto {
 	public void setServer(String server) {
 		this.server = server;
 	}
-	public String getTyp() {
-		return typ;
+	public String getProtocol() {
+		return protocol;
 	}
-	public void setTyp(String typ) {
-		this.typ = typ;
+	public void setProtocol(String protocol) {
+		this.protocol = protocol;
 	}
 	public String getSmtpServer() {
 		return smtpServer;
 	}
 	public void setSmtpServer(String smtpServer) {
 		this.smtpServer = smtpServer;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public double getRefRate() {
+		return refRate;
+	}
+
+	public void setRefRate(int refRate) {
+		this.refRate = refRate;
 	}
 	
 	
