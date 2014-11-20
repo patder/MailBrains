@@ -61,7 +61,7 @@ public class Mailuebersicht extends Fenster {
 			System.out.println("Der Spamfilter konnte nicht ge�ffnet werden.");
 		}
 	}
-	//
+	///
 	public void anzeigen(int nummer){
 		System.out.println(mails.get(nummer).getNachricht());
 	}
