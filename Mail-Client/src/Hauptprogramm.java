@@ -1,5 +1,6 @@
 import java.util.Scanner;
 public class Hauptprogramm {
+	//lala
 	public static void main(String argv[]){
 		Scanner sc=new Scanner(System.in);
 		Fenster oben=new Fenster();
