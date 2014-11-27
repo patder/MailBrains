@@ -7,12 +7,14 @@ public class Konto {
 	private String smtpServer;
 	private String protocol; 
 	private double refRate;
+	private int port;
 	
-	public Konto(String name, String myA, String server, String smtp, String protocol, double refRate){
+	public Konto(String name, String myA, String server, String smtp, int port, String protocol, double refRate){
 		this.name = name;
 		this.adress = myA;
 		this.server = server;
 		this.smtpServer = smtp;
+		this.port = port;
 		this.protocol = protocol;
 		this.refRate = refRate;;
 		
@@ -63,6 +65,14 @@ public class Konto {
 
 	public void setRefRate(int refRate) {
 		this.refRate = refRate;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
 	}
 	
 	

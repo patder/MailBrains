@@ -21,7 +21,7 @@ public class Startfenster extends Fenster{
 		konten=new ArrayList<Konto>();
 		inFile=new File("Konten.txt");
 		inXML= new File("KontenListe.xml");
-		makeList();
+		holeKonten();
 		
 		// Initalisierung der kommandoliste
 		kommandoliste.add("waehlen");
@@ -29,6 +29,11 @@ public class Startfenster extends Fenster{
 		kommandoliste.add("kommandos");
 		kommandoliste.add("aendern");
 		kommandoliste.add("beenden");
+		
+		System.out.println("0/tneues Konto anlegen");
+		for(int i = 0; i  < konten.size(); i++){
+			System.out.println(i+1 + "/t" + konten.get(i).getName() + "/t" + konten.get(i).getAdress());
+		}
 		
 		
 		
@@ -72,7 +77,9 @@ public class Startfenster extends Fenster{
 						
 		Konto neuesKonto = new Konto(name, adresse, passwort refRate);
 		
-		speichereKonto(name, adresse, passwort refRate);	
+		
+		
+		speichereKonto(neuesKonto);	
 //		while(true){
 //			System.out.println("(1)imap");
 //			System.out.println("(2)pop3");
@@ -95,7 +102,7 @@ public class Startfenster extends Fenster{
 	}
 	
 	//Speichere Konto in "inFile"
-	public void speichereKonto(String name, String adresse, double refRate){
+	public void speichereKonto(Konto k){
 		FileWriter fw;
 //		String smtp = getsmpt(adresse);
 //		String typ = getTyp(adresse);
@@ -130,13 +137,14 @@ public class Startfenster extends Fenster{
             List alleKonten = root.getChildren();
             
             for(int i = 0; i < alleKonten.size(); i++){
-            	String name = ((Element) alleKonten.get(0)).getChild("Name").getValue();
-            	String adresse = ((Element) alleKonten.get(0)).getChild("Name").getValue();
-            	String server = ((Element) alleKonten.get(0)).getChild("Name").getValue();
-            	String smtpServer = ((Element) alleKonten.get(0)).getChild("Name").getValue();            	
-            	String protocol = ((Element) alleKonten.get(0)).getChild("Name").getValue();
-            	double refRate = Double.parseDouble(((Element) alleKonten.get(0)).getChild("Name").getValue());
-            	Konto k = new Konto(name, adresse, server, smtpServer, protocol, refRate);
+            	String name = ((Element) alleKonten.get(0)).getChild("name").getValue();
+            	String adresse = ((Element) alleKonten.get(0)).getChild("adresse").getValue();
+            	String server = ((Element) alleKonten.get(0)).getChild("server").getValue();
+            	String smtpServer = ((Element) alleKonten.get(0)).getChild("smtpServer").getValue();    
+            	int port = Integer.parseInt(((Element) alleKonten.get(0)).getChild("port").getValue());
+            	String protocol = ((Element) alleKonten.get(0)).getChild("protocol").getValue();
+            	double refRate = Double.parseDouble(((Element) alleKonten.get(0)).getChild("refRate").getValue());
+            	Konto k = new Konto(name, adresse, server, smtpServer,port, protocol, refRate);
             	konten.add(k);
             }
         }
