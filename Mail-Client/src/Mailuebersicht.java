@@ -2,8 +2,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import org.jdom.*;
+import org.jdom.input.SAXBuilder;
 import org.jdom.output.*;
 
 
@@ -14,6 +16,7 @@ public class Mailuebersicht extends Fenster {
 	
 	public Mailuebersicht() {
 		mails= new ArrayList<Mail>(); //Mails m�ssen vom Server geholt werden
+		offlineMails=new File("offlineMails.xml");
 		
 		// Initalisierung der kommandoliste
 		kommandoliste.add("kommandos");
@@ -32,11 +35,21 @@ public class Mailuebersicht extends Fenster {
 		offlineMails=new File("offlineMails.xml");
 		
 		aktuelleSeite=1;
-		
+
+		try {
+			Element root = new Element("konten");
+			Document doc = new Document(root);
+			XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
+			out.output(doc,new FileOutputStream(offlineMails));
+		}catch(Exception e){
+			System.out.println("Die Adressbuch-Datei konnte nicht initialisiert werden.");
+		}
+
 		for(int i=0;i<mails.size()&&i<25;i++){
 			Mail tmp=mails.get(i);
 			System.out.println(i+"\t"+tmp.getAdresse()+"\t"+tmp.getBetreff()+"\t"+tmp.getEmpfangsdatum());
 		}
+
 		
 	}
 	
@@ -48,19 +61,26 @@ public class Mailuebersicht extends Fenster {
 		System.out.println("Bitte geben Sie die Nummer der Mail an, die sie offline speichern möchten");
 		Scanner sc=new Scanner(System.in);
 		int nummer=sc.nextInt();
-		try{
+		Document doc = null;
+		try {
+			// Das Dokument erstellen
+			SAXBuilder builder = new SAXBuilder();
+			doc = builder.build(offlineMails);
+			XMLOutputter fmt = new XMLOutputter();
+			// Wurzelelement wird auf root gesetzt
+			Element root = doc.getRootElement();
+			//Liste aller vorhandenen Adressen als Elemente
+			List alleAdressen = root.getChildren();
+
 			Mail tmp=mails.get(nummer);
-			Element root = new Element("konten");
-			Document doc = new Document(root);
-			root.addContent(new Element("person")
-					.addContent(new Element("adresse").addContent(tmp.getAdresse()))
-					.addContent(new Element("betreff").addContent(tmp.getBetreff()))
-					.addContent(new Element("nachricht").addContent(tmp.getNachricht()))
-					.addContent(new Element("empfangsdatum").addContent(tmp.getEmpfangsdatum())));
-			XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
-			out.output(doc, new FileOutputStream("konten.xml"));
+			Element e1=new Element("person");
+			root.addContent(e1);
+			e1.addContent(new Element("adresse").addContent(tmp.getAdresse()));
+			e1.addContent(new Element("betreff").addContent(tmp.getBetreff()));
+			e1.addContent(new Element("nachricht").addContent(tmp.getNachricht()));
+			e1.addContent(new Element("empfangsdatum").addContent(tmp.getEmpfangsdatum()));
 		}catch(Exception e){
-			System.out.println("Der Spamfilter konnte nicht ge�ffnet werden.");
+			System.out.println("Das Konto konnte nicht offline gespeichert werden.");
 		}
 	}
 	///
