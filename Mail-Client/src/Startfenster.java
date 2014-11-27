@@ -58,12 +58,21 @@ public class Startfenster extends Fenster{
 		String name = sc.next();
 		System.out.println("Bitte geben Sie Ihre Mail-Addresse ein:");
 		String adresse = sc.next();
-		System.out.println("Bitte geben Sie Passwort ein:");
-		String passwort = sc.next();
-		System.out.println("Bitte geben Sie die gewuenschte aktualisierungsrate ein:");
+		System.out.println("Bitte geben Sie Ihr Passwort ein:");
+		String passwort;
+		if ( System.console() != null ){
+			passwort = new String( System.console().readPassword() );
+		}
+		else{
+			System.out.println("Fehler bei Passworteingabe");
+			System.exit(1);
+		}
+		System.out.println("Bitte geben Sie die gewuenschte Aktualisierungsrate ein(in sek)");
 		double refRate = sc.nextDouble();
+						
+		Konto neuesKonto = new Konto(name, adresse, passwort refRate);
 		
-		
+		speichereKonto(name, adresse, passwort refRate);	
 //		while(true){
 //			System.out.println("(1)imap");
 //			System.out.println("(2)pop3");
@@ -83,7 +92,6 @@ public class Startfenster extends Fenster{
 //			
 //		}	
 		//connection war ok, wird gespeichert
-		speichereKonto(name, adresse, refRate);		
 	}
 	
 	//Speichere Konto in "inFile"
@@ -142,10 +150,10 @@ public class Startfenster extends Fenster{
 	}
 
 	public void loeschen(){
-
+		
 	}
 
 	public void beenden(){
-
+		System.exit(1);	
 	}
 }
