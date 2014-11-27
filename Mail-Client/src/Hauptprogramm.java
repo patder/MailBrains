@@ -3,6 +3,9 @@ public class Hauptprogramm {
 	public static void main(String argv[]){
 		Scanner sc=new Scanner(System.in);
 		Fenster oben=new Fenster();
+		Spamfilter spam=new Spamfilter();
+		Adressbuch adress=new Adressbuch();
+		Mailuebersicht mail=new Mailuebersicht();
 		while(true){
 			System.out.println("Es gibt folgende Befehle zur Auswahl mit den zugehörigen Nummern:");
 			for(int i=0;i<oben.getAktuell().kommandoliste.size();i++){
@@ -43,8 +46,12 @@ public class Hauptprogramm {
 					else if(befehl==2){
 						tmp.kommandos();
 					}
-					else if(befehl==3){
-						tmp.zurueck();
+					else if(befehl==3){ //zurueck
+						oben.aktuell=mail;
+						for(int i=0;i<mail.getMails().size()&&i<25;i++){
+							Mail tmp2=mail.getMails().get(i);
+							System.out.println(i+"\t"+tmp2.getAdresse()+"\t"+tmp2.getBetreff()+"\t"+tmp2.getEmpfangsdatum());
+						}
 					}
 					else{
 						System.out.println("Dieser Befehl ist leider nicht ausführbar.");
@@ -61,8 +68,12 @@ public class Hauptprogramm {
 					else if(befehl==2){
 						tmp.aendern();
 					}
-					else if(befehl==3){
-						tmp.zurueck();
+					else if(befehl==3){ //zurueck
+						oben.aktuell=mail;
+						for(int i=0;i<mail.getMails().size()&&i<25;i++){
+							Mail tmp2=mail.getMails().get(i);
+							System.out.println(i+"\t"+tmp2.getAdresse()+"\t"+tmp2.getBetreff()+"\t"+tmp2.getEmpfangsdatum());
+						}
 					}
 					else if(befehl==4){
 						tmp.kommandos();
@@ -92,9 +103,11 @@ public class Hauptprogramm {
 						tmp.seite();
 					}
 					else if(befehl==7){
+						oben.aktuell=adress;
 						tmp.adressbuch();
 					}
 					else if(befehl==8){
+						oben.aktuell=spam;
 						tmp.spamfilter();
 					}
 					else if(befehl==9){

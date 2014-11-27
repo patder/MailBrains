@@ -134,6 +134,19 @@ public class Mailuebersicht extends Fenster {
 	public void ausloggen(){
 
 	}
+}
+
+	public void spamfilter(){
+		for(int i=0;i<spam.getAdressen().size();i++){
+			System.out.println(spam.getAdressen().get(i));
+		}
+	}
+
+	public void adressbuch(){
+		for(int i=0;i<adress.getAdressen().size();i++){
+			//formatiert (siehe Lastenheft) ausgeben
+		}
+	}
 
 
 }
