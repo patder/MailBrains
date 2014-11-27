@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -43,8 +44,10 @@ public class Mailuebersicht extends Fenster {
 		return mails;
 	}
 
-	public void speichern(int nummer){
-		FileWriter fw;
+	public void speichern(){
+		System.out.println("Bitte geben Sie die Nummer der Mail an, die sie offline speichern möchten");
+		Scanner sc=new Scanner(System.in);
+		int nummer=sc.nextInt();
 		try{
 			Mail tmp=mails.get(nummer);
 			Element root = new Element("konten");
@@ -53,20 +56,25 @@ public class Mailuebersicht extends Fenster {
 					.addContent(new Element("adresse").addContent(tmp.getAdresse()))
 					.addContent(new Element("betreff").addContent(tmp.getBetreff()))
 					.addContent(new Element("nachricht").addContent(tmp.getNachricht()))
-					.addContent(new Element("empfangsdatum").addContent(tmp.getEmpfangsdatum()));
+					.addContent(new Element("empfangsdatum").addContent(tmp.getEmpfangsdatum())));
 			XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
 			out.output(doc, new FileOutputStream("konten.xml"));
-			fw.close();			
 		}catch(Exception e){
 			System.out.println("Der Spamfilter konnte nicht ge�ffnet werden.");
 		}
 	}
 	///
-	public void anzeigen(int nummer){
+	public void anzeigen(){
+		System.out.println("Bitte geben Sie die Nummer der Mail an, die Sie sehen möchten.");
+		Scanner sc=new Scanner(System.in);
+		int nummer=sc.nextInt();
 		System.out.println(mails.get(nummer).getNachricht());
 	}
 	
-	public void seite(int nummer){
+	public void seite(){
+		System.out.println("Bitte geben Sie die Nummer der Seite an, zu der Sie springen möchten");
+		Scanner sc=new Scanner(System.in);
+		int nummer=sc.nextInt();
 		aktuelleSeite=nummer;
 		for(int i=(nummer-1)*25;i<mails.size()&&i<i+25;i++){
 			Mail tmp=mails.get(i);
@@ -107,12 +115,5 @@ public class Mailuebersicht extends Fenster {
 
 	}
 
-	public void seite(){
-
-	}
-
-	public void speichern(){
-
-	}
 
 }
