@@ -62,7 +62,7 @@ public class Mailuebersicht extends Fenster {
 		}catch(Exception e){
 			System.out.println("Der Spamfilter konnte nicht ge�ffnet werden.");
 		}
-	}
+//	}
 	///
 	public void anzeigen(){
 		System.out.println("Bitte geben Sie die Nummer der Mail an, die Sie sehen möchten.");

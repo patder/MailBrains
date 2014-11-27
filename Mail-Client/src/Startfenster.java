@@ -9,6 +9,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter; 
 
 public class Startfenster extends Fenster{
@@ -40,22 +41,7 @@ public class Startfenster extends Fenster{
 	}
 	
 	
-	
-	private void makeList(){
-		try{
-			Scanner sc = new Scanner(inFile);
-			while( sc.hasNextLine()){
-				String properties [] = sc.nextLine().split(";");
-				Konto neuesKonto = new Konto(properties[0], properties[1], properties[2], properties[3], properties[4], Double.parseDouble(properties[5]));
-				konten.add(neuesKonto);
-				SAXBuilder builder = new SAXBuilder(); 
-			}
-		}
-		catch(Exception e){
-			System.out.println("Fehler beim Einlesen der Kontoliste");
-		}
-	}
-	
+
 	private void neuesKonto(){
 		//hole daten f�r das zu speicherne Konto
 		Scanner sc = new Scanner(System.in);
@@ -102,20 +88,28 @@ public class Startfenster extends Fenster{
 	}
 	
 	//Speichere Konto in "inFile"
-	public void speichereKonto(Konto k){
-		FileWriter fw;
-//		String smtp = getsmpt(adresse);
-//		String typ = getTyp(adresse);
-//		String server = getServer(adresse); 
+	public void speichereKonto(Konto k) throws JDOMException, IOException{
 		try{
-			fw=new FileWriter(inFile);
-//			fw.append(adresse + ";" +  + ";" + protocol);
-			fw.close();
-		}catch(Exception e){
-			System.out.println("Der Spamfilter konnte nicht ge�ffnet werden.");
+			Document doc = null;
+	        SAXBuilder builder = new SAXBuilder();
+	        doc = builder.build(inXML);
+	        XMLOutputter fmt = new XMLOutputter();
+	        
+	        Element root = doc.getRootElement();
+	        Element paddy = new Element(k.getAdress());
+	        paddy.addContent(new Element("name").addContent(k.getName()));
+	        paddy.addContent(new Element("adresse").addContent(k.getAdress()));
+	        paddy.addContent(new Element("server").addContent(k.getServer()));
+	        paddy.addContent(new Element("smtpServer").addContent(k.getSmtpServer()));
+	        paddy.addContent(new Element("port").addContent(k.getPort()+""));
+	        paddy.addContent(new Element("protocol").addContent(k.getProtocol()));
+	        paddy.addContent(new Element("refRate").addContent(k.getRefRate()+""));
+		}
+		catch(Exception e){
+			System.out.println("Fehler beim schreiben eines neuen Kontos");
 		}
 	}
-	
+
 	
 	public void aendern(){
 		
