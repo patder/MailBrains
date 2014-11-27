@@ -6,8 +6,8 @@ public class Konto {
 	private String server;
 	private String smtpServer;
 	private String protocol; 
-	private double refRate;
 	private int port;
+	private double refRate;
 	
 	public Konto(String name, String myA, String server, String smtp, int port, String protocol, double refRate){
 		this.name = name;
@@ -16,9 +16,24 @@ public class Konto {
 		this.smtpServer = smtp;
 		this.port = port;
 		this.protocol = protocol;
-		this.refRate = refRate;;
-		
+		this.refRate = refRate;
 	}
+	
+    public Konto(String name,String mailAdresse, String passwort, double refRate){
+    	this.name=name;
+    	this.refRate=refRate;
+    	this.adress=mailAdresse;
+    	this.password=passwort;
+    	port=25;
+    	//try block falls keine mailadresse
+    	String provider=mailAdresse.split("@")[1];
+    	switch(provider){
+    	case "gmx.de":
+    	case "gmx.net": smtpServer="mail.gmx.net"; break;
+    	case "gmail.com":
+    	case "googlemail.com": smtpServer="smtp.googlemail.com"; break;
+    	}
+    }
 	
 	public String getAdress() {
 		return adress;

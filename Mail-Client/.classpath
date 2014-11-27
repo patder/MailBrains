@@ -3,5 +3,9 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="lib" path="C:/Users/Patrick/development/Java Libs/jdom/build/jdom-1.1.3.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Users/Svenja/workspace1/javamail-1.4.7/mail.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Svenja/Downloads/jdom-1.1.3.zip"/>
+	<classpathentry kind="lib" path="C:/Users/Svenja/workspace1/jdom/build/jdom-1.1.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
