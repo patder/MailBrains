@@ -107,4 +107,12 @@ public class Mailuebersicht extends Fenster {
 
 	}
 
+	public void seite(){
+
+	}
+
+	public void speichern(){
+
+	}
+
 }
