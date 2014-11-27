@@ -82,8 +82,8 @@ public class Mailuebersicht extends Fenster {
 		}catch(Exception e){
 			System.out.println("Das Konto konnte nicht offline gespeichert werden.");
 		}
-//	}
-	///
+	}
+
 	public void anzeigen(){
 		System.out.println("Bitte geben Sie die Nummer der Mail an, die Sie sehen möchten.");
 		Scanner sc=new Scanner(System.in);
@@ -134,18 +134,13 @@ public class Mailuebersicht extends Fenster {
 	public void ausloggen(){
 
 	}
-}
 
 	public void spamfilter(){
-		for(int i=0;i<spam.getAdressen().size();i++){
-			System.out.println(spam.getAdressen().get(i));
-		}
+
 	}
 
 	public void adressbuch(){
-		for(int i=0;i<adress.getAdressen().size();i++){
-			//formatiert (siehe Lastenheft) ausgeben
-		}
+
 	}
 
 
