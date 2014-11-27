@@ -12,6 +12,7 @@ public class Adressbuch extends Fenster{
 		kommandoliste.add("loeschen");
 		kommandoliste.add("aendern");
 		kommandoliste.add("zurueck");
+		kommandoliste.add("kommandos");
 	}
 	public ArrayList<String> getAdressen() {
 		return adressen;
@@ -25,6 +26,10 @@ public class Adressbuch extends Fenster{
 	}
 
 	public void loeschen(){
+
+	}
+
+	public void aendern(){
 
 	}
 
