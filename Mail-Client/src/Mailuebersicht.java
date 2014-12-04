@@ -23,12 +23,12 @@ public class Mailuebersicht extends Fenster {
 	private ArrayList<Mail> mails;
 	private File offlineMails;
 	private int aktuelleSeite;
-	private Konto konto;
+	Konto konto;
 	
 	public Mailuebersicht(Konto k) {
+		konto=k;
 		mails= new ArrayList<Mail>(); //Mails mï¿½ssen vom Server geholt werden
 		offlineMails=new File("offlineMails.xml");
-		konto=k;
 		
 		// Initalisierung der kommandoliste
 		kommandoliste.add("kommandos");
@@ -147,7 +147,7 @@ public class Mailuebersicht extends Fenster {
 	public static void send(Konto acc, String empfaenger, String betreff,
             String text) throws AddressException, MessagingException
     {
-        // Properties über die Systemeigenschaften anlegen
+        // Properties ï¿½ber die Systemeigenschaften anlegen
         Properties properties = System.getProperties();
         properties.setProperty("mail.smtp.host", acc.getSmtpHost());
         properties.setProperty("mail.smtp.port", String.valueOf(acc.getPort()));
