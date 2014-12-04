@@ -25,7 +25,7 @@ public class Fenster {
 		return aktuell;
 	}
 
-	public Fenster setAktuell(Fenster f){
+	public void setAktuell(Fenster f){
 		aktuell=f;
 	}
 	}

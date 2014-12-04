@@ -23,10 +23,12 @@ public class Mailuebersicht extends Fenster {
 	private ArrayList<Mail> mails;
 	private File offlineMails;
 	private int aktuelleSeite;
+	private Konto konto;
 	
-	public Mailuebersicht() {
+	public Mailuebersicht(Konto k) {
 		mails= new ArrayList<Mail>(); //Mails m�ssen vom Server geholt werden
 		offlineMails=new File("offlineMails.xml");
+		konto=k;
 		
 		// Initalisierung der kommandoliste
 		kommandoliste.add("kommandos");
