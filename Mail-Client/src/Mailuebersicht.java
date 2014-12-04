@@ -23,8 +23,10 @@ public class Mailuebersicht extends Fenster {
 	private ArrayList<Mail> mails;
 	private File offlineMails;
 	private int aktuelleSeite;
+	public Konto konto;
 	
-	public Mailuebersicht() {
+	public Mailuebersicht(Konto k) {
+		konto=k;
 		mails= new ArrayList<Mail>(); //Mails mï¿½ssen vom Server geholt werden
 		offlineMails=new File("offlineMails.xml");
 		
@@ -49,6 +51,7 @@ public class Mailuebersicht extends Fenster {
 		try {
 			Element root = new Element("konten");
 			Document doc = new Document(root);
+			Element e1=new Element(k.getName());
 			XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
 			out.output(doc,new FileOutputStream(offlineMails));
 		}catch(Exception e){
@@ -84,7 +87,7 @@ public class Mailuebersicht extends Fenster {
 
 			Mail tmp=mails.get(nummer);
 			Element e1=new Element("person");
-			root.addContent(e1);
+			root.getChild(konto.getName()).addContent(e1);
 			e1.addContent(new Element("adresse").addContent(tmp.getAdresse()));
 			e1.addContent(new Element("betreff").addContent(tmp.getBetreff()));
 			e1.addContent(new Element("nachricht").addContent(tmp.getNachricht()));
@@ -141,10 +144,11 @@ public class Mailuebersicht extends Fenster {
 
 	}
 	
+	
 	public static void send(Konto acc, String empfaenger, String betreff,
             String text) throws AddressException, MessagingException
     {
-        // Properties über die Systemeigenschaften anlegen
+        // Properties ï¿½ber die Systemeigenschaften anlegen
         Properties properties = System.getProperties();
         properties.setProperty("mail.smtp.host", acc.getSmtpHost());
         properties.setProperty("mail.smtp.port", String.valueOf(acc.getPort()));
