@@ -3,7 +3,17 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Scanner;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
 import org.jdom.*;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.*;
@@ -130,6 +140,35 @@ public class Mailuebersicht extends Fenster {
 	public void verfassen(){
 
 	}
+	
+	public static void send(Konto acc, String empfaenger, String betreff,
+            String text) throws AddressException, MessagingException
+    {
+        // Properties über die Systemeigenschaften anlegen
+        Properties properties = System.getProperties();
+        properties.setProperty("mail.smtp.host", acc.getSmtpHost());
+        properties.setProperty("mail.smtp.port", String.valueOf(acc.getPort()));
+        properties.setProperty("mail.smtp.auth", "true");
+         
+        // properties.put("mail.smtp.starttls.enable", "true");
+        
+        // session erstellen
+        Session session = Session.getDefaultInstance(properties, acc.getPasswordAuthentication());
+
+        // nachricht erzeugen
+        MimeMessage msg = new MimeMessage(session);
+        msg.setFrom(new InternetAddress(acc.getMailAdresse()));
+        msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(empfaenger, false));
+ 
+        // Betreff
+        msg.setSubject(betreff);
+         
+        // Nachricht
+        msg.setText(text);
+         
+        // E-Mail versenden
+        Transport.send(msg);
+    }
 
 	public void ausloggen(){
 

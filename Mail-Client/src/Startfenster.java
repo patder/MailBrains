@@ -35,11 +35,7 @@ public class Startfenster extends Fenster{
 		for(int i = 0; i  < konten.size(); i++){
 			System.out.println(i+1 + "/t" + konten.get(i).getName() + "/t" + konten.get(i).getAdress());
 		}
-		
-		
-		
 	}
-	
 	
 
 	private void neuesKonto(){
@@ -50,7 +46,7 @@ public class Startfenster extends Fenster{
 		System.out.println("Bitte geben Sie Ihre Mail-Addresse ein:");
 		String adresse = sc.next();
 		System.out.println("Bitte geben Sie Ihr Passwort ein:");
-		String passwort;
+		String passwort="";
 		if ( System.console() != null ){
 			passwort = new String( System.console().readPassword() );
 		}
@@ -61,7 +57,7 @@ public class Startfenster extends Fenster{
 		System.out.println("Bitte geben Sie die gewuenschte Aktualisierungsrate ein(in sek)");
 		double refRate = sc.nextDouble();
 						
-		Konto neuesKonto = new Konto(name, adresse, passwort refRate);
+		Konto neuesKonto = new Konto(name, adresse, passwort, refRate);
 		
 		
 		
