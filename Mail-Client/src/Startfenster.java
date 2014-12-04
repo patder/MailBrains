@@ -18,8 +18,9 @@ public class Startfenster extends Fenster{
 	private ArrayList<Konto> konten;
 	private File inFile;
 	private File inXML;
-
+	private ArrayList<String> elemList = new ArrayList<String>();
 	public Startfenster(){
+		 ArrayList<String> kommandoliste=new ArrayList<String>();
 		konten=new ArrayList<Konto>();
 		inFile=new File("Konten.txt");
 		inXML= new File("KontenListe.xml");
@@ -40,15 +41,27 @@ public class Startfenster extends Fenster{
 		
 	}
 	
-	
+	public void kommandos() {
+		System.out.println("Sie haben die M�glichkeit folgende Kommandos einzugeben: ");
+		for (int i = 0; i < kommandoliste.size(); i++) {
+			System.out.print(kommandoliste.get(i) + ", ");
+		}
+	}	
 
 	private void neuesKonto(){
-		//hole daten f�r das zu speicherne Konto
+		//hole daten fuer das zu speichernde Konto
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Bitte geben Sie Ihren Namen ein:");
 		String name = sc.next();
 		System.out.println("Bitte geben Sie Ihre Mail-Addresse ein:");
 		String adresse = sc.next();
+		String st = adresse.replace('@', 'p');
+		if(elemList.contains(st)){
+			System.out.println("Adresse ist schon vorhanden");
+			return;
+		}
+		
+		
 		System.out.println("Bitte geben Sie Ihr Passwort ein:");
 		String passwort="";
 		if ( System.console() != null ){
@@ -101,7 +114,9 @@ public class Startfenster extends Fenster{
 	        doc = builder.build(inXML);
 	        
 	        Element root = doc.getRootElement();
-	        Element paddy = new Element(k.getAdress());
+	        String tmp = k.getAdress();
+	        tmp.replace('@', 'p');
+	        Element paddy = new Element(tmp);
 	        paddy.addContent(new Element("name").addContent(k.getName()));
 	        paddy.addContent(new Element("adresse").addContent(k.getAdress()));
 	        paddy.addContent(new Element("server").addContent(k.getServer()));
@@ -131,10 +146,8 @@ public class Startfenster extends Fenster{
         try {
             // Das Dokument erstellen
             SAXBuilder builder = new SAXBuilder();
-            System.out.println("Check 1");
             
             doc = builder.build(inXML);
-            System.out.println("Check 2");
             
             
             // Wurzelelement wird auf root gesetzt
@@ -152,6 +165,8 @@ public class Startfenster extends Fenster{
             	String protocol = ((Element) alleKonten.get(i)).getChild("protocol").getValue();
             	double refRate = Double.parseDouble(((Element) alleKonten.get(i)).getChild("refRate").getValue());
             	Konto k1 = new Konto(name, adresse, server, smtpServer,port, protocol, refRate);
+            	String st = adresse.replace('@', 'p');
+            	elemList.add(st);
             	konten.add(k1);
             }
         }
@@ -189,7 +204,35 @@ public class Startfenster extends Fenster{
 	}
 
 	public void loeschen(){
-		
+		System.out.println("was wollen Sie loeschen?");
+		Scanner sc = new Scanner(System.in);
+		int i = -1;
+		try{
+			i = sc.nextInt();
+			if(i > konten.size() || i < 1){
+				throw new Exception();
+			}
+		}
+		catch(Exception e){
+			System.out.println("ungueltige Eingabe");
+		}
+		Document doc = null;
+		try {
+            // Das Dokument erstellen
+            SAXBuilder builder = new SAXBuilder();
+            doc = builder.build(inXML);
+            
+            // Wurzelelement wird auf root gesetzt
+            Element root = doc.getRootElement();
+            List children = root.getChildren();
+            root.removeChildren(((Element)children.get(i-1)).getValue());
+	        XMLOutputter outp = new XMLOutputter();
+	        outp.setFormat( Format.getPrettyFormat() );
+	        outp.output( doc, new FileOutputStream( "XMLModelKontenDatei"));
+		}
+		catch(Exception e){
+			System.out.println("Fehler beim loeschen von Konto");
+		}
 	}
 
 	public void beenden(){
