@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -35,7 +36,11 @@ public class Startfenster extends Fenster{
 		for(int i = 0; i  < konten.size(); i++){
 			System.out.println(i+1 + "/t" + konten.get(i).getName() + "/t" + konten.get(i).getAdress());
 		}
+		
+		
+		
 	}
+	
 	
 
 	private void neuesKonto(){
@@ -61,7 +66,13 @@ public class Startfenster extends Fenster{
 		
 		
 		
-		speichereKonto(neuesKonto);	
+		try {
+			speichereKonto(neuesKonto);
+		} catch (JDOMException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	
 //		while(true){
 //			System.out.println("(1)imap");
 //			System.out.println("(2)pop3");
@@ -89,7 +100,6 @@ public class Startfenster extends Fenster{
 			Document doc = null;
 	        SAXBuilder builder = new SAXBuilder();
 	        doc = builder.build(inXML);
-	        XMLOutputter fmt = new XMLOutputter();
 	        
 	        Element root = doc.getRootElement();
 	        Element paddy = new Element(k.getAdress());
@@ -100,8 +110,13 @@ public class Startfenster extends Fenster{
 	        paddy.addContent(new Element("port").addContent(k.getPort()+""));
 	        paddy.addContent(new Element("protocol").addContent(k.getProtocol()));
 	        paddy.addContent(new Element("refRate").addContent(k.getRefRate()+""));
+	        root.addContent(paddy);
+	        XMLOutputter outp = new XMLOutputter();
+	        outp.setFormat( Format.getPrettyFormat() );
+	        outp.output( doc, new FileOutputStream( "XMLModelKontenDatei"));
 		}
 		catch(Exception e){
+			System.out.println(e);
 			System.out.println("Fehler beim schreiben eines neuen Kontos");
 		}
 	}
@@ -117,9 +132,12 @@ public class Startfenster extends Fenster{
         try {
             // Das Dokument erstellen
             SAXBuilder builder = new SAXBuilder();
+            System.out.println("Check 1");
+            
             doc = builder.build(inXML);
-            XMLOutputter fmt = new XMLOutputter();
-
+            System.out.println("Check 2");
+            
+            
             // Wurzelelement wird auf root gesetzt
             Element root = doc.getRootElement();
              
@@ -127,18 +145,19 @@ public class Startfenster extends Fenster{
             List alleKonten = root.getChildren();
             
             for(int i = 0; i < alleKonten.size(); i++){
-            	String name = ((Element) alleKonten.get(0)).getChild("name").getValue();
-            	String adresse = ((Element) alleKonten.get(0)).getChild("adresse").getValue();
-            	String server = ((Element) alleKonten.get(0)).getChild("server").getValue();
-            	String smtpServer = ((Element) alleKonten.get(0)).getChild("smtpServer").getValue();    
-            	int port = Integer.parseInt(((Element) alleKonten.get(0)).getChild("port").getValue());
-            	String protocol = ((Element) alleKonten.get(0)).getChild("protocol").getValue();
-            	double refRate = Double.parseDouble(((Element) alleKonten.get(0)).getChild("refRate").getValue());
-            	Konto k = new Konto(name, adresse, server, smtpServer,port, protocol, refRate);
-            	konten.add(k);
+            	String name = ((Element) alleKonten.get(i)).getChild("name").getValue();
+            	String adresse = ((Element) alleKonten.get(i)).getChild("adresse").getValue();
+            	String server = ((Element) alleKonten.get(i)).getChild("server").getValue();
+            	String smtpServer = ((Element) alleKonten.get(i)).getChild("smtpServer").getValue();    
+            	int port = Integer.parseInt(((Element) alleKonten.get(i)).getChild("port").getValue());
+            	String protocol = ((Element) alleKonten.get(i)).getChild("protocol").getValue();
+            	double refRate = Double.parseDouble(((Element) alleKonten.get(i)).getChild("refRate").getValue());
+            	Konto k1 = new Konto(name, adresse, server, smtpServer,port, protocol, refRate);
+            	konten.add(k1);
             }
         }
         catch(Exception e){
+        	System.out.println(e);
         	System.out.println("Datei Fehlerhaft oder nicht gefunden");
         }
 	}
