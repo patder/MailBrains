@@ -38,7 +38,6 @@ public class Startfenster extends Fenster{
 		}
 		
 		
-		
 	}
 	
 	
@@ -163,7 +162,30 @@ public class Startfenster extends Fenster{
 	}
 
 	public void waehlen(){
-
+		System.out.println("was moechten Sie waehlen?( Zum abbrechen waehlen Sie -1) ");
+		Scanner sc = new Scanner(System.in);
+		String st = sc.next();
+		sc.close();
+		int i = -2;
+		try{
+			i = Integer.parseInt(st);
+			if(i < -1 || i > konten.size()){
+				throw new Exception();
+			}
+		}
+		catch(Exception e){
+			System.out.println("Ungueltige Eingabe");
+		}
+		if(i == 0){
+			neuesKonto();
+			return;
+		}
+		if(i > 0 && i <=konten.size()){
+			Mailuebersicht mU = new Mailuebersicht(konten.get(i));
+			return;
+		}
+		return;
+		
 	}
 
 	public void loeschen(){
