@@ -143,6 +143,7 @@ public class Mailuebersicht extends Fenster {
 
 	}
 	
+	
 	public static void send(Konto acc, String empfaenger, String betreff,
             String text) throws AddressException, MessagingException
     {
