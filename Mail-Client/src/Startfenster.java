@@ -59,9 +59,7 @@ public class Startfenster extends Fenster{
 		if(elemList.contains(st)){
 			System.out.println("Adresse ist schon vorhanden");
 			return;
-		}
-		
-		
+		}		
 		System.out.println("Bitte geben Sie Ihr Passwort ein:");
 		String passwort="";
 		if ( System.console() != null ){
@@ -73,11 +71,17 @@ public class Startfenster extends Fenster{
 		}
 		System.out.println("Bitte geben Sie die gewuenschte Aktualisierungsrate ein(in sek)");
 		double refRate = sc.nextDouble();
-						
+		sc.close();				
 		Konto neuesKonto = new Konto(name, adresse, passwort, refRate);
 		
-		
-		
+//		if(!knownAdress(neuesKonto)){
+//			System.out.println("BItte gegeb sie noch die folgenden Werte an: ");
+//			
+//			
+//		}
+//		if(!goodValues(neuesKonto)){
+//			System.out.println("Die angegebenen Werte sind fehlerhaft, das Konto wurde nicht erstellt");
+//		}
 		try {
 			speichereKonto(neuesKonto);
 		} catch (JDOMException e) {
@@ -85,25 +89,7 @@ public class Startfenster extends Fenster{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}	
-//		while(true){
-//			System.out.println("(1)imap");
-//			System.out.println("(2)pop3");
-//			int typ = sc.nextInt();
-//			if(!(typ == 1 || typ == 2)){
-//				System.out.println("ungueltige Eingabe, bitt erneut eingeben:");
-//			}
-//			else{
-//				if(typ == 1){
-//					protocol = "imap";
-//				}
-//				else{
-//					protocol = "pop3";
-//				}
-//				break;
-//			}
-//			
-//		}	
-		//connection war ok, wird gespeichert
+
 	}
 	
 	//Speichere Konto in "inFile"
