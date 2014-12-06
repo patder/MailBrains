@@ -1,6 +1,5 @@
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.IOException;
@@ -16,13 +15,11 @@ import org.jdom.output.XMLOutputter;
 public class Startfenster extends Fenster{
 
 	private ArrayList<Konto> konten;
-	private File inFile;
 	private File inXML;
 	private ArrayList<String> elemList = new ArrayList<String>();
 	public Startfenster(){
 		 ArrayList<String> kommandoliste=new ArrayList<String>();
 		konten=new ArrayList<Konto>();
-		inFile=new File("Konten.txt");
 		inXML= new File("KontenListe.xml");
 		holeKonten();
 		
@@ -58,6 +55,7 @@ public class Startfenster extends Fenster{
 		String st = adresse.replace('@', 'p');
 		if(elemList.contains(st)){
 			System.out.println("Adresse ist schon vorhanden");
+			sc.close();
 			return;
 		}		
 		System.out.println("Bitte geben Sie Ihr Passwort ein:");
@@ -123,7 +121,109 @@ public class Startfenster extends Fenster{
 
 	
 	public void aendern(){
-		
+		System.out.println("welchen Eintag wollen Sie aendern?");
+		Scanner sc = new Scanner(System.in);
+		int i = -2;
+		try{
+			i =sc.nextInt();
+			if(i < 1 || i > konten.size()){
+				sc.close();
+				throw new Exception();
+			}
+		}
+		catch(Exception e){
+			System.out.println("Ungueltige Eingabe");
+			return;
+		}
+		System.out.println("1) Kontoname: " + konten.get(i-1).getName());
+		System.out.println("2) Adresse: " + konten.get(i-1).getAdress());
+		System.out.println("3) Ausgangsserver: " + konten.get(i-1).getServer());
+		System.out.println("4) SMTP-Server: " + konten.get(i-1).getSmtpServer());
+		System.out.println("5) Protokol: " + konten.get(i-1).getProtocol());
+		System.out.println("6) Port: " + konten.get(i-1).getPort());
+		System.out.println("7) Aktualisierungsrate: " + konten.get(i-1).getRefRate());
+		System.out.println("welchen Eintag wollen Sie aendern?");
+		try{
+			i =sc.nextInt();
+			if(i < 1 || i > 7){
+				sc.close();
+				throw new Exception();
+			}
+		}
+		catch(Exception e){
+			System.out.println("Ungueltige Eingabe");
+			return;
+		}
+		System.out.println("Geben Sie den Neuen Weret ein: ");
+		String neu = "";
+		try{
+			if(i == 6){
+				neu = sc.next();
+				int tmp = Integer.parseInt(neu);
+			}
+			else{
+				if(i == 7){
+					neu = sc.next();
+					double tmp = Double.parseDouble(neu);
+				}
+				else{
+					neu = sc.next();
+				}
+				
+			}
+		}
+		catch(Exception e){
+			sc.close();
+			System.out.println("Fehler bei aendern eines Eintags, Ungueltige Eingabe");
+			return;
+		}
+		sc.close();
+		Document doc = null;
+        try {
+            // Das Dokument erstellen
+            SAXBuilder builder = new SAXBuilder();
+            
+            doc = builder.build(inXML);
+            
+            
+            // Wurzelelement wird auf root gesetzt
+            Element root = doc.getRootElement();
+             
+            //Liste aller vorhandenen Mailkonten als Elemente
+            String st = konten.get(i-1).getAdress().replace('@', 'p');
+
+            switch(i){
+				case 1:		root.getChild(st).getChild("name").removeContent();
+							root.getChild(st).getChild("name").addContent(neu);
+							break;
+				case 2:		root.getChild(st).getChild("adresse").removeContent();
+							root.getChild(st).getChild("adresse").addContent(neu);
+							break;
+				case 3:		root.getChild(st).getChild("server").removeContent();
+							root.getChild(st).getChild("server").addContent(neu);
+							break;
+				case 4:		root.getChild(st).getChild("smtpServer").removeContent();
+							root.getChild(st).getChild("smtpServer").addContent(neu);
+							break;	
+				case 5:		root.getChild(st).getChild("port").removeContent();
+							root.getChild(st).getChild("port").addContent(neu);
+							break;
+				case 6:		root.getChild(st).getChild("protocol").removeContent();
+							root.getChild(st).getChild("protocol").addContent(neu);
+							break;
+				case 7:		root.getChild(st).getChild("refRate").removeContent();
+							root.getChild(st).getChild("refRate").addContent(neu);
+							break;
+				default:	break;
+            }
+	        XMLOutputter outp = new XMLOutputter();
+	        outp.setFormat( Format.getPrettyFormat());
+	        outp.output( doc, new FileOutputStream( "XMLModelKontenDatei"));
+            
+        }
+        catch(Exception e){
+        	System.out.println("Fehler bei aendern des Attributs");
+        }
 	}
 	
 	private void holeKonten(){
@@ -196,12 +296,15 @@ public class Startfenster extends Fenster{
 		try{
 			i = sc.nextInt();
 			if(i > konten.size() || i < 1){
+				sc.close();
 				throw new Exception();
 			}
 		}
 		catch(Exception e){
 			System.out.println("ungueltige Eingabe");
+			return;
 		}
+		sc.close();
 		Document doc = null;
 		try {
             // Das Dokument erstellen
