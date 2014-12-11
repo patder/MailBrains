@@ -1,7 +1,6 @@
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -63,10 +62,22 @@ public class Spamfilter {
 		System.out.println("Bitte geben Sie die Nummer der Mail ein, die Sie loeschen wollen.");
 		int nummer=sc.nextInt(); //Bedingungen für die Nummer ergaenzen
 		adressen.remove(nummer);
-		FileWriter fw;
 		try{
-			sc=new Scanner(output);
-			//in der Datei die richtige zeile loeschen
+			File kopie = new File("kopie.txt");
+			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(output)));
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(kopie)));
+			int counter = 0;
+			String line;
+			while((line = br.readLine()) != null){
+				if(counter != nummer){
+					bw.write(line);
+					bw.newLine();
+				}
+				counter++;
+			}
+			bw.close();
+			br.close();
+		 	output=kopie; //geht das oder geht das nicht weil das iwie mit referenz oder sowat nicht funkt
 		}catch(Exception e){
 			System.out.println("Der Spamfilter konnte nicht ge�ffnet werden.");
 		}
