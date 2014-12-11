@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 
-public class Spamfilter extends Fenster {
+public class Spamfilter {
 	
 	private static ArrayList<String> adressen;
 	private static File output;
