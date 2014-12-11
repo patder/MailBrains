@@ -22,12 +22,24 @@ import org.jdom.output.XMLOutputter;
 public class Startfenster{
 
 	static ArrayList<Konto> konten;
-	static File inXML = new File("KontenListe.xml");
+	static File inXML;
 	static ArrayList<String> elemList = new ArrayList<String>();
 	private static ArrayList<String> kommandoliste=new ArrayList<String>();
 	private static Scanner sc = new Scanner(System.in);
 	static String datName = "KontenListe.xml";
 	public static void init(){
+		if(!inXML.exists()){
+			try {
+				inXML.createNewFile();
+				
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		inXML= new File(datName);
+		
+		
 		konten=new ArrayList<Konto>();
 		
 		
