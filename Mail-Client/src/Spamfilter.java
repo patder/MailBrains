@@ -8,9 +8,9 @@ import java.util.Scanner;
 
 public class Spamfilter extends Fenster {
 	
-	private ArrayList<String> adressen;
-	private File output;
-	private ArrayList<String> kommandoliste;
+	private static ArrayList<String> adressen;
+	private static File output;
+	private static ArrayList<String> kommandoliste;
 	
 	public Spamfilter(){
 		kommandoliste=new ArrayList<String>();
@@ -25,7 +25,7 @@ public class Spamfilter extends Fenster {
 		
 	}
 
-	public static void auswaehlen() throws AddressException, MessagingException {
+	public static void auswaehlen() {
 		System.out.println("Wählen Sie durch Eingabe der jeweiligen Zahl über die Tastatur den gewünschten Menüpunkt");
 		Scanner sc=new Scanner(System.in);
 		int eingabe=sc.nextInt();
@@ -64,16 +64,18 @@ public class Spamfilter extends Fenster {
 		int nummer=sc.nextInt(); //Bedingungen für die Nummer ergaenzen
 		adressen.remove(nummer);
 		FileWriter fw;
+		Scanner sc
 		try{
-			Scanner sc=new Scanner(output);
+			sc=new Scanner(output);
 			//in der Datei die richtige zeile loeschen
 		}catch(Exception e){
 			System.out.println("Der Spamfilter konnte nicht ge�ffnet werden.");
 		}
 		sc.close();
+		auswaehlen();
 	}
 	
-	public ArrayList<String> getAdressen() {
+	public static ArrayList<String> getAdressen() {
 		return adressen;
 	}
 
@@ -90,6 +92,6 @@ public class Spamfilter extends Fenster {
 	}
 
 	public static void zurueck(){
-
+		auswaehlen();
 	}
 }
