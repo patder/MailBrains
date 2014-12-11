@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.mail.AuthenticationFailedException;
 import javax.mail.MessagingException;
+import javax.mail.NoSuchProviderException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
@@ -22,7 +23,7 @@ public class Startfenster{
 
 	private static ArrayList<Konto> konten;
 	private static File inXML;
-	private ArrayList<String> elemList = new ArrayList<String>();
+	private static ArrayList<String> elemList = new ArrayList<String>();
 	private static ArrayList<String> kommandoliste=new ArrayList<String>();
 	
 	public static void init(){
@@ -44,13 +45,18 @@ public class Startfenster{
 		auswaehlen();
 	}
 	
-	public static void auswaehlen(){
-		System.out.println("Wï¿½hlen Sie durch Eingabe der jeweiligen Zahl ï¿½ber die Tastatur den gewï¿½nschten Menï¿½punkt");
+	public static void auswaehlen() {
+		System.out.println("Waehlen Sie durch Eingabe der jeweiligen Zahl über die Tastatur den gewuenschten Menupunkt");
 		Scanner sc=new Scanner(System.in);
 		int eingabe=sc.nextInt();
 		
 		switch(eingabe){
-		case 1: neuesKonto();
+		case 1:
+				try {
+					neuesKonto();
+				} catch (MessagingException e) {
+					e.printStackTrace();
+				}
 				auswaehlen();
 				break;
 		case 2: kontoWaehlen();
@@ -71,7 +77,7 @@ public class Startfenster{
 
 	
 	
-	private static void neuesKonto(){
+	private static void neuesKonto() throws MessagingException{
 		//hole daten fuer das zu speichernde Konto
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Bitte geben Sie Ihren Namen ein:");
@@ -100,14 +106,14 @@ public class Startfenster{
 		
 		
 		Konto konto = new Konto(name, adresse, passwort, refRate);
-		Session s=Senden.getSession(konto);
+		Session s=Mailuebersicht.getSession();
 		
 		Transport tr = s.getTransport("smtp");
 		
 		try{
 			tr.connect(konto.getSmtpServer(), konto.getAdress(), passwort);
 		}catch (AuthenticationFailedException e){
-			System.out.println("Verbindung konnte nicht hergestellt werden, bitte ï¿½berprï¿½fen sie ihre Eingaben");
+			System.out.println("Verbindung konnte nicht hergestellt werden, bitte überprüfen sie ihre Eingaben");
 			neuesKonto();
 		}
 		System.out.println("Verbindung hergestellt");
