@@ -24,8 +24,11 @@ public class Mailuebersicht extends Fenster {
 	private File offlineMails;
 	private int aktuelleSeite;
 	public Konto konto;
+	private ArrayList<String> kommandoliste;
 	
 	public Mailuebersicht(Konto k) {
+
+		kommandoliste=new ArrayList<String>();
 		konto=k;
 		mails= new ArrayList<Mail>(); //Mails m�ssen vom Server geholt werden
 		offlineMails=new File("offlineMails.xml");
@@ -184,6 +187,14 @@ public class Mailuebersicht extends Fenster {
 
 	public void adressbuch(){
 
+	}
+
+	public void kommandos() {
+		System.out.println("Sie haben die M�glichkeit folgende Kommandos einzugeben: ");
+		for (int i = 0; i < kommandoliste.size(); i++) {
+			System.out.print(kommandoliste.get(i) + ", ");
+		}
+		auswaehlen();
 	}
 
 

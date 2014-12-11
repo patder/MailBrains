@@ -14,8 +14,12 @@ public class Adressbuch extends Fenster{
 
 	private ArrayList<String> adressen;
 	private File adressDat;
+	private ArrayList<String> kommandoliste;
+
 
 	public Adressbuch(){
+
+		kommandoliste=new ArrayList<String>();
 		adressen=new ArrayList<String>();
 		adressDat=new File("adressbuch.xml");
 
@@ -116,6 +120,14 @@ public class Adressbuch extends Fenster{
 			System.out.println("Der Adresseintrag konnte nicht geloescht werden.");
 		}
 
+	}
+
+	public void kommandos() {
+		System.out.println("Sie haben die M�glichkeit folgende Kommandos einzugeben: ");
+		for (int i = 0; i < kommandoliste.size(); i++) {
+			System.out.print(kommandoliste.get(i) + ", ");
+		}
+		auswaehlen();
 	}
 
 }

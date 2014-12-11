@@ -1,3 +1,5 @@
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
@@ -8,8 +10,10 @@ public class Spamfilter extends Fenster {
 	
 	private ArrayList<String> adressen;
 	private File output;
+	private ArrayList<String> kommandoliste;
 	
 	public Spamfilter(){
+		kommandoliste=new ArrayList<String>();
 		adressen=new ArrayList<String>();
 		output=new File("Spamfilter.txt");
 		
@@ -20,8 +24,24 @@ public class Spamfilter extends Fenster {
 		kommandoliste.add("zurueck");
 		
 	}
+
+	public static void auswaehlen() throws AddressException, MessagingException {
+		System.out.println("Wählen Sie durch Eingabe der jeweiligen Zahl über die Tastatur den gewünschten Menüpunkt");
+		Scanner sc=new Scanner(System.in);
+		int eingabe=sc.nextInt();
+
+		switch(eingabe){
+			case 1: hinzufuegen();
+				break;
+			case 2:loeschen();
+				break;
+			case 3: kommandos();
+				break;
+			case 4: zurueck();
+		}
+	}
 	
-	public void hinzufuegen(){
+	public static void hinzufuegen(){
 		Scanner sc=new Scanner(System.in);
 		System.out.println("Bitte geben Sie die Adresse ein, die Sie hinzufuegen wollen.");
 		String adresse=sc.next(); //Bedingungen für die Adresse ergaenzen
@@ -37,7 +57,7 @@ public class Spamfilter extends Fenster {
 		sc.close();
 	}
 	
-	public void loeschen(){
+	public static void loeschen(){
 		Scanner sc=new Scanner(System.in);
 		System.out.println("Bitte geben Sie die Nummer der Mail ein, die Sie loeschen wollen.");
 		int nummer=sc.nextInt(); //Bedingungen für die Nummer ergaenzen
@@ -60,5 +80,15 @@ public class Spamfilter extends Fenster {
 		this.adressen = adressen;
 	}
 
-	
+	public void kommandos() {
+		System.out.println("Sie haben die M�glichkeit folgende Kommandos einzugeben: ");
+		for (int i = 0; i < kommandoliste.size(); i++) {
+			System.out.print(kommandoliste.get(i) + ", ");
+		}
+		auswaehlen();
+	}
+
+	public void zurueck(){
+
+	}
 }
