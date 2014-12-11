@@ -55,6 +55,7 @@ public class Spamfilter extends Fenster {
 			System.out.println("Der Spamfilter konnte nicht ge�ffnet werden.");
 		}
 		sc.close();
+		auswaehlen();
 	}
 	
 	public static void loeschen(){
@@ -76,11 +77,11 @@ public class Spamfilter extends Fenster {
 		return adressen;
 	}
 
-	public void setAdressen(ArrayList<String> adressen) {
+	public  void setAdressen(ArrayList<String> adressen) {
 		this.adressen = adressen;
 	}
 
-	public void kommandos() {
+	public static void kommandos() {
 		System.out.println("Sie haben die M�glichkeit folgende Kommandos einzugeben: ");
 		for (int i = 0; i < kommandoliste.size(); i++) {
 			System.out.print(kommandoliste.get(i) + ", ");
@@ -88,7 +89,7 @@ public class Spamfilter extends Fenster {
 		auswaehlen();
 	}
 
-	public void zurueck(){
+	public static void zurueck(){
 
 	}
 }
