@@ -28,40 +28,41 @@ public class Startfenster{
 	private static Scanner sc = new Scanner(System.in);
 	static String datName = "KontenListe.xml";
 	public static void init(){
-		if(!inXML.exists()){
-			try {				
-				inXML= new File(datName);
+		inXML=new File(datName);
+
+		if (inXML != null) {
+			try {
 				inXML.createNewFile();
-				
-				
+				try {
+					Element root = new Element("kontenListe");
+					Document doc = new Document(root);
+					XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
+					out.output(doc,new FileOutputStream(inXML));
+				}catch(Exception e){
+					System.out.println("Die KontenListe-Datei konnte nicht initialisiert werden.");
+				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.err.println("Error creating " + inXML.toString());
 			}
 		}
-		else{
-			inXML= new File(datName);
-		}
-		
-		konten=new ArrayList<Konto>();
-		
-		
+			konten=new ArrayList<Konto>();
+
+
 		// Initalisierung der kommandoliste
-		kommandoliste.add("waehlen");
-		kommandoliste.add("kommandos");
-		kommandoliste.add("aendern");
+		kommandoliste.add("neues Konto anlegen");
+		kommandoliste.add("bestehendes Konto waehlen");
+		kommandoliste.add("Kommandos anzeigen");
 		kommandoliste.add("beenden");
-		
-		System.out.println("0)\tneues Konto anlegen");
-		for(int i = 0; i  < konten.size(); i++){
-			System.out.println(i+1 + ")\t" + konten.get(i).getName() + " -> " + konten.get(i).getAdress());
-		}
 		auswaehlen();
 	}
 	
 	public static void auswaehlen() {
 		holeKonten();
-		System.out.println("Waehlen Sie durch Eingabe der jeweiligen Zahl über die Tastatur den gewuenschten Menupunkt");
-		int eingabe=sc.nextInt();
+		System.out.println("Sie haben die Moeglichkeit folgende Kommandos einzugeben: ");
+		for (int i = 1; i <= kommandoliste.size(); i++) {
+			System.out.print(i+": "+kommandoliste.get(i-1)+"\n");
+		}
+		int eingabe=Integer.parseInt(sc.nextLine());
 		
 		switch(eingabe){
 		case 1:
@@ -73,29 +74,30 @@ public class Startfenster{
 				auswaehlen();
 				break;
 		case 2: kontoWaehlen();
-				auswaehlen();
 				break;
 		case 3: verlassen();
 			    break;
 		}
 	}
-	
-	
-	public void kommandos() {
-		System.out.println("Sie haben die Mï¿½glichkeit folgende Kommandos einzugeben: ");
-		for (int i = 0; i < kommandoliste.size(); i++) {
-			System.out.print(kommandoliste.get(i) + ", ");
+
+
+	public static void kommandos() {
+		System.out.println("Sie haben die Moeglichkeit folgende Kommandos einzugeben: ");
+		for (int i = 1; i < kommandoliste.size(); i++) {
+			System.out.print(i+": "+kommandoliste.get(i-1)+"\n");
 		}
-	}	
+		auswaehlen();
+	}
 
 	
 	
 	private static void neuesKonto() throws MessagingException{
 		//hole daten fuer das zu speichernde Konto
 		System.out.println("Bitte geben Sie Ihren Namen ein:");
-		String name = sc.next();
+		String name = sc.nextLine();
+		System.out.println(name);
 		System.out.println("Bitte geben Sie Ihre Mail-Addresse ein:");
-		String adresse = sc.next();
+		String adresse = sc.nextLine();
 		String st = adresse.replace('@', 'p');
 		if(elemList.contains(st)){
 			System.out.println("Adresse ist schon vorhanden");
@@ -103,19 +105,21 @@ public class Startfenster{
 		}		
 		System.out.println("Bitte geben Sie Ihr Passwort ein:");
 		String passwort="";
-		if ( System.console() != null ){
+		/*if ( System.console() != null ){
 			passwort = new String( System.console().readPassword() );
 		}
 		else{
 			System.out.println("Fehler bei Passworteingabe");
 			System.exit(1);
-		}
+		}*/
+		passwort=sc.nextLine();
 
 		System.out.println("Bitte geben Sie die gewuenschte Aktualisierungsrate ein(in sek)");
 		double refRate = sc.nextDouble();		
 		
 		
 		Konto konto = new Konto(name, adresse, passwort, refRate);
+		Mailuebersicht.konto=new Konto(name, adresse, passwort, refRate);
 		Session s=Mailuebersicht.getSession();
 		
 		Transport tr = s.getTransport("smtp");
@@ -123,7 +127,7 @@ public class Startfenster{
 		try{
 			tr.connect(konto.getSmtpServer(), konto.getAdress(), passwort);
 		}catch (AuthenticationFailedException e){
-			System.out.println("Verbindung konnte nicht hergestellt werden, bitte überprüfen sie ihre Eingaben");
+			System.out.println("Verbindung konnte nicht hergestellt werden, bitte ï¿½berprï¿½fen sie ihre Eingaben");
 			neuesKonto();
 		}
 		System.out.println("Verbindung hergestellt");
@@ -162,7 +166,7 @@ public class Startfenster{
 	        root.addContent(paddy);
 	        XMLOutputter outp = new XMLOutputter();
 	        outp.setFormat( Format.getPrettyFormat() );
-	        outp.output( doc, new FileOutputStream( "XMLModelKontenDatei"));
+	        outp.output( doc, new FileOutputStream(datName));
 		}
 		catch(Exception e){
 			System.out.println(e);
@@ -208,14 +212,15 @@ public class Startfenster{
 	
 
 	public static void kontoWaehlen(){
+		System.out.println("Sie koennen aus folgenden Konten auswaehlen: ");
 		for(int i = 0; i  < konten.size(); i++){
-			System.out.println(i+1 + "/t" + konten.get(i).getName() + "/t" + konten.get(i).getAdress());
+			System.out.println(i+1 + ")/t" + konten.get(i).getName() + "/t" + konten.get(i).getAdress()+"\n");
 		}
-		System.out.println("Bitte Konto waehlen: ");
 		int i = sc.nextInt();
 		Konto konto=konten.get(i-1);
 		Mailuebersicht.init(konto);
-		return;
+
+		auswaehlen();
 	}
 
 	

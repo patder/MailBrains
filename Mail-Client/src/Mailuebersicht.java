@@ -197,7 +197,7 @@ public class Mailuebersicht {
 	
 	public static Session getSession(){ 
 		Properties properties = System.getProperties();
-        properties.setProperty("mail.smtp.host", konto.getServer());
+        properties.setProperty("mail.smtp.host", konto.getSmtpServer());
         properties.setProperty("mail.smtp.port", String.valueOf(konto.getPort()));
         properties.setProperty("mail.smtp.auth", "true");
          
@@ -250,9 +250,9 @@ public class Mailuebersicht {
 	}
 
 	public static void kommandos() {
-		System.out.println("Sie haben die M�glichkeit folgende Kommandos einzugeben: ");
-		for (int i = 0; i < kommandoliste.size(); i++) {
-			System.out.print(kommandoliste.get(i) + ", ");
+		System.out.println("Sie haben die Moeglichkeit folgende Kommandos einzugeben: ");
+		for (int i = 1; i < kommandoliste.size(); i++) {
+			System.out.print(i+": "+kommandoliste.get(i-1)+"\n");
 		}
 		auswaehlen();
 	}

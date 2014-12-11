@@ -146,9 +146,9 @@ public class Adressbuch {
 	}
 
 	public static void kommandos() {
-		System.out.println("Sie haben die M�glichkeit folgende Kommandos einzugeben: ");
-		for (int i = 0; i < kommandoliste.size(); i++) {
-			System.out.print(kommandoliste.get(i) + ", ");
+		System.out.println("Sie haben die Moeglichkeit folgende Kommandos einzugeben: ");
+		for (int i = 1; i < kommandoliste.size(); i++) {
+			System.out.print(i+": "+kommandoliste.get(i-1)+"\n");
 		}
 		auswaehlen();
 	}

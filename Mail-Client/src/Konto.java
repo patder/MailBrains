@@ -27,12 +27,16 @@ public class Konto {
     	this.port=25;
     	//try block falls keine mailadresse
     	String provider=mailAdresse.split("@")[1];
-    	switch(provider){
-    	case "gmx.de":
-    	case "gmx.net": smtpServer="mail.gmx.net"; break;
-    	case "gmail.com":
-    	case "googlemail.com": smtpServer="smtp.googlemail.com"; break;
+		if(provider.equals("gmx.de")||provider.equals("gmx.net")) {
+			smtpServer = "mail.gmx.net";
+		}
+		else if (provider.equals("gmail.com")||provider.equals("googlemail.com")) {
+			smtpServer="smtp.googlemail.com";
     	}
+		else if(provider.equals("web.de")){
+			smtpServer="smtp.web.de";
+		}
+		System.out.println(provider);
     }
 	
 	public String getAdress() {

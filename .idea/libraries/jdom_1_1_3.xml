@@ -5,6 +5,10 @@
       <root url="jar://$PROJECT_DIR$/javax.mail-1.4.7.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="file://C:/Program Files/Java/jdk1.7.0_09" />
+      <root url="file://C:/ProgramData/Oracle/Java" />
+    </SOURCES>
+    <jarDirectory url="file://C:/Program Files/Java/jdk1.7.0_09" recursive="false" type="SOURCES" />
   </library>
 </component>
