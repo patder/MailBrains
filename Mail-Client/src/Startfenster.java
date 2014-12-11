@@ -45,7 +45,7 @@ public class Startfenster{
 	}
 	
 	public static void auswaehlen(){
-		System.out.println("Wählen Sie durch Eingabe der jeweiligen Zahl über die Tastatur den gewünschten Menüpunkt");
+		System.out.println("Wï¿½hlen Sie durch Eingabe der jeweiligen Zahl ï¿½ber die Tastatur den gewï¿½nschten Menï¿½punkt");
 		Scanner sc=new Scanner(System.in);
 		int eingabe=sc.nextInt();
 		
@@ -107,7 +107,7 @@ public class Startfenster{
 		try{
 			tr.connect(konto.getSmtpServer(), konto.getAdress(), passwort);
 		}catch (AuthenticationFailedException e){
-			System.out.println("Verbindung konnte nicht hergestellt werden, bitte überprüfen sie ihre Eingaben");
+			System.out.println("Verbindung konnte nicht hergestellt werden, bitte ï¿½berprï¿½fen sie ihre Eingaben");
 			neuesKonto();
 		}
 		System.out.println("Verbindung hergestellt");
@@ -163,116 +163,6 @@ public class Startfenster{
 		}
 	}
 
-	
-	
-	public void aendern(){
-		System.out.println("welchen Eintag wollen Sie aendern?");
-		Scanner sc = new Scanner(System.in);
-		int i = -2;
-		try{
-			i =sc.nextInt();
-			if(i < 1 || i > konten.size()){
-				sc.close();
-				throw new Exception();
-			}
-		}
-		catch(Exception e){
-			System.out.println("Ungueltige Eingabe");
-			return;
-		}
-		System.out.println("1) Kontoname: " + konten.get(i-1).getName());
-		System.out.println("2) Adresse: " + konten.get(i-1).getAdress());
-		System.out.println("3) Ausgangsserver: " + konten.get(i-1).getServer());
-		System.out.println("4) SMTP-Server: " + konten.get(i-1).getSmtpServer());
-		System.out.println("5) Protokol: " + konten.get(i-1).getProtocol());
-		System.out.println("6) Port: " + konten.get(i-1).getPort());
-		System.out.println("7) Aktualisierungsrate: " + konten.get(i-1).getRefRate());
-		System.out.println("welchen Eintag wollen Sie aendern?");
-		try{
-			i =sc.nextInt();
-			if(i < 1 || i > 7){
-				sc.close();
-				throw new Exception();
-			}
-		}
-		catch(Exception e){
-			System.out.println("Ungueltige Eingabe");
-			return;
-		}
-		System.out.println("Geben Sie den Neuen Weret ein: ");
-		String neu = "";
-		try{
-			if(i == 6){
-				neu = sc.next();
-				int tmp = Integer.parseInt(neu);
-			}
-			else{
-				if(i == 7){
-					neu = sc.next();
-					double tmp = Double.parseDouble(neu);
-				}
-				else{
-					neu = sc.next();
-				}
-				
-			}
-		}
-		catch(Exception e){
-			sc.close();
-			System.out.println("Fehler bei aendern eines Eintags, Ungueltige Eingabe");
-			return;
-		}
-		sc.close();
-		Document doc = null;
-        try {
-            // Das Dokument erstellen
-            SAXBuilder builder = new SAXBuilder();
-            
-            doc = builder.build(inXML);
-            
-            
-            // Wurzelelement wird auf root gesetzt
-            Element root = doc.getRootElement();
-             
-            //Liste aller vorhandenen Mailkonten als Elemente
-            String st = konten.get(i-1).getAdress().replace('@', 'p');
-
-            switch(i){
-				case 1:		root.getChild(st).getChild("name").removeContent();
-							root.getChild(st).getChild("name").addContent(neu);
-							break;
-				case 2:		root.getChild(st).getChild("adresse").removeContent();
-							root.getChild(st).getChild("adresse").addContent(neu);
-							break;
-				case 3:		root.getChild(st).getChild("server").removeContent();
-							root.getChild(st).getChild("server").addContent(neu);
-							break;
-				case 4:		root.getChild(st).getChild("smtpServer").removeContent();
-							root.getChild(st).getChild("smtpServer").addContent(neu);
-							break;	
-				case 5:		root.getChild(st).getChild("port").removeContent();
-							root.getChild(st).getChild("port").addContent(neu);
-							break;
-				case 6:		root.getChild(st).getChild("protocol").removeContent();
-							root.getChild(st).getChild("protocol").addContent(neu);
-							break;
-				case 7:		root.getChild(st).getChild("refRate").removeContent();
-							root.getChild(st).getChild("refRate").addContent(neu);
-							break;
-				default:	break;
-            }
-	        XMLOutputter outp = new XMLOutputter();
-	        outp.setFormat( Format.getPrettyFormat());
-	        outp.output( doc, new FileOutputStream( "XMLModelKontenDatei"));
-            
-        }
-        catch(Exception e){
-        	System.out.println("Fehler bei aendern des Attributs");
-        }
-	}
-	
-	
-	
 	private static void holeKonten(){
 		Document doc = null;
 
@@ -340,40 +230,7 @@ public class Startfenster{
 	}
 
 	
-	public void loeschen(){
-		System.out.println("was wollen Sie loeschen?");
-		Scanner sc = new Scanner(System.in);
-		int i = -1;
-		try{
-			i = sc.nextInt();
-			if(i > konten.size() || i < 1){
-				sc.close();
-				throw new Exception();
-			}
-		}
-		catch(Exception e){
-			System.out.println("ungueltige Eingabe");
-			return;
-		}
-		sc.close();
-		Document doc = null;
-		try {
-            // Das Dokument erstellen
-            SAXBuilder builder = new SAXBuilder();
-            doc = builder.build(inXML);
-            
-            // Wurzelelement wird auf root gesetzt
-            Element root = doc.getRootElement();
-            List children = root.getChildren();
-            root.removeChildren(((Element)children.get(i-1)).getValue());
-	        XMLOutputter outp = new XMLOutputter();
-	        outp.setFormat( Format.getPrettyFormat() );
-	        outp.output( doc, new FileOutputStream( "XMLModelKontenDatei"));
-		}
-		catch(Exception e){
-			System.out.println("Fehler beim loeschen von Konto");
-		}
-	}
+
 
 	public static void verlassen(){
 		System.exit(1);	

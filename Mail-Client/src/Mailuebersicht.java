@@ -48,7 +48,7 @@ public class Mailuebersicht {
 		kommandoliste.add("spamfilter");
 		kommandoliste.add("aktualisieren");
 		kommandoliste.add("speichern");
-		
+		kommandoliste.add("aendern");
 		offlineMails=new File("offlineMails.xml");
 		
 		aktuelleSeite=1;
@@ -97,6 +97,8 @@ public class Mailuebersicht {
 			case 10: aktualisieren();
 				break;
 			case 11: speichern();
+				break;
+			case 12: aendern();
 				break;
 		}
 	}
@@ -173,12 +175,6 @@ public class Mailuebersicht {
 	public static void aktualisieren(){
 		auswaehlen();
 	}
-
-	public static void loeschen(){
-		auswaehlen();
-	}
-
-	
 	
 	public static void verfassen(Konto acc, String empfaenger, String betreff,
             String text) throws AddressException, MessagingException
@@ -226,6 +222,149 @@ public class Mailuebersicht {
 		System.out.println("Sie haben die M�glichkeit folgende Kommandos einzugeben: ");
 		for (int i = 0; i < kommandoliste.size(); i++) {
 			System.out.print(kommandoliste.get(i) + ", ");
+		}
+		auswaehlen();
+	}
+
+	public static void loeschen(){
+		System.out.println("was wollen Sie loeschen?");
+		Scanner sc = new Scanner(System.in);
+		int i = -1;
+		try{
+			i = sc.nextInt();
+			if(i > konten.size() || i < 1){
+				sc.close();
+				throw new Exception();
+			}
+		}
+		catch(Exception e){
+			System.out.println("ungueltige Eingabe");
+			return;
+		}
+		sc.close();
+		Document doc = null;
+		try {
+			// Das Dokument erstellen
+			SAXBuilder builder = new SAXBuilder();
+			doc = builder.build(inXML);
+
+			// Wurzelelement wird auf root gesetzt
+			Element root = doc.getRootElement();
+			List children = root.getChildren();
+			root.removeChildren(((Element)children.get(i-1)).getValue());
+			XMLOutputter outp = new XMLOutputter();
+			outp.setFormat( Format.getPrettyFormat() );
+			outp.output( doc, new FileOutputStream( "XMLModelKontenDatei"));
+		}
+		catch(Exception e){
+			System.out.println("Fehler beim loeschen von Konto");
+		}
+		auswaehlen();
+	}
+
+	public static void aendern(){
+		System.out.println("welchen Eintag wollen Sie aendern?");
+		Scanner sc = new Scanner(System.in);
+		int i = -2;
+		try{
+			i =sc.nextInt();
+			if(i < 1 || i > konten.size()){
+				sc.close();
+				throw new Exception();
+			}
+		}
+		catch(Exception e){
+			System.out.println("Ungueltige Eingabe");
+			return;
+		}
+		System.out.println("1) Kontoname: " + konten.get(i-1).getName());
+		System.out.println("2) Adresse: " + konten.get(i-1).getAdress());
+		System.out.println("3) Ausgangsserver: " + konten.get(i-1).getServer());
+		System.out.println("4) SMTP-Server: " + konten.get(i-1).getSmtpServer());
+		System.out.println("5) Protokol: " + konten.get(i-1).getProtocol());
+		System.out.println("6) Port: " + konten.get(i-1).getPort());
+		System.out.println("7) Aktualisierungsrate: " + konten.get(i-1).getRefRate());
+		System.out.println("welchen Eintag wollen Sie aendern?");
+		try{
+			i =sc.nextInt();
+			if(i < 1 || i > 7){
+				sc.close();
+				throw new Exception();
+			}
+		}
+		catch(Exception e){
+			System.out.println("Ungueltige Eingabe");
+			return;
+		}
+		System.out.println("Geben Sie den Neuen Weret ein: ");
+		String neu = "";
+		try{
+			if(i == 6){
+				neu = sc.next();
+				int tmp = Integer.parseInt(neu);
+			}
+			else{
+				if(i == 7){
+					neu = sc.next();
+					double tmp = Double.parseDouble(neu);
+				}
+				else{
+					neu = sc.next();
+				}
+
+			}
+		}
+		catch(Exception e){
+			sc.close();
+			System.out.println("Fehler bei aendern eines Eintags, Ungueltige Eingabe");
+			return;
+		}
+		sc.close();
+		Document doc = null;
+		try {
+			// Das Dokument erstellen
+			SAXBuilder builder = new SAXBuilder();
+
+			doc = builder.build(inXML);
+
+
+			// Wurzelelement wird auf root gesetzt
+			Element root = doc.getRootElement();
+
+			//Liste aller vorhandenen Mailkonten als Elemente
+			String st = konten.get(i-1).getAdress().replace('@', 'p');
+
+			switch(i){
+				case 1:		root.getChild(st).getChild("name").removeContent();
+					root.getChild(st).getChild("name").addContent(neu);
+					break;
+				case 2:		root.getChild(st).getChild("adresse").removeContent();
+					root.getChild(st).getChild("adresse").addContent(neu);
+					break;
+				case 3:		root.getChild(st).getChild("server").removeContent();
+					root.getChild(st).getChild("server").addContent(neu);
+					break;
+				case 4:		root.getChild(st).getChild("smtpServer").removeContent();
+					root.getChild(st).getChild("smtpServer").addContent(neu);
+					break;
+				case 5:		root.getChild(st).getChild("port").removeContent();
+					root.getChild(st).getChild("port").addContent(neu);
+					break;
+				case 6:		root.getChild(st).getChild("protocol").removeContent();
+					root.getChild(st).getChild("protocol").addContent(neu);
+					break;
+				case 7:		root.getChild(st).getChild("refRate").removeContent();
+					root.getChild(st).getChild("refRate").addContent(neu);
+					break;
+				default:	break;
+			}
+			XMLOutputter outp = new XMLOutputter();
+			outp.setFormat( Format.getPrettyFormat());
+			outp.output( doc, new FileOutputStream( "XMLModelKontenDatei"));
+
+		}
+		catch(Exception e){
+			System.out.println("Fehler bei aendern des Attributs");
 		}
 		auswaehlen();
 	}
