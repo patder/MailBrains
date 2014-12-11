@@ -43,7 +43,7 @@ public class Startfenster{
 		}
 	}
 	
-	public static void auswaehlen() throws AddressException, MessagingException{
+	public static void auswaehlen(){
 		System.out.println("Wählen Sie durch Eingabe der jeweiligen Zahl über die Tastatur den gewünschten Menüpunkt");
 		Scanner sc=new Scanner(System.in);
 		int eingabe=sc.nextInt();
@@ -331,8 +331,7 @@ public class Startfenster{
 //		}
 //		return;
 		
-		Mailuebersicht uebersicht=new Mailuebersicht(konto);
-		uebersicht.zeigeAuswahl();
+		Mailuebersicht.kommandos();
 	}
 
 	public void loeschen(){
