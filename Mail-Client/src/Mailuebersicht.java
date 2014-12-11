@@ -98,7 +98,11 @@ public class Mailuebersicht {
 				break;
 			case 4: vorherige();
 				break;
-			case 5: verfassen();
+			case 5: try {
+				verfassen();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 				break;
 			case 6: loeschen();
 				break;
