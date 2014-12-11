@@ -23,9 +23,9 @@ public class Startfenster{
 	private static ArrayList<Konto> konten;
 	private static File inXML;
 	private ArrayList<String> elemList = new ArrayList<String>();
+	private static ArrayList<String> kommandoliste=new ArrayList<String>();
 	
-	public Startfenster(){
-		 ArrayList<String> kommandoliste=new ArrayList<String>();
+	public static void init(){
 		konten=new ArrayList<Konto>();
 		inXML= new File("KontenListe.xml");
 		holeKonten();
@@ -41,6 +41,7 @@ public class Startfenster{
 		for(int i = 0; i  < konten.size(); i++){
 			System.out.println(i+1 + "/t" + konten.get(i).getName() + "/t" + konten.get(i).getAdress());
 		}
+		auswaehlen();
 	}
 	
 	public static void auswaehlen(){
@@ -50,8 +51,10 @@ public class Startfenster{
 		
 		switch(eingabe){
 		case 1: neuesKonto();
+				auswaehlen();
 				break;
 		case 2: kontoWaehlen();
+				auswaehlen();
 				break;
 		case 3: verlassen();
 			    break;
@@ -96,13 +99,13 @@ public class Startfenster{
 		sc.close();			
 		
 		
-		Konto neuesKonto = new Konto(name, adresse, passwort, refRate);
-		Session s=Senden.getSession(neuesKonto);
+		Konto konto = new Konto(name, adresse, passwort, refRate);
+		Session s=Senden.getSession(konto);
 		
 		Transport tr = s.getTransport("smtp");
 		
 		try{
-			tr.connect(neuesKonto.getSmtpServer(), neuesKonto.getAdress(), passwort);
+			tr.connect(konto.getSmtpServer(), konto.getAdress(), passwort);
 		}catch (AuthenticationFailedException e){
 			System.out.println("Verbindung konnte nicht hergestellt werden, bitte überprüfen sie ihre Eingaben");
 			neuesKonto();
@@ -118,13 +121,14 @@ public class Startfenster{
 //			System.out.println("Die angegebenen Werte sind fehlerhaft, das Konto wurde nicht erstellt");
 //		}
 		try {
-			speichereKonto(neuesKonto);
+			speichereKonto(konto);
 		} catch (JDOMException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}	
 
+		Mailuebersicht.init(konto);
 	}
 	
 	
@@ -269,7 +273,7 @@ public class Startfenster{
 	
 	
 	
-	private void holeKonten(){
+	private static void holeKonten(){
 		Document doc = null;
 
         try {
@@ -331,9 +335,11 @@ public class Startfenster{
 //		}
 //		return;
 		
-		Mailuebersicht.kommandos();
+		Konto konto=null;
+		Mailuebersicht.init(konto);
 	}
 
+	
 	public void loeschen(){
 		System.out.println("was wollen Sie loeschen?");
 		Scanner sc = new Scanner(System.in);
