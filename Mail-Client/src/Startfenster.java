@@ -25,11 +25,12 @@ public class Startfenster{
 	private static File inXML;
 	private static ArrayList<String> elemList = new ArrayList<String>();
 	private static ArrayList<String> kommandoliste=new ArrayList<String>();
-	
+	private static Scanner sc = new Scanner(System.in);
+	private static String datName = "KontenListe.xml";
 	public static void init(){
 		konten=new ArrayList<Konto>();
 		inXML= new File("KontenListe.xml");
-		holeKonten();
+		
 		
 		// Initalisierung der kommandoliste
 		kommandoliste.add("waehlen");
@@ -38,16 +39,16 @@ public class Startfenster{
 		kommandoliste.add("aendern");
 		kommandoliste.add("beenden");
 		
-		System.out.println("0/tneues Konto anlegen");
+		System.out.println("0)\tneues Konto anlegen");
 		for(int i = 0; i  < konten.size(); i++){
-			System.out.println(i+1 + "/t" + konten.get(i).getName() + "/t" + konten.get(i).getAdress());
+			System.out.println(i+1 + ")\t" + konten.get(i).getName() + " -> " + konten.get(i).getAdress());
 		}
 		auswaehlen();
 	}
 	
 	public static void auswaehlen() {
+		holeKonten();
 		System.out.println("Waehlen Sie durch Eingabe der jeweiligen Zahl über die Tastatur den gewuenschten Menupunkt");
-		Scanner sc=new Scanner(System.in);
 		int eingabe=sc.nextInt();
 		
 		switch(eingabe){
@@ -79,7 +80,6 @@ public class Startfenster{
 	
 	private static void neuesKonto() throws MessagingException{
 		//hole daten fuer das zu speichernde Konto
-		Scanner sc = new Scanner(System.in);
 		System.out.println("Bitte geben Sie Ihren Namen ein:");
 		String name = sc.next();
 		System.out.println("Bitte geben Sie Ihre Mail-Addresse ein:");
@@ -87,7 +87,6 @@ public class Startfenster{
 		String st = adresse.replace('@', 'p');
 		if(elemList.contains(st)){
 			System.out.println("Adresse ist schon vorhanden");
-			sc.close();
 			return;
 		}		
 		System.out.println("Bitte geben Sie Ihr Passwort ein:");
@@ -101,8 +100,7 @@ public class Startfenster{
 		}
 
 		System.out.println("Bitte geben Sie die gewuenschte Aktualisierungsrate ein(in sek)");
-		double refRate = sc.nextDouble();
-		sc.close();			
+		double refRate = sc.nextDouble();		
 		
 		
 		Konto konto = new Konto(name, adresse, passwort, refRate);
@@ -117,15 +115,6 @@ public class Startfenster{
 			neuesKonto();
 		}
 		System.out.println("Verbindung hergestellt");
-		
-//		if(!knownAdress(neuesKonto)){
-//			System.out.println("BItte gegeb sie noch die folgenden Werte an: ");
-//			
-//			
-//		}
-//		if(!goodValues(neuesKonto)){
-//			System.out.println("Die angegebenen Werte sind fehlerhaft, das Konto wurde nicht erstellt");
-//		}
 		try {
 			speichereKonto(konto);
 		} catch (JDOMException e) {
@@ -140,7 +129,7 @@ public class Startfenster{
 	
 	
 	
-	//Speichere Konto in "inFile"
+
 	public static void speichereKonto(Konto k) throws JDOMException, IOException{
 		try{
 			Document doc = null;
@@ -149,7 +138,7 @@ public class Startfenster{
 	        
 	        Element root = doc.getRootElement();
 	        String tmp = k.getAdress();
-	        tmp.replace('@', 'p');
+	        tmp = tmp.replace('@', 'p');
 	        Element paddy = new Element(tmp);
 	        paddy.addContent(new Element("name").addContent(k.getName()));
 	        paddy.addContent(new Element("adresse").addContent(k.getAdress()));
@@ -171,7 +160,7 @@ public class Startfenster{
 
 	private static void holeKonten(){
 		Document doc = null;
-
+		konten.clear();
         try {
             // Das Dokument erstellen
             SAXBuilder builder = new SAXBuilder();
@@ -207,32 +196,14 @@ public class Startfenster{
 	
 
 	public static void kontoWaehlen(){
-//		System.out.println("was moechten Sie waehlen?( Zum abbrechen waehlen Sie -1) ");
-//		Scanner sc = new Scanner(System.in);
-//		String st = sc.next();
-//		sc.close();
-//		int i = -2;
-//		try{
-//			i = Integer.parseInt(st);
-//			if(i < -1 || i > konten.size()){
-//				throw new Exception();
-//			}
-//		}
-//		catch(Exception e){
-//			System.out.println("Ungueltige Eingabe");
-//		}
-//		if(i == 0){
-//			neuesKonto();
-//			return;
-//		}
-//		if(i > 0 && i <=konten.size()){
-//			Mailuebersicht mU = new Mailuebersicht(konten.get(i));
-//			return;
-//		}
-//		return;
-		
-		Konto konto=null;
+		for(int i = 0; i  < konten.size(); i++){
+			System.out.println(i+1 + "/t" + konten.get(i).getName() + "/t" + konten.get(i).getAdress());
+		}
+		System.out.println("Bitte Konto waehlen: ");
+		int i = sc.nextInt();
+		Konto konto=konten.get(i-1);
 		Mailuebersicht.init(konto);
+		return;
 	}
 
 	

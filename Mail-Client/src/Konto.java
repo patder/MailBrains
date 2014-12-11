@@ -24,7 +24,7 @@ public class Konto {
     	this.refRate=refRate;
     	this.adress=mailAdresse;
     	this.password=passwort;
-    	port=25;
+    	this.port=25;
     	//try block falls keine mailadresse
     	String provider=mailAdresse.split("@")[1];
     	switch(provider){

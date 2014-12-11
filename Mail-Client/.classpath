@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="C:/Users/Svenja/workspace1/javamail-1.4.7/mail.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Svenja/Downloads/jdom-1.1.3.zip"/>
 	<classpathentry kind="lib" path="C:/Users/Svenja/workspace1/jdom/build/jdom-1.1.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Patrick/development/Java Libs/mail.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
