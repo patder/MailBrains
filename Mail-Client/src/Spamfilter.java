@@ -64,7 +64,6 @@ public class Spamfilter extends Fenster {
 		int nummer=sc.nextInt(); //Bedingungen für die Nummer ergaenzen
 		adressen.remove(nummer);
 		FileWriter fw;
-		Scanner sc
 		try{
 			sc=new Scanner(output);
 			//in der Datei die richtige zeile loeschen
