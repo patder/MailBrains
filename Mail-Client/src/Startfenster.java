@@ -5,6 +5,12 @@ import java.util.Scanner;
 import java.io.IOException;
 import java.util.List;
 
+import javax.mail.AuthenticationFailedException;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -12,11 +18,12 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter; 
 
-public class Startfenster extends Fenster{
+public class Startfenster{
 
-	private ArrayList<Konto> konten;
-	private File inXML;
+	private static ArrayList<Konto> konten;
+	private static File inXML;
 	private ArrayList<String> elemList = new ArrayList<String>();
+	
 	public Startfenster(){
 		 ArrayList<String> kommandoliste=new ArrayList<String>();
 		konten=new ArrayList<Konto>();
@@ -34,9 +41,23 @@ public class Startfenster extends Fenster{
 		for(int i = 0; i  < konten.size(); i++){
 			System.out.println(i+1 + "/t" + konten.get(i).getName() + "/t" + konten.get(i).getAdress());
 		}
-		
-		
 	}
+	
+	public static void auswaehlen() throws AddressException, MessagingException{
+		System.out.println("Wählen Sie durch Eingabe der jeweiligen Zahl über die Tastatur den gewünschten Menüpunkt");
+		Scanner sc=new Scanner(System.in);
+		int eingabe=sc.nextInt();
+		
+		switch(eingabe){
+		case 1: neuesKonto();
+				break;
+		case 2: kontoWaehlen();
+				break;
+		case 3: verlassen();
+			    break;
+		}
+	}
+	
 	
 	public void kommandos() {
 		System.out.println("Sie haben die Mï¿½glichkeit folgende Kommandos einzugeben: ");
@@ -45,7 +66,9 @@ public class Startfenster extends Fenster{
 		}
 	}	
 
-	private void neuesKonto(){
+	
+	
+	private static void neuesKonto(){
 		//hole daten fuer das zu speichernde Konto
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Bitte geben Sie Ihren Namen ein:");
@@ -67,10 +90,24 @@ public class Startfenster extends Fenster{
 			System.out.println("Fehler bei Passworteingabe");
 			System.exit(1);
 		}
+
 		System.out.println("Bitte geben Sie die gewuenschte Aktualisierungsrate ein(in sek)");
 		double refRate = sc.nextDouble();
-		sc.close();				
+		sc.close();			
+		
+		
 		Konto neuesKonto = new Konto(name, adresse, passwort, refRate);
+		Session s=Senden.getSession(neuesKonto);
+		
+		Transport tr = s.getTransport("smtp");
+		
+		try{
+			tr.connect(neuesKonto.getSmtpServer(), neuesKonto.getAdress(), passwort);
+		}catch (AuthenticationFailedException e){
+			System.out.println("Verbindung konnte nicht hergestellt werden, bitte überprüfen sie ihre Eingaben");
+			neuesKonto();
+		}
+		System.out.println("Verbindung hergestellt");
 		
 //		if(!knownAdress(neuesKonto)){
 //			System.out.println("BItte gegeb sie noch die folgenden Werte an: ");
@@ -90,8 +127,11 @@ public class Startfenster extends Fenster{
 
 	}
 	
+	
+	
+	
 	//Speichere Konto in "inFile"
-	public void speichereKonto(Konto k) throws JDOMException, IOException{
+	public static void speichereKonto(Konto k) throws JDOMException, IOException{
 		try{
 			Document doc = null;
 	        SAXBuilder builder = new SAXBuilder();
@@ -119,6 +159,7 @@ public class Startfenster extends Fenster{
 		}
 	}
 
+	
 	
 	public void aendern(){
 		System.out.println("welchen Eintag wollen Sie aendern?");
@@ -226,6 +267,8 @@ public class Startfenster extends Fenster{
         }
 	}
 	
+	
+	
 	private void holeKonten(){
 		Document doc = null;
 
@@ -261,32 +304,35 @@ public class Startfenster extends Fenster{
         	System.out.println("Datei Fehlerhaft oder nicht gefunden");
         }
 	}
+	
 
-	public void waehlen(){
-		System.out.println("was moechten Sie waehlen?( Zum abbrechen waehlen Sie -1) ");
-		Scanner sc = new Scanner(System.in);
-		String st = sc.next();
-		sc.close();
-		int i = -2;
-		try{
-			i = Integer.parseInt(st);
-			if(i < -1 || i > konten.size()){
-				throw new Exception();
-			}
-		}
-		catch(Exception e){
-			System.out.println("Ungueltige Eingabe");
-		}
-		if(i == 0){
-			neuesKonto();
-			return;
-		}
-		if(i > 0 && i <=konten.size()){
-			Mailuebersicht mU = new Mailuebersicht(konten.get(i));
-			return;
-		}
-		return;
+	public static void kontoWaehlen(){
+//		System.out.println("was moechten Sie waehlen?( Zum abbrechen waehlen Sie -1) ");
+//		Scanner sc = new Scanner(System.in);
+//		String st = sc.next();
+//		sc.close();
+//		int i = -2;
+//		try{
+//			i = Integer.parseInt(st);
+//			if(i < -1 || i > konten.size()){
+//				throw new Exception();
+//			}
+//		}
+//		catch(Exception e){
+//			System.out.println("Ungueltige Eingabe");
+//		}
+//		if(i == 0){
+//			neuesKonto();
+//			return;
+//		}
+//		if(i > 0 && i <=konten.size()){
+//			Mailuebersicht mU = new Mailuebersicht(konten.get(i));
+//			return;
+//		}
+//		return;
 		
+		Mailuebersicht uebersicht=new Mailuebersicht(konto);
+		uebersicht.zeigeAuswahl();
 	}
 
 	public void loeschen(){
@@ -324,7 +370,7 @@ public class Startfenster extends Fenster{
 		}
 	}
 
-	public void beenden(){
+	public static void verlassen(){
 		System.exit(1);	
 	}
 }
