@@ -21,20 +21,18 @@ import org.jdom.output.XMLOutputter;
 
 public class Startfenster{
 
-	private static ArrayList<Konto> konten;
-	private static File inXML;
-	private static ArrayList<String> elemList = new ArrayList<String>();
+	static ArrayList<Konto> konten;
+	static File inXML = new File("KontenListe.xml");
+	static ArrayList<String> elemList = new ArrayList<String>();
 	private static ArrayList<String> kommandoliste=new ArrayList<String>();
 	private static Scanner sc = new Scanner(System.in);
-	private static String datName = "KontenListe.xml";
+	static String datName = "KontenListe.xml";
 	public static void init(){
 		konten=new ArrayList<Konto>();
-		inXML= new File("KontenListe.xml");
 		
 		
 		// Initalisierung der kommandoliste
 		kommandoliste.add("waehlen");
-		kommandoliste.add("loeschen");
 		kommandoliste.add("kommandos");
 		kommandoliste.add("aendern");
 		kommandoliste.add("beenden");

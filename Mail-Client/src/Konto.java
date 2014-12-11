@@ -78,7 +78,7 @@ public class Konto {
 		return refRate;
 	}
 
-	public void setRefRate(int refRate) {
+	public void setRefRate(double refRate) {
 		this.refRate = refRate;
 	}
 
