@@ -17,6 +17,19 @@ import javax.mail.internet.MimeMessage;
 import org.jdom.*;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.*;
+import java.net.ConnectException;
+import java.util.Properties;
+ 
+
+import java.util.Scanner;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 
 public class Mailuebersicht {
@@ -176,23 +189,36 @@ public class Mailuebersicht {
 		auswaehlen();
 	}
 	
-	public static void verfassen(Konto acc, String empfaenger, String betreff,
-            String text) throws AddressException, MessagingException
-    {
-        // Properties �ber die Systemeigenschaften anlegen
-        Properties properties = System.getProperties();
-        properties.setProperty("mail.smtp.host", acc.getSmtpHost());
-        properties.setProperty("mail.smtp.port", String.valueOf(acc.getPort()));
+	
+	public static Session getSession(){ 
+		Properties properties = System.getProperties();
+        properties.setProperty("mail.smtp.host", konto.getServer());
+        properties.setProperty("mail.smtp.port", String.valueOf(konto.getPort()));
         properties.setProperty("mail.smtp.auth", "true");
          
-        // properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.smtp.starttls.enable", "true");
         
         // session erstellen
-        Session session = Session.getDefaultInstance(properties, acc.getPasswordAuthentication());
-
+        Session session = Session.getDefaultInstance(properties, konto.getPasswordAuthentication());
+		return session;
+	}
+	
+	
+	public static void verfassen() throws AddressException, MessagingException
+    {
+		Session session=getSession();
         // nachricht erzeugen
+		
+		Scanner sc=new Scanner(System.in);
+		System.out.println("Empfaenger:");
+		String empfaenger=sc.nextLine();
+		System.out.println("Betreff:");
+		String betreff=sc.nextLine();
+		System.out.println("Nachricht:");
+		String text=sc.next();
+		
         MimeMessage msg = new MimeMessage(session);
-        msg.setFrom(new InternetAddress(acc.getMailAdresse()));
+        msg.setFrom(new InternetAddress(konto.getAdress()));
         msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(empfaenger, false));
  
         // Betreff

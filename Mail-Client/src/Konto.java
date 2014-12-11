@@ -90,6 +90,13 @@ public class Konto {
 		this.port = port;
 	}
 	
+	public MailAuthenticator getPasswordAuthentication() {
+		return new MailAuthenticator(adress, password);
+	}
+
+	public MailAuthenticator getPasswordAuthentication(String passwort) {
+		return new MailAuthenticator(adress, password);
+	}
 	
 	
 }
