@@ -95,7 +95,6 @@ public class Startfenster{
 		//hole daten fuer das zu speichernde Konto
 		System.out.println("Bitte geben Sie Ihren Namen ein:");
 		String name = sc.nextLine();
-		System.out.println(name);
 		System.out.println("Bitte geben Sie Ihre Mail-Addresse ein:");
 		String adresse = sc.nextLine();
 		String st = adresse.replace('@', 'p');
@@ -115,7 +114,7 @@ public class Startfenster{
 		passwort=sc.nextLine();
 
 		System.out.println("Bitte geben Sie die gewuenschte Aktualisierungsrate ein(in sek)");
-		double refRate = sc.nextDouble();		
+		double refRate =Double.parseDouble(sc.nextLine());
 		
 		
 		Konto konto = new Konto(name, adresse, passwort, refRate);
@@ -127,7 +126,7 @@ public class Startfenster{
 		try{
 			tr.connect(konto.getSmtpServer(), konto.getAdress(), passwort);
 		}catch (AuthenticationFailedException e){
-			System.out.println("Verbindung konnte nicht hergestellt werden, bitte �berpr�fen sie ihre Eingaben");
+			System.out.println("Verbindung konnte nicht hergestellt werden, bitte ueberpruefen sie ihre Eingaben");
 			neuesKonto();
 		}
 		System.out.println("Verbindung hergestellt");
