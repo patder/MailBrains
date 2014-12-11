@@ -29,7 +29,8 @@ public class Startfenster{
 	static String datName = "KontenListe.xml";
 	public static void init(){
 		if(!inXML.exists()){
-			try {
+			try {				
+				inXML= new File(datName);
 				inXML.createNewFile();
 				
 				
@@ -37,8 +38,9 @@ public class Startfenster{
 				e.printStackTrace();
 			}
 		}
-		inXML= new File(datName);
-		
+		else{
+			inXML= new File(datName);
+		}
 		
 		konten=new ArrayList<Konto>();
 		
