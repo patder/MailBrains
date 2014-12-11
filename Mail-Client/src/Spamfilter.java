@@ -12,7 +12,7 @@ public class Spamfilter {
 	private static File output;
 	private static ArrayList<String> kommandoliste;
 	
-	public Spamfilter(){
+	public static void init(){
 		kommandoliste=new ArrayList<String>();
 		adressen=new ArrayList<String>();
 		output=new File("Spamfilter.txt");
@@ -22,7 +22,7 @@ public class Spamfilter {
 		kommandoliste.add("loeschen");
 		kommandoliste.add("kommandos");
 		kommandoliste.add("zurueck");
-		
+		auswaehlen();
 	}
 
 	public static void auswaehlen() {

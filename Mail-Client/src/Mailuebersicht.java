@@ -25,8 +25,10 @@ public class Mailuebersicht {
 	private static int aktuelleSeite;
 	public static Konto konto;
 	private static ArrayList<String> kommandoliste;
+
+	public Mailuebersicht(){};
 	
-	public Mailuebersicht(Konto k) {
+	public static void init(Konto k){
 
 		kommandoliste=new ArrayList<String>();
 		konto=k;
@@ -61,12 +63,11 @@ public class Mailuebersicht {
 			System.out.println("Die Adressbuch-Datei konnte nicht initialisiert werden.");
 		}
 
-		for(int i=0;i<mails.size()&&i<25;i++){
-			Mail tmp=mails.get(i);
-			System.out.println(i+"\t"+tmp.getAdresse()+"\t"+tmp.getBetreff()+"\t"+tmp.getEmpfangsdatum());
+		for(int i=0;i<mails.size()&&i<25;i++) {
+			Mail tmp = mails.get(i);
+			System.out.println(i + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
 		}
-
-		
+		auswaehlen();
 	}
 
 	public static void auswaehlen() {
@@ -214,13 +215,11 @@ public class Mailuebersicht {
 	}
 
 	public static void spamfilter(){
-		Spamfilter sp=new Spamfilter();
-		sp.auswaehlen();
+		Spamfilter.init();
 	}
 
 	public static void adressbuch(){
-		Adressbuch ad=new Adressbuch();
-		ad.auswaehlen();
+		Adressbuch.init();
 	}
 
 	public static void kommandos() {

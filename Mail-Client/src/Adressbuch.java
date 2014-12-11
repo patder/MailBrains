@@ -17,7 +17,7 @@ public class Adressbuch {
 	private static ArrayList<String> kommandoliste;
 
 
-	public Adressbuch(){
+	public static void init(){
 
 		kommandoliste=new ArrayList<String>();
 		adressen=new ArrayList<String>();
@@ -43,6 +43,7 @@ public class Adressbuch {
 			String tmp=adressen.get(i);
 			System.out.println(i+"\t"+tmp);
 		}
+		auswaehlen();
 	}
 
 	public static void auswaehlen() {
