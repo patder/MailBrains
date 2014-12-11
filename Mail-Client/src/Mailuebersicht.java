@@ -19,12 +19,12 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.*;
 
 
-public class Mailuebersicht extends Fenster {
-	private ArrayList<Mail> mails;
-	private File offlineMails;
-	private int aktuelleSeite;
-	public Konto konto;
-	private ArrayList<String> kommandoliste;
+public class Mailuebersicht {
+	private static ArrayList<Mail> mails;
+	private static File offlineMails;
+	private static int aktuelleSeite;
+	public static Konto konto;
+	private static ArrayList<String> kommandoliste;
 	
 	public Mailuebersicht(Konto k) {
 
@@ -68,12 +68,42 @@ public class Mailuebersicht extends Fenster {
 
 		
 	}
-	
-	public ArrayList<Mail> getMails() {
+
+	public static void auswaehlen() {
+		System.out.println("Wählen Sie durch Eingabe der jeweiligen Zahl über die Tastatur den gewünschten Menüpunkt");
+		Scanner sc=new Scanner(System.in);
+		int eingabe=sc.nextInt();
+
+		switch(eingabe){
+			case 1: kommandos();
+				break;
+			case 2: ausloggen();
+				break;
+			case 3: naechste();
+				break;
+			case 4: vorherige();
+				break;
+			case 5: verfassen();
+				break;
+			case 6: loeschen();
+				break;
+			case 7: anzeigen();
+				break;
+			case 8: adressbuch();
+				break;
+			case 9: spamfilter();
+				break;
+			case 10: aktualisieren();
+				break;
+			case 11: speichern();
+				break;
+		}
+	}
+	public static ArrayList<Mail> getMails() {
 		return mails;
 	}
 
-	public void speichern(){
+	public static void speichern(){
 		System.out.println("Bitte geben Sie die Nummer der Mail an, die sie offline speichern möchten");
 		Scanner sc=new Scanner(System.in);
 		int nummer=sc.nextInt();
@@ -98,16 +128,18 @@ public class Mailuebersicht extends Fenster {
 		}catch(Exception e){
 			System.out.println("Das Konto konnte nicht offline gespeichert werden.");
 		}
+		auswaehlen();
 	}
 
-	public void anzeigen(){
+	public static void anzeigen(){
 		System.out.println("Bitte geben Sie die Nummer der Mail an, die Sie sehen möchten.");
 		Scanner sc=new Scanner(System.in);
 		int nummer=sc.nextInt();
 		System.out.println(mails.get(nummer).getNachricht());
+		auswaehlen();
 	}
 	
-	public void seite(){
+	public static void seite(){
 		System.out.println("Bitte geben Sie die Nummer der Seite an, zu der Sie springen möchten");
 		Scanner sc=new Scanner(System.in);
 		int nummer=sc.nextInt();
@@ -116,39 +148,38 @@ public class Mailuebersicht extends Fenster {
 			Mail tmp=mails.get(i);
 			System.out.println(i+"\t"+tmp.getAdresse()+"\t"+tmp.getBetreff()+"\t"+tmp.getEmpfangsdatum());
 		}
+		auswaehlen();
 	}
 	
-	public void naechste(){
+	public static void naechste(){
 		aktuelleSeite++;
 		for(int i=(aktuelleSeite-1)*25;i<mails.size()&&i<i+25;i++){
 			Mail tmp=mails.get(i);
 			System.out.println(i+"\t"+tmp.getAdresse()+"\t"+tmp.getBetreff()+"\t"+tmp.getEmpfangsdatum());
 		}
+		auswaehlen();
 	}
 	
-	public void vorherige(){
+	public static void vorherige(){
 		aktuelleSeite--;
 		for(int i=(aktuelleSeite-1)*25;i<mails.size()&&i<i+25;i++){
 			Mail tmp=mails.get(i);
 			System.out.println(i+"\t"+tmp.getAdresse()+"\t"+tmp.getBetreff()+"\t"+tmp.getEmpfangsdatum());
-
 		}
+		auswaehlen();
 	}
 
-	public void aktualisieren(){
-
+	public static void aktualisieren(){
+		auswaehlen();
 	}
 
-	public void loeschen(){
-
+	public static void loeschen(){
+		auswaehlen();
 	}
 
-	public void verfassen(){
-
-	}
 	
 	
-	public static void send(Konto acc, String empfaenger, String betreff,
+	public static void verfassen(Konto acc, String empfaenger, String betreff,
             String text) throws AddressException, MessagingException
     {
         // Properties �ber die Systemeigenschaften anlegen
@@ -175,21 +206,24 @@ public class Mailuebersicht extends Fenster {
          
         // E-Mail versenden
         Transport.send(msg);
+		auswaehlen();
     }
 
-	public void ausloggen(){
-
+	public static void ausloggen(){
+		//leer
 	}
 
-	public void spamfilter(){
-
+	public static void spamfilter(){
+		Spamfilter sp=new Spamfilter();
+		sp.auswaehlen();
 	}
 
-	public void adressbuch(){
-
+	public static void adressbuch(){
+		Adressbuch ad=new Adressbuch();
+		ad.auswaehlen();
 	}
 
-	public void kommandos() {
+	public static void kommandos() {
 		System.out.println("Sie haben die M�glichkeit folgende Kommandos einzugeben: ");
 		for (int i = 0; i < kommandoliste.size(); i++) {
 			System.out.print(kommandoliste.get(i) + ", ");

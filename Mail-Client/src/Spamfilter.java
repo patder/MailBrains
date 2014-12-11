@@ -74,7 +74,7 @@ public class Spamfilter {
 		auswaehlen();
 	}
 	
-	public static ArrayList<String> getAdressen() {
+	public ArrayList<String> getAdressen() {
 		return adressen;
 	}
 
@@ -91,6 +91,6 @@ public class Spamfilter {
 	}
 
 	public static void zurueck(){
-		auswaehlen();
+
 	}
 }

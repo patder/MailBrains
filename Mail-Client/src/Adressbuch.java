@@ -10,11 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class Adressbuch extends Fenster{
+public class Adressbuch {
 
-	private ArrayList<String> adressen;
-	private File adressDat;
-	private ArrayList<String> kommandoliste;
+	private static ArrayList<String> adressen;
+	private static File adressDat;
+	private static ArrayList<String> kommandoliste;
 
 
 	public Adressbuch(){
@@ -44,14 +44,34 @@ public class Adressbuch extends Fenster{
 			System.out.println(i+"\t"+tmp);
 		}
 	}
+
+	public static void auswaehlen() {
+		System.out.println("Wählen Sie durch Eingabe der jeweiligen Zahl über die Tastatur den gewünschten Menüpunkt");
+		Scanner sc=new Scanner(System.in);
+		int eingabe=sc.nextInt();
+
+		switch(eingabe){
+			case 1: hinzufuegen();
+				break;
+			case 2:loeschen();
+				break;
+			case 3: aendern();
+				break;
+			case 4: zurueck();
+				break;
+			case 5: kommandos();
+				break;
+		}
+	}
+
 	public ArrayList<String> getAdressen() {
 		return adressen;
 	}
-	public void setAdressen(ArrayList<String> adressen) {
-		this.adressen = adressen;
+	public void setAdressen(ArrayList<String> adr) {
+		adressen = adr;
 	}
 
-	public void hinzufuegen(){
+	public static void hinzufuegen(){
 		System.out.println("Bitte geben Sie den Namen und die Adresse ein, die Sie hinzufuegen moechten.");
 		Scanner sc=new Scanner(System.in);
 		String name=sc.next();
@@ -73,9 +93,10 @@ public class Adressbuch extends Fenster{
 		}catch(Exception e){
 			System.out.println("Die Adresse konnte nicht gespeichert werden.");
 		}
+		auswaehlen();
 	}
 
-	public void loeschen(){
+	public static void loeschen(){
 		System.out.println("Bitte geben Sie einen Namen der Person ein, die Sie aus Ihrem Adressbuch loeschen wollen.");
 		Scanner sc=new Scanner(System.in);
 		String name=sc.next();
@@ -94,9 +115,10 @@ public class Adressbuch extends Fenster{
 		}catch(Exception e){
 			System.out.println("Der Adresseintrag konnte nicht geloescht werden.");
 		}
+		auswaehlen();
 	}
 
-	public void aendern(){
+	public static void aendern(){
 		System.out.println("Bitte geben Sie den Namen der Person ein, deren Adresse Sie aendern wollen.");
 		Scanner sc=new Scanner(System.in);
 		String name=sc.next();
@@ -119,15 +141,19 @@ public class Adressbuch extends Fenster{
 		}catch(Exception e){
 			System.out.println("Der Adresseintrag konnte nicht geloescht werden.");
 		}
-
+		auswaehlen();
 	}
 
-	public void kommandos() {
+	public static void kommandos() {
 		System.out.println("Sie haben die M�glichkeit folgende Kommandos einzugeben: ");
 		for (int i = 0; i < kommandoliste.size(); i++) {
 			System.out.print(kommandoliste.get(i) + ", ");
 		}
 		auswaehlen();
+	}
+
+	public static void zurueck(){
+		//leer
 	}
 
 }
