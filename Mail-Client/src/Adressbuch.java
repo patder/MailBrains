@@ -15,10 +15,11 @@ public class Adressbuch {
 	private static ArrayList<String> adressen;
 	private static File adressDat;
 	private static ArrayList<String> kommandoliste;
+	private static Konto konto;
 
 
-	public static void init(){
-
+	public static void init(Konto k){
+		konto=k;
 		kommandoliste=new ArrayList<String>();
 		adressen=new ArrayList<String>();
 		adressDat=new File("adressbuch.xml");
@@ -33,6 +34,7 @@ public class Adressbuch {
 		try {
 			Element root = new Element("adressen");
 			Document doc = new Document(root);
+			root.addContent(new Element((k.getAdress()).replace('@','p')));
 			XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
 			out.output(doc,new FileOutputStream(adressDat));
 		}catch(Exception e){
@@ -48,6 +50,7 @@ public class Adressbuch {
 
 	public static void auswaehlen() {
 		System.out.println("Wählen Sie durch Eingabe der jeweiligen Zahl über die Tastatur den gewünschten Menüpunkt");
+		Adressbuch.kommandos();
 		Scanner sc=new Scanner(System.in);
 		int eingabe=sc.nextInt();
 
@@ -60,7 +63,7 @@ public class Adressbuch {
 				break;
 			case 4: zurueck();
 				break;
-			case 5: kommandos();
+			case 5: kommandos(); auswaehlen();
 				break;
 		}
 	}
@@ -88,13 +91,11 @@ public class Adressbuch {
 			Element root = doc.getRootElement();
 			//Liste aller vorhandenen Adressen als Elemente
 			List alleAdressen = root.getChildren();
-
-			root.addContent(new Element("name")
-					.addContent(new Element("adresse").addContent(adr)));
+			root.getChild((konto.getAdress()).replace('@','p')).addContent(new Element(name).addContent(adr));
 		}catch(Exception e){
 			System.out.println("Die Adresse konnte nicht gespeichert werden.");
 		}
-		auswaehlen();
+		Adressbuch.auswaehlen();
 	}
 
 	public static void loeschen(){
@@ -150,11 +151,9 @@ public class Adressbuch {
 		for (int i = 1; i < kommandoliste.size(); i++) {
 			System.out.print(i+": "+kommandoliste.get(i-1)+"\n");
 		}
-		auswaehlen();
 	}
 
 	public static void zurueck(){
-		//leer
 	}
 
 }

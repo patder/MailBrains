@@ -71,10 +71,11 @@ public class Mailuebersicht {
 			Element root = new Element("konten");
 			Document doc = new Document(root);
 			Element e1=new Element(k.getName());
+			root.addContent(e1);
 			XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
 			out.output(doc,new FileOutputStream(offlineMails));
 		}catch(Exception e){
-			System.out.println("Die Adressbuch-Datei konnte nicht initialisiert werden.");
+			System.out.println("Die OfflineMails-Datei konnte nicht initialisiert werden.");
 		}
 
 		for(int i=0;i<mails.size()&&i<25;i++) {
@@ -86,11 +87,12 @@ public class Mailuebersicht {
 
 	public static void auswaehlen() {
 		System.out.println("Wählen Sie durch Eingabe der jeweiligen Zahl über die Tastatur den gewünschten Menüpunkt");
+		kommandos();
 		Scanner sc=new Scanner(System.in);
 		int eingabe=sc.nextInt();
 
 		switch(eingabe){
-			case 1: kommandos();
+			case 1: kommandos(); auswaehlen();
 				break;
 			case 2: ausloggen();
 				break;
@@ -108,15 +110,17 @@ public class Mailuebersicht {
 				break;
 			case 7: anzeigen();
 				break;
-			case 8: adressbuch();
+			case 8: seite();
 				break;
-			case 9: spamfilter();
+			case 9: adressbuch(); auswaehlen();
 				break;
-			case 10: aktualisieren();
+			case 10: spamfilter();
 				break;
-			case 11: speichern();
+			case 11: aktualisieren();
 				break;
-			case 12: aendern();
+			case 12: speichern();
+				break;
+			case 13: aendern();
 				break;
 		}
 	}
@@ -246,15 +250,14 @@ public class Mailuebersicht {
 	}
 
 	public static void adressbuch(){
-		Adressbuch.init();
+		Adressbuch.init(konto);
 	}
 
 	public static void kommandos() {
 		System.out.println("Sie haben die Moeglichkeit folgende Kommandos einzugeben: ");
-		for (int i = 1; i < kommandoliste.size(); i++) {
-			System.out.print(i+": "+kommandoliste.get(i-1)+"\n");
+		for (int i = 0; i < kommandoliste.size(); i++) {
+			System.out.print(i+1+": "+kommandoliste.get(i)+"\n");
 		}
-		auswaehlen();
 	}
 
 	public static void loeschen(){		

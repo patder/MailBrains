@@ -36,6 +36,7 @@ public class Konto {
 		else if(provider.equals("web.de")){
 			smtpServer="smtp.web.de";
 		}
+		System.out.println(provider+" "+smtpServer);
     }
 	
 	public String getAdress() {
