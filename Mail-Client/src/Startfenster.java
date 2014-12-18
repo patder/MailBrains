@@ -30,7 +30,7 @@ public class Startfenster{
 	public static void init(){
 		inXML=new File(datName);
 
-		if (inXML != null) {
+		if (!inXML.exists()) {
 			try {
 				inXML.createNewFile();
 				try {
