@@ -67,15 +67,16 @@ public class Startfenster{
 		switch(eingabe){
 		case 1:
 				try {
-					neuesKonto();
+					neuesKonto(); // kein 'auswaehlen' danach, weil am Ende der Methode wird init von Mailuebersicht aufgerufen
 				} catch (MessagingException e) {
 					e.printStackTrace();
 				}
-				auswaehlen();
 				break;
-		case 2: kontoWaehlen();
+		case 2: kontoWaehlen(); auswaehlen();
 				break;
-		case 3: verlassen();
+			case 3: kommandos(); auswaehlen();
+				break;
+		case 4: verlassen();
 			    break;
 		}
 	}
@@ -86,11 +87,8 @@ public class Startfenster{
 		for (int i = 1; i < kommandoliste.size(); i++) {
 			System.out.print(i+": "+kommandoliste.get(i-1)+"\n");
 		}
-		auswaehlen();
 	}
 
-	
-	
 	private static void neuesKonto() throws MessagingException{
 		//hole daten fuer das zu speichernde Konto
 		System.out.println("Bitte geben Sie Ihren Namen ein:");
@@ -140,10 +138,6 @@ public class Startfenster{
 
 		Mailuebersicht.init(konto);
 	}
-	
-	
-	
-	
 
 	public static void speichereKonto(Konto k) throws JDOMException, IOException{
 		try{
@@ -208,7 +202,6 @@ public class Startfenster{
         	System.out.println("Datei Fehlerhaft oder nicht gefunden");
         }
 	}
-	
 
 	public static void kontoWaehlen(){
 		System.out.println("Sie koennen aus folgenden Konten auswaehlen: ");
@@ -218,14 +211,9 @@ public class Startfenster{
 		int i = sc.nextInt();
 		Konto konto=konten.get(i-1);
 		Mailuebersicht.init(konto);
-
-		auswaehlen();
 	}
 
-	
-
-
 	public static void verlassen(){
-		System.exit(1);	
+		System.exit(1);
 	}
 }

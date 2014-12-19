@@ -96,31 +96,31 @@ public class Mailuebersicht {
 				break;
 			case 2: ausloggen();
 				break;
-			case 3: naechste();
+			case 3: naechste(); auswaehlen();
 				break;
-			case 4: vorherige();
+			case 4: vorherige(); auswaehlen();
 				break;
 			case 5: try {
 				verfassen();
 			} catch (Exception e) {
 				e.printStackTrace();
-			}
+			}auswaehlen();
 				break;
-			case 6: loeschen();
+			case 6: loeschen(); auswaehlen();
 				break;
-			case 7: anzeigen();
+			case 7: anzeigen(); auswaehlen();
 				break;
-			case 8: seite();
+			case 8: seite(); auswaehlen();
 				break;
 			case 9: adressbuch(); auswaehlen();
 				break;
 			case 10: spamfilter();
 				break;
-			case 11: aktualisieren();
+			case 11: aktualisieren(); auswaehlen();
 				break;
-			case 12: speichern();
+			case 12: speichern(); auswaehlen();
 				break;
-			case 13: aendern();
+			case 13: aendern(); auswaehlen();
 				break;
 		}
 	}
@@ -153,7 +153,6 @@ public class Mailuebersicht {
 		}catch(Exception e){
 			System.out.println("Das Konto konnte nicht offline gespeichert werden.");
 		}
-		auswaehlen();
 	}
 
 	public static void anzeigen(){
@@ -161,7 +160,6 @@ public class Mailuebersicht {
 		Scanner sc=new Scanner(System.in);
 		int nummer=sc.nextInt();
 		System.out.println(mails.get(nummer).getNachricht());
-		auswaehlen();
 	}
 	
 	public static void seite(){
@@ -173,7 +171,6 @@ public class Mailuebersicht {
 			Mail tmp=mails.get(i);
 			System.out.println(i+"\t"+tmp.getAdresse()+"\t"+tmp.getBetreff()+"\t"+tmp.getEmpfangsdatum());
 		}
-		auswaehlen();
 	}
 	
 	public static void naechste(){
@@ -182,7 +179,6 @@ public class Mailuebersicht {
 			Mail tmp=mails.get(i);
 			System.out.println(i+"\t"+tmp.getAdresse()+"\t"+tmp.getBetreff()+"\t"+tmp.getEmpfangsdatum());
 		}
-		auswaehlen();
 	}
 	
 	public static void vorherige(){
@@ -191,11 +187,11 @@ public class Mailuebersicht {
 			Mail tmp=mails.get(i);
 			System.out.println(i+"\t"+tmp.getAdresse()+"\t"+tmp.getBetreff()+"\t"+tmp.getEmpfangsdatum());
 		}
-		auswaehlen();
 	}
 
 	public static void aktualisieren(){
-		auswaehlen();
+
+		//TODO
 	}
 	
 	
@@ -211,8 +207,7 @@ public class Mailuebersicht {
         Session session = Session.getDefaultInstance(properties, konto.getPasswordAuthentication());
 		return session;
 	}
-	
-	
+
 	public static void verfassen() throws AddressException, MessagingException
     {
 		Session session=getSession();
@@ -238,11 +233,10 @@ public class Mailuebersicht {
          
         // E-Mail versenden
         Transport.send(msg);
-		auswaehlen();
     }
 
 	public static void ausloggen(){
-		//leer
+		// absichtlich leer
 	}
 
 	public static void spamfilter(){
@@ -293,7 +287,6 @@ public class Mailuebersicht {
 		catch(Exception e){
 			System.out.println("Fehler beim loeschen von Konto");
 		}
-		auswaehlen();
 	}
 	public static void loeschen(int i){		
 		Document doc = null;
@@ -313,7 +306,6 @@ public class Mailuebersicht {
 		catch(Exception e){
 			System.out.println("Fehler beim loeschen von Konto");
 		}
-		auswaehlen();
 	}
 
 	public static void aendern(){
@@ -422,7 +414,6 @@ public class Mailuebersicht {
 		catch(Exception e){
 			System.out.println("Fehler bei aendern des Attributs");
 		}
-		auswaehlen();
 	}
 
 

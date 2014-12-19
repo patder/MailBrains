@@ -30,11 +30,11 @@ public class Spamfilter {
 		int eingabe=sc.nextInt();
 
 		switch(eingabe){
-			case 1: hinzufuegen();
+			case 1: hinzufuegen(); auswaehlen();
 				break;
-			case 2:loeschen();
+			case 2:loeschen(); auswaehlen();
 				break;
-			case 3: kommandos();
+			case 3: kommandos(); auswaehlen();
 				break;
 			case 4: zurueck();
 		}
@@ -54,7 +54,6 @@ public class Spamfilter {
 			System.out.println("Der Spamfilter konnte nicht ge�ffnet werden.");
 		}
 		sc.close();
-		auswaehlen();
 	}
 	
 	public static void loeschen(){
@@ -82,7 +81,6 @@ public class Spamfilter {
 			System.out.println("Der Spamfilter konnte nicht ge�ffnet werden.");
 		}
 		sc.close();
-		auswaehlen();
 	}
 	
 	public ArrayList<String> getAdressen() {
@@ -98,10 +96,9 @@ public class Spamfilter {
 		for (int i = 1; i < kommandoliste.size(); i++) {
 			System.out.print(i+": "+kommandoliste.get(i-1)+"\n");
 		}
-		auswaehlen();
 	}
 
 	public static void zurueck(){
-
+		//absichtlich leer
 	}
 }

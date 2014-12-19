@@ -55,11 +55,11 @@ public class Adressbuch {
 		int eingabe=sc.nextInt();
 
 		switch(eingabe){
-			case 1: hinzufuegen();
+			case 1: hinzufuegen(); auswaehlen();
 				break;
-			case 2:loeschen();
+			case 2:loeschen(); auswaehlen();
 				break;
-			case 3: aendern();
+			case 3: aendern(); auswaehlen();
 				break;
 			case 4: zurueck();
 				break;
@@ -95,7 +95,6 @@ public class Adressbuch {
 		}catch(Exception e){
 			System.out.println("Die Adresse konnte nicht gespeichert werden.");
 		}
-		Adressbuch.auswaehlen();
 	}
 
 	public static void loeschen(){
@@ -117,7 +116,6 @@ public class Adressbuch {
 		}catch(Exception e){
 			System.out.println("Der Adresseintrag konnte nicht geloescht werden.");
 		}
-		auswaehlen();
 	}
 
 	public static void aendern(){
@@ -143,7 +141,6 @@ public class Adressbuch {
 		}catch(Exception e){
 			System.out.println("Der Adresseintrag konnte nicht geloescht werden.");
 		}
-		auswaehlen();
 	}
 
 	public static void kommandos() {
@@ -154,6 +151,7 @@ public class Adressbuch {
 	}
 
 	public static void zurueck(){
+		//absichtlich leer
 	}
 
 }
