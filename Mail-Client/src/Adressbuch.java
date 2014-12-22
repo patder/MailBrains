@@ -12,17 +12,16 @@ import java.util.Scanner;
 
 public class Adressbuch {
 
-	private static ArrayList<String> adressen;
-	private static File adressDat;
+	//enthaelt alle Adressen des aktuellen Kontos
+	public static ArrayList<String> adressen;
+	public static File adressDat;
 	private static ArrayList<String> kommandoliste;
 	private static Konto konto;
-
-
+	public static String datName="adressbuch.xml";
 	public static void init(Konto k){
 		konto=k;
 		kommandoliste=new ArrayList<String>();
 		adressen=new ArrayList<String>();
-		adressDat=new File("adressbuch.xml");
 
 		//Initialisierung der Kommandoliste
 		kommandoliste.add("hinzufuegen");
@@ -30,27 +29,22 @@ public class Adressbuch {
 		kommandoliste.add("aendern");
 		kommandoliste.add("zurueck");
 		kommandoliste.add("kommandos");
+		kommandoliste.add("anzeigen");
 
-		try {
-			Element root = new Element("adressen");
-			Document doc = new Document(root);
-			root.addContent(new Element((k.getAdress()).replace('@','p')));
-			XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
-			out.output(doc,new FileOutputStream(adressDat));
-		}catch(Exception e){
-		System.out.println("Die Adressbuch-Datei konnte nicht initialisiert werden.");
-		}
-
+		//anzeigen der Adressen
+		adressDat=new File(datName);
+		holeAdressen();
 		for(int i=0;i<adressen.size()&&i<25;i++){
 			String tmp=adressen.get(i);
-			System.out.println(i+"\t"+tmp);
+			System.out.println(i+1+"\t"+tmp);
 		}
+
 		auswaehlen();
 	}
 
 	public static void auswaehlen() {
 		System.out.println("Wählen Sie durch Eingabe der jeweiligen Zahl über die Tastatur den gewünschten Menüpunkt");
-		Adressbuch.kommandos();
+		kommandos();
 		Scanner sc=new Scanner(System.in);
 		int eingabe=sc.nextInt();
 
@@ -65,6 +59,8 @@ public class Adressbuch {
 				break;
 			case 5: kommandos(); auswaehlen();
 				break;
+			case 6: anzeigen(); auswaehlen();
+				break;
 		}
 	}
 
@@ -75,25 +71,41 @@ public class Adressbuch {
 		adressen = adr;
 	}
 
+	public static void anzeigen(){
+		System.out.println("Ihr Adressbuch enthält folgende Adressen: ");
+		for (int i = 0; i <adressen.size(); i++) {
+			System.out.print(i+1+": "+adressen.get(i)+"\n");
+		}
+	}
+
 	public static void hinzufuegen(){
 		System.out.println("Bitte geben Sie den Namen und die Adresse ein, die Sie hinzufuegen moechten.");
 		Scanner sc=new Scanner(System.in);
-		String name=sc.next();
-		String adr=sc.next();
-		adressen.add(adr);
+		String name=sc.nextLine();
+		String adr=sc.nextLine();
 		Document doc = null;
 		try {
 			// Das Dokument erstellen
 			SAXBuilder builder = new SAXBuilder();
 			doc = builder.build(adressDat);
-			XMLOutputter fmt = new XMLOutputter();
+
 			// Wurzelelement wird auf root gesetzt
 			Element root = doc.getRootElement();
-			//Liste aller vorhandenen Adressen als Elemente
-			List alleAdressen = root.getChildren();
-			root.getChild((konto.getAdress()).replace('@','p')).addContent(new Element(name).addContent(adr));
+
+			//neuer Eintrag an aktuelle Konto (Kind) anhaengen
+			Element akt=root.getChild((konto.getAdress()).replace('@', 'p'));
+			if(akt!=null) {
+				akt.addContent(new Element(adr.replace('@','p')).addContent(name));
+				XMLOutputter outp = new XMLOutputter();
+				outp.setFormat( Format.getPrettyFormat() );
+				outp.output(doc, new FileOutputStream(Adressbuch.adressDat));
+				adressen.add(adr);
+			}else{
+				System.out.println("Warum gibt es das aktuelle Konto nicht als Kind vom root?");
+			}
+
 		}catch(Exception e){
-			System.out.println("Die Adresse konnte nicht gespeichert werden.");
+			System.out.println(" Die Adresse konnte nicht gespeichert werden.");
 		}
 	}
 
@@ -119,25 +131,32 @@ public class Adressbuch {
 	}
 
 	public static void aendern(){
-		System.out.println("Bitte geben Sie den Namen der Person ein, deren Adresse Sie aendern wollen.");
+		System.out.println("Bitte geben Sie die Nummer des Eintrags ein, dessen Adresse Sie aendern wollen.");
 		Scanner sc=new Scanner(System.in);
-		String name=sc.next();
+		int nummer=Integer.parseInt(sc.nextLine());
 		System.out.println("Bitte geben Sie die neue Adresse ein.");
-		String adr=sc.next();
+		String adr=sc.nextLine();
 		Document doc = null;
 		try {
 			// Das Dokument erstellen
 			SAXBuilder builder = new SAXBuilder();
 			doc = builder.build(adressDat);
-			XMLOutputter fmt = new XMLOutputter();
 			// Wurzelelement wird auf root gesetzt
 			Element root = doc.getRootElement();
-			//Liste aller vorhandenen Adressen als Elemente
-			List alleAdressen = root.getChildren();
 
-			root.removeChild("name");
-			root.addContent(new Element("name")
-					.addContent(new Element("adresse").addContent(adr)));
+			//neuer Eintrag an aktuelle Konto (Kind) anhaengen
+			Element akt=root.getChild((konto.getAdress()).replace('@', 'p'));
+			if(akt!=null) {
+				String name=akt.getChild(adressen.get(nummer-1)).getValue();
+				akt.removeChild(adressen.get(nummer-1));
+				akt.addContent(new Element(adr).addContent(name));
+				XMLOutputter outp = new XMLOutputter();
+				outp.setFormat( Format.getPrettyFormat() );
+				outp.output(doc, new FileOutputStream(Adressbuch.adressDat));
+				adressen.add(adr);
+			}else{
+				System.out.println("Warum gibt es das aktuelle Konto nicht als Kind vom root?");
+			}
 		}catch(Exception e){
 			System.out.println("Der Adresseintrag konnte nicht geloescht werden.");
 		}
@@ -145,8 +164,8 @@ public class Adressbuch {
 
 	public static void kommandos() {
 		System.out.println("Sie haben die Moeglichkeit folgende Kommandos einzugeben: ");
-		for (int i = 1; i < kommandoliste.size(); i++) {
-			System.out.print(i+": "+kommandoliste.get(i-1)+"\n");
+		for (int i = 0; i < kommandoliste.size(); i++) {
+			System.out.print(i+1+": "+kommandoliste.get(i)+"\n");
 		}
 	}
 
@@ -154,4 +173,35 @@ public class Adressbuch {
 		//absichtlich leer
 	}
 
+	private static void holeAdressen(){
+		Document doc = null;
+		adressen.clear();
+		try {
+			// Das Dokument erstellen
+			SAXBuilder builder = new SAXBuilder();
+			doc = builder.build(adressDat);
+
+			// Wurzelelement wird auf root gesetzt
+			Element root = doc.getRootElement();
+
+			//Liste aller aller gespeicherten Adressen des aktuellen Kontos
+			Element akt=root.getChild(konto.getAdress().replace('@','p'));
+			List alleKonten;
+			if(akt!=null) {
+				alleKonten = akt.getChildren();
+			}else{
+				alleKonten=new ArrayList(); //List selber ist abstract
+			}
+
+			for(int i = 0; i < alleKonten.size(); i++){
+				String name = ((Element) alleKonten.get(i)).getChild("name").getValue();
+				String adresse = ((Element) alleKonten.get(i)).getChild("adresse").getValue();
+				adressen.add(adresse);
+			}
+		}
+		catch(Exception e){
+			System.out.println(e.getMessage());
+			System.out.println("Datei Fehlerhaft oder nicht gefunden");
+		}
+	}
 }

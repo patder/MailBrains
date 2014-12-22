@@ -27,9 +27,11 @@ public class Startfenster{
 	private static ArrayList<String> kommandoliste=new ArrayList<String>();
 	private static Scanner sc = new Scanner(System.in);
 	static String datName = "KontenListe.xml";
+
 	public static void init(){
 		inXML=new File(datName);
 
+		//Initialisierung von KontenListe-Datei
 		if (!inXML.exists()) {
 			try {
 				inXML.createNewFile();
@@ -46,6 +48,26 @@ public class Startfenster{
 			}
 		}
 			konten=new ArrayList<Konto>();
+
+		//Initialisierung der Adressbuch-Datei
+		Adressbuch.adressDat=new File(Adressbuch.datName);
+		if (!Adressbuch.adressDat.exists()) {
+			try {
+				Adressbuch.adressDat.createNewFile();
+				try {
+					Element root = new Element("adressdat");
+					Document doc = new Document(root);
+					XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
+					out.output(doc,new FileOutputStream(Adressbuch.adressDat));
+
+				}catch(Exception e){
+					System.out.println("Die Adressbuch-Datei konnte nicht initialisiert werden.");
+				}
+			} catch (IOException e) {
+				System.err.println("Error creating " + inXML.toString());
+			}
+		}
+
 
 
 		// Initalisierung der kommandoliste
@@ -80,7 +102,6 @@ public class Startfenster{
 			    break;
 		}
 	}
-
 
 	public static void kommandos() {
 		System.out.println("Sie haben die Moeglichkeit folgende Kommandos einzugeben: ");
@@ -159,7 +180,7 @@ public class Startfenster{
 	        root.addContent(paddy);
 	        XMLOutputter outp = new XMLOutputter();
 	        outp.setFormat( Format.getPrettyFormat() );
-	        outp.output( doc, new FileOutputStream(datName));
+	        outp.output( doc, new FileOutputStream(inXML));
 		}
 		catch(Exception e){
 			System.out.println(e);
@@ -173,10 +194,8 @@ public class Startfenster{
         try {
             // Das Dokument erstellen
             SAXBuilder builder = new SAXBuilder();
-            
             doc = builder.build(inXML);
-            
-            
+
             // Wurzelelement wird auf root gesetzt
             Element root = doc.getRootElement();
              
@@ -206,7 +225,7 @@ public class Startfenster{
 	public static void kontoWaehlen(){
 		System.out.println("Sie koennen aus folgenden Konten auswaehlen: ");
 		for(int i = 0; i  < konten.size(); i++){
-			System.out.println(i+1 + ")/t" + konten.get(i).getName() + "/t" + konten.get(i).getAdress()+"\n");
+			System.out.println(i+1 + ")\t" + konten.get(i).getName() + "\t" + konten.get(i).getAdress()+"\n");
 		}
 		int i = sc.nextInt();
 		Konto konto=konten.get(i-1);

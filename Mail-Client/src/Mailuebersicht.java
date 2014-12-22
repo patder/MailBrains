@@ -40,14 +40,14 @@ public class Mailuebersicht {
 	public static Konto konto;
 	private static ArrayList<String> kommandoliste;
 
-	public Mailuebersicht(){};
-	
-	public static void init(Konto k){
 
+	public static void init(Konto k){
+		//Initialisierung der Attribute
 		kommandoliste=new ArrayList<String>();
 		konto=k;
 		mails= new ArrayList<Mail>(); //Mails m�ssen vom Server geholt werden
 		offlineMails=new File("offlineMails.xml");
+		aktuelleSeite=1;
 		
 		// Initalisierung der kommandoliste
 		kommandoliste.add("kommandos");
@@ -63,15 +63,39 @@ public class Mailuebersicht {
 		kommandoliste.add("aktualisieren");
 		kommandoliste.add("speichern");
 		kommandoliste.add("aendern");
-		offlineMails=new File("offlineMails.xml");
-		
-		aktuelleSeite=1;
 
+		//In der Adressbuch-Datei das aktuelle Konto als Kind anhängen
+		Document doc = null;
 		try {
-			Element root = new Element("konten");
-			Document doc = new Document(root);
-			Element e1=new Element(k.getName());
-			root.addContent(e1);
+			// Das Dokument erstellen
+			SAXBuilder builder = new SAXBuilder();
+			doc = builder.build(Adressbuch.adressDat);
+
+			// Wurzelelement wird auf root gesetzt
+			Element root = doc.getRootElement();
+
+			//Liste aller Adressen des aktuellen Kontos
+			List alleKonten = root.getChildren();
+
+			if(!alleKonten.contains(konto.getAdress().replace('p','@'))) {
+				root.addContent(new Element(konto.getAdress().replace('@', 'p')));
+				XMLOutputter outp = new XMLOutputter();
+				outp.setFormat( Format.getPrettyFormat() );
+				outp.output( doc, new FileOutputStream(Adressbuch.adressDat));
+				System.out.println("Das aktuelle Konto wurde als Kind zu Adressbuch-Datei hinzugefuegt.");
+			}
+		}
+		catch(Exception e){
+			System.out.println(e);
+			System.out.println("Mail-Uebersicht-init: Datei Fehlerhaft oder nicht gefunden");
+		}
+
+		//
+		doc=null;
+		try {
+			Element root = new Element("offline");
+			doc = new Document(root);
+			root.addContent(new Element(k.getAdress().replace('@','p')));
 			XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
 			out.output(doc,new FileOutputStream(offlineMails));
 		}catch(Exception e){
@@ -193,8 +217,7 @@ public class Mailuebersicht {
 
 		//TODO
 	}
-	
-	
+
 	public static Session getSession(){ 
 		Properties properties = System.getProperties();
         properties.setProperty("mail.smtp.host", konto.getSmtpServer());
