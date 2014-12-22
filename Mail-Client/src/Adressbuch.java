@@ -118,6 +118,8 @@ public class Adressbuch {
 		String name=sc.next();
 		Document doc = null;
 		try {
+
+			//TODO hier muss noch der xmloutputter benutzt werden
 			// Das Dokument erstellen
 			SAXBuilder builder = new SAXBuilder();
 			doc = builder.build(adressDat);

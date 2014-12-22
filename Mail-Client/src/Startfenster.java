@@ -209,6 +209,7 @@ public class Startfenster{
 		Document doc = null;
 		konten.clear();
         try {
+			//TODO XMLoutputter benutzen
             // Das Dokument erstellen
             SAXBuilder builder = new SAXBuilder();
             doc = builder.build(inXML);

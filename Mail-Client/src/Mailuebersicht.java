@@ -76,14 +76,14 @@ public class Mailuebersicht {
 			Element root = doc.getRootElement();
 
 			//Liste aller Adressen des aktuellen Kontos
-			List alleKonten = root.getChildren();
+			List<Element> alleKonten = root.getChildren();
 
 			boolean vorhanden=false;
 			for(int i=0;i<alleKonten.size();i++){
 				System.out.println(alleKonten.get(i));
-				if(alleKonten.get(i).equals(konto.getAdress().replace('@','p'))) {
+				if(alleKonten.get(i).getName().equals(konto.getAdress().replace('@','p'))){
 					vorhanden=true;
-					System.out.println("Dieses konto hat schonmal eine ADress zum buch hinzugefuegt");
+					System.out.println("Dieses konto hat schonmal eine Adresse zum buch hinzugefuegt");
 					break;
 				}
 			}
@@ -188,6 +188,7 @@ public class Mailuebersicht {
 		int nummer=sc.nextInt();
 		Document doc = null;
 		try {
+			//TODO hier muss noch der xml outputter benutzt werden
 			// Das Dokument erstellen
 			SAXBuilder builder = new SAXBuilder();
 			doc = builder.build(offlineMails);
