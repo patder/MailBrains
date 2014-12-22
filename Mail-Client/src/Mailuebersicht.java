@@ -82,24 +82,36 @@ public class Mailuebersicht {
 				XMLOutputter outp = new XMLOutputter();
 				outp.setFormat( Format.getPrettyFormat() );
 				outp.output( doc, new FileOutputStream(Adressbuch.adressDat));
-				System.out.println("Das aktuelle Konto wurde als Kind zu Adressbuch-Datei hinzugefuegt.");
 			}
 		}
 		catch(Exception e){
 			System.out.println(e);
-			System.out.println("Mail-Uebersicht-init: Datei Fehlerhaft oder nicht gefunden");
+			System.out.println("Mail-Uebersicht-init: Adressbuch-Datei Fehlerhaft oder nicht gefunden");
 		}
 
-		//
-		doc=null;
+		//In der OfflineMails-Datei das aktuelle Konto als Kind anhängen
+		doc = null;
 		try {
-			Element root = new Element("offline");
-			doc = new Document(root);
-			root.addContent(new Element(k.getAdress().replace('@','p')));
-			XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
-			out.output(doc,new FileOutputStream(offlineMails));
-		}catch(Exception e){
-			System.out.println("Die OfflineMails-Datei konnte nicht initialisiert werden.");
+			// Das Dokument erstellen
+			SAXBuilder builder = new SAXBuilder();
+			doc = builder.build(offlineMails);
+
+			// Wurzelelement wird auf root gesetzt
+			Element root = doc.getRootElement();
+
+			//Liste aller Adressen des aktuellen Kontos
+			List alleKonten = root.getChildren();
+
+			if(!alleKonten.contains(konto.getAdress().replace('p','@'))) {
+				root.addContent(new Element(konto.getAdress().replace('@', 'p')));
+				XMLOutputter outp = new XMLOutputter();
+				outp.setFormat( Format.getPrettyFormat() );
+				outp.output( doc, new FileOutputStream(Adressbuch.adressDat));
+			}
+		}
+		catch(Exception e){
+			System.out.println(e);
+			System.out.println("Mail-Uebersicht-init: offline-Mails-Datei Fehlerhaft oder nicht gefunden");
 		}
 
 		for(int i=0;i<mails.size()&&i<25;i++) {
