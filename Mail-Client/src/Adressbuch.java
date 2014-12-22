@@ -95,7 +95,10 @@ public class Adressbuch {
 			//neuer Eintrag an aktuelle Konto (Kind) anhaengen
 			Element akt=root.getChild((konto.getAdress()).replace('@', 'p'));
 			if(akt!=null) {
-				akt.addContent(new Element(adr.replace('@','p')).addContent(name));
+				Element neu=new Element(adr.replace('@','p'));
+				neu.addContent(new Element("name").addContent(name));
+				neu.addContent(new Element("adresse").addContent(adr));
+				akt.addContent(neu);
 				XMLOutputter outp = new XMLOutputter();
 				outp.setFormat( Format.getPrettyFormat() );
 				outp.output(doc, new FileOutputStream(Adressbuch.adressDat));
@@ -147,9 +150,12 @@ public class Adressbuch {
 			//neuer Eintrag an aktuelle Konto (Kind) anhaengen
 			Element akt=root.getChild((konto.getAdress()).replace('@', 'p'));
 			if(akt!=null) {
-				String name=akt.getChild(adressen.get(nummer-1)).getValue();
+				String name=akt.getChild(adressen.get(nummer - 1)).getChild("name").getValue();
 				akt.removeChild(adressen.get(nummer-1));
-				akt.addContent(new Element(adr).addContent(name));
+				Element neu=new Element(adr.replace('@','p'));
+				neu.addContent(new Element("name").addContent(name));
+				neu.addContent(new Element("adresse").addContent(adr));
+				akt.addContent(neu);
 				XMLOutputter outp = new XMLOutputter();
 				outp.setFormat( Format.getPrettyFormat() );
 				outp.output(doc, new FileOutputStream(Adressbuch.adressDat));
@@ -193,15 +199,15 @@ public class Adressbuch {
 				alleKonten=new ArrayList(); //List selber ist abstract
 			}
 
+			System.out.println("hi4");
 			for(int i = 0; i < alleKonten.size(); i++){
-				String name = ((Element) alleKonten.get(i)).getChild("name").getValue();
-				String adresse = ((Element) alleKonten.get(i)).getChild("adresse").getValue();
+				String adresse = ((Element)alleKonten.get(i)).getChild("adresse").getValue();
 				adressen.add(adresse);
 			}
 		}
 		catch(Exception e){
 			System.out.println(e.getMessage());
-			System.out.println("Datei Fehlerhaft oder nicht gefunden");
+			System.out.println("Adressbuch-hole-Adressen: Datei Fehlerhaft oder nicht gefunden");
 		}
 	}
 }

@@ -35,7 +35,8 @@ import javax.mail.internet.MimeMessage;
 
 public class Mailuebersicht {
 	private static ArrayList<Mail> mails;
-	private static File offlineMails;
+	public static File offlineMails;
+	public static String datName="offlineMails.xml";
 	private static int aktuelleSeite;
 	public static Konto konto;
 	private static ArrayList<String> kommandoliste;
@@ -46,7 +47,7 @@ public class Mailuebersicht {
 		kommandoliste=new ArrayList<String>();
 		konto=k;
 		mails= new ArrayList<Mail>(); //Mails m�ssen vom Server geholt werden
-		offlineMails=new File("offlineMails.xml");
+		offlineMails=new File(datName);
 		aktuelleSeite=1;
 		
 		// Initalisierung der kommandoliste
@@ -77,11 +78,20 @@ public class Mailuebersicht {
 			//Liste aller Adressen des aktuellen Kontos
 			List alleKonten = root.getChildren();
 
-			if(!alleKonten.contains(konto.getAdress().replace('p','@'))) {
+			boolean vorhanden=false;
+			for(int i=0;i<alleKonten.size();i++){
+				System.out.println(alleKonten.get(i));
+				if(alleKonten.get(i).equals(konto.getAdress().replace('@','p'))) {
+					vorhanden=true;
+					System.out.println("Dieses konto hat schonmal eine ADress zum buch hinzugefuegt");
+					break;
+				}
+			}
+			if(!vorhanden){
 				root.addContent(new Element(konto.getAdress().replace('@', 'p')));
 				XMLOutputter outp = new XMLOutputter();
-				outp.setFormat( Format.getPrettyFormat() );
-				outp.output( doc, new FileOutputStream(Adressbuch.adressDat));
+				outp.setFormat(Format.getPrettyFormat());
+				outp.output(doc, new FileOutputStream(Adressbuch.adressDat));
 			}
 		}
 		catch(Exception e){
@@ -102,11 +112,19 @@ public class Mailuebersicht {
 			//Liste aller Adressen des aktuellen Kontos
 			List alleKonten = root.getChildren();
 
-			if(!alleKonten.contains(konto.getAdress().replace('p','@'))) {
+			boolean vorhanden=false;
+			for(int i=0;i<alleKonten.size();i++){
+				System.out.println(alleKonten.get(i));
+				if(alleKonten.get(i).equals(konto.getAdress().replace('@','p'))) {
+					vorhanden=true;
+					break;
+				}
+			}
+			if(!vorhanden){
 				root.addContent(new Element(konto.getAdress().replace('@', 'p')));
 				XMLOutputter outp = new XMLOutputter();
-				outp.setFormat( Format.getPrettyFormat() );
-				outp.output( doc, new FileOutputStream(Adressbuch.adressDat));
+				outp.setFormat(Format.getPrettyFormat());
+				outp.output(doc, new FileOutputStream(offlineMails));
 			}
 		}
 		catch(Exception e){

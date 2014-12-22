@@ -31,7 +31,7 @@ public class Startfenster{
 	public static void init(){
 		inXML=new File(datName);
 
-		//Initialisierung von KontenListe-Datei
+		//Erster Aufbau von KontenListe-Datei
 		if (!inXML.exists()) {
 			try {
 				inXML.createNewFile();
@@ -49,7 +49,7 @@ public class Startfenster{
 		}
 			konten=new ArrayList<Konto>();
 
-		//Initialisierung der Adressbuch-Datei
+		//Erster Aufbau der Adressbuch-Datei
 		Adressbuch.adressDat=new File(Adressbuch.datName);
 		if (!Adressbuch.adressDat.exists()) {
 			try {
@@ -68,7 +68,24 @@ public class Startfenster{
 			}
 		}
 
+		//Erster Aufbau der offlineMails-Datei
+		Mailuebersicht.offlineMails=new File(Mailuebersicht.datName);
+		if (!Mailuebersicht.offlineMails.exists()) {
+			try {
+				Mailuebersicht.offlineMails.createNewFile();
+				try {
+					Element root = new Element("offlineMails");
+					Document doc = new Document(root);
+					XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
+					out.output(doc,new FileOutputStream(Mailuebersicht.offlineMails));
 
+				}catch(Exception e){
+					System.out.println("Die OfflineMails-Datei konnte nicht initialisiert werden.");
+				}
+			} catch (IOException e) {
+				System.err.println("Error creating " + inXML.toString());
+			}
+		}
 
 		// Initalisierung der kommandoliste
 		kommandoliste.add("neues Konto anlegen");
@@ -218,7 +235,7 @@ public class Startfenster{
         }
         catch(Exception e){
         	System.out.println(e);
-        	System.out.println("Datei Fehlerhaft oder nicht gefunden");
+        	System.out.println("Startfenster-hole-Konten: Datei Fehlerhaft oder nicht gefunden");
         }
 	}
 
