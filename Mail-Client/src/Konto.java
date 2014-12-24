@@ -5,15 +5,17 @@ public class Konto {
 	private String password;
 	private String server;
 	private String smtpServer;
+	private String pop3Server;
 	private String protocol; 
 	private int port;
 	private double refRate;
 	
-	public Konto(String name, String myA, String server, String smtp, int port, String protocol, double refRate){
+	public Konto(String name, String myA, String server, String smtp, String pop3, int port, String protocol, double refRate){
 		this.name = name;
 		this.adress = myA;
 		this.server = server;
 		this.smtpServer = smtp;
+		this.pop3Server = pop3;
 		this.port = port;
 		this.protocol = protocol;
 		this.refRate = refRate;
@@ -29,14 +31,17 @@ public class Konto {
     	String provider=mailAdresse.split("@")[1];
 		if(provider.equals("gmx.de")||provider.equals("gmx.net")) {
 			smtpServer = "mail.gmx.net";
+			pop3Server="pop.gmx.net";
 		}
 		else if (provider.equals("gmail.com")||provider.equals("googlemail.com")) {
 			smtpServer="smtp.googlemail.com";
+			pop3Server="pop.gmail.com";
     	}
 		else if(provider.equals("web.de")){
 			smtpServer="smtp.web.de";
+			pop3Server="pop3.web.de";
 		}
-		System.out.println(provider+" "+smtpServer);
+
     }
 	
 	public String getAdress() {
@@ -66,8 +71,14 @@ public class Konto {
 	public String getSmtpServer() {
 		return smtpServer;
 	}
-	public void setSmtpServer(String smtpServer) {
+	public void setSmtpServer(String pop3Server) {
 		this.smtpServer = smtpServer;
+	}
+	public String getPop3Server() {
+		return pop3Server;
+	}
+	public void setPop3Server(String pop3Server) {
+		this.pop3Server = pop3Server;
 	}
 
 	public String getName() {

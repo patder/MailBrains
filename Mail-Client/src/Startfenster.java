@@ -191,6 +191,7 @@ public class Startfenster{
 	        paddy.addContent(new Element("adresse").addContent(k.getAdress()));
 	        paddy.addContent(new Element("server").addContent(k.getServer()));
 	        paddy.addContent(new Element("smtpServer").addContent(k.getSmtpServer()));
+			paddy.addContent(new Element("pop3Server").addContent(k.getPop3Server()));
 	        paddy.addContent(new Element("port").addContent(k.getPort()+""));
 	        paddy.addContent(new Element("protocol").addContent(k.getProtocol()));
 	        paddy.addContent(new Element("refRate").addContent(k.getRefRate()+""));
@@ -224,11 +225,12 @@ public class Startfenster{
             	String name = ((Element) alleKonten.get(i)).getChild("name").getValue();
             	String adresse = ((Element) alleKonten.get(i)).getChild("adresse").getValue();
             	String server = ((Element) alleKonten.get(i)).getChild("server").getValue();
-            	String smtpServer = ((Element) alleKonten.get(i)).getChild("smtpServer").getValue();    
+            	String smtpServer = ((Element) alleKonten.get(i)).getChild("smtpServer").getValue();
+				String pop3Server = ((Element) alleKonten.get(i)).getChild("pop3Server").getValue();
             	int port = Integer.parseInt(((Element) alleKonten.get(i)).getChild("port").getValue());
             	String protocol = ((Element) alleKonten.get(i)).getChild("protocol").getValue();
             	double refRate = Double.parseDouble(((Element) alleKonten.get(i)).getChild("refRate").getValue());
-            	Konto k1 = new Konto(name, adresse, server, smtpServer,port, protocol, refRate);
+            	Konto k1 = new Konto(name, adresse, server, smtpServer, pop3Server, port, protocol, refRate);
             	String st = adresse.replace('@', 'p');
             	elemList.add(st);
             	konten.add(k1);
@@ -243,7 +245,7 @@ public class Startfenster{
 	public static void kontoWaehlen(){
 		System.out.println("Sie koennen aus folgenden Konten auswaehlen: ");
 		for(int i = 0; i  < konten.size(); i++){
-			System.out.println(i+1 + ")\t" + konten.get(i).getName() + "\t" + konten.get(i).getAdress()+"\n");
+			System.out.println(i+1 + ")\t" + konten.get(i).getName() + "\t" + konten.get(i).getAdress());
 		}
 		int i = sc.nextInt();
 		Konto konto=konten.get(i-1);

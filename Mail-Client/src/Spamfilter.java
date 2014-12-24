@@ -10,25 +10,40 @@ public class Spamfilter {
 	private static ArrayList<String> adressen;
 	private static File output;
 	private static ArrayList<String> kommandoliste;
+	private static Scanner sc;
 	
 	public static void init(){
 		kommandoliste=new ArrayList<String>();
 		adressen=new ArrayList<String>();
 		output=new File("Spamfilter.txt");
-		
+		sc= new Scanner(System.in);
+
 		// Initalisierung der kommandoliste
 		kommandoliste.add("hinzufuegen");
 		kommandoliste.add("loeschen");
 		kommandoliste.add("kommandos");
 		kommandoliste.add("zurueck");
+		kommandoliste.add("anzeigen");
+
+		holeSpam();
 		auswaehlen();
+	}
+
+	private static void holeSpam(){
+		try {
+			Scanner tmp = new Scanner(output);
+			while(tmp.hasNextLine()){
+				adressen.add(tmp.nextLine());
+			}
+		}catch(FileNotFoundException e){
+			System.out.println("Die Spamfilter-Datei konnte nicht geöffnet werden");
+		}
 	}
 
 	public static void auswaehlen() {
 		System.out.println("Wählen Sie durch Eingabe der jeweiligen Zahl über die Tastatur den gewünschten Menüpunkt");
-		Scanner sc=new Scanner(System.in);
-		int eingabe=sc.nextInt();
-
+		kommandos();
+		int eingabe=Integer.parseInt(sc.nextLine());
 		switch(eingabe){
 			case 1: hinzufuegen(); auswaehlen();
 				break;
@@ -37,35 +52,43 @@ public class Spamfilter {
 			case 3: kommandos(); auswaehlen();
 				break;
 			case 4: zurueck();
+				break;
+			case 5: anzeigen();auswaehlen();
+				break;
 		}
 	}
-	
+
+	private static void anzeigen(){
+		for(int i=0;i<adressen.size();i++){
+			System.out.println(i+1+") "+adressen.get(i));
+		}
+	}
+
 	public static void hinzufuegen(){
-		Scanner sc=new Scanner(System.in);
 		System.out.println("Bitte geben Sie die Adresse ein, die Sie hinzufuegen wollen.");
-		String adresse=sc.next(); //Bedingungen für die Adresse ergaenzen
+		String adresse=sc.nextLine(); //Bedingungen für die Adresse ergaenzen
 		adressen.add(adresse);
-		FileWriter fw;
+		BufferedWriter fw;
 		try{
-			fw=new FileWriter(output);
+			fw=new BufferedWriter(new FileWriter(output,true));
 			fw.append(adresse);
+			fw.newLine();
 			fw.close();
 		}catch(Exception e){
 			System.out.println("Der Spamfilter konnte nicht ge�ffnet werden.");
 		}
-		sc.close();
 	}
 	
 	public static void loeschen(){
-		Scanner sc=new Scanner(System.in);
-		System.out.println("Bitte geben Sie die Nummer der Mail ein, die Sie loeschen wollen.");
-		int nummer=sc.nextInt(); //Bedingungen für die Nummer ergaenzen
-		adressen.remove(nummer);
+		System.out.println("Bitte geben Sie die Nummer der Adresse ein, die Sie loeschen wollen.");
+		anzeigen();
+		int nummer=Integer.parseInt(sc.nextLine()); //Bedingungen für die Nummer ergaenzen
+		adressen.remove(nummer-1);
 		try{
 			File kopie = new File("kopie.txt");
 			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(output)));
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(kopie)));
-			int counter = 0;
+			int counter = 1;
 			String line;
 			while((line = br.readLine()) != null){
 				if(counter != nummer){
@@ -80,7 +103,6 @@ public class Spamfilter {
 		}catch(Exception e){
 			System.out.println("Der Spamfilter konnte nicht ge�ffnet werden.");
 		}
-		sc.close();
 	}
 	
 	public ArrayList<String> getAdressen() {
@@ -93,12 +115,13 @@ public class Spamfilter {
 
 	public static void kommandos() {
 		System.out.println("Sie haben die Moeglichkeit folgende Kommandos einzugeben: ");
-		for (int i = 1; i < kommandoliste.size(); i++) {
-			System.out.print(i+": "+kommandoliste.get(i-1)+"\n");
+		for (int i = 0; i < kommandoliste.size(); i++) {
+			System.out.print(i+1+": "+kommandoliste.get(i)+"\n");
 		}
 	}
 
 	public static void zurueck(){
 		//absichtlich leer
+		sc.close();
 	}
 }
