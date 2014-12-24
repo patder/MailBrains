@@ -1,4 +1,4 @@
-//
+////
 public class Mail {
 	private String adresse;
 	private String betreff;

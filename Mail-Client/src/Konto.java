@@ -43,7 +43,7 @@ public class Konto {
 		}
 
     }
-	//
+	////
 	public String getAdress() {
 		return adress;
 	}
