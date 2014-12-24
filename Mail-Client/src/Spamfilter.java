@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 
 public class Spamfilter {
-	
+	//
 	private static ArrayList<String> adressen;
 	private static File output;
 	private static ArrayList<String> kommandoliste;

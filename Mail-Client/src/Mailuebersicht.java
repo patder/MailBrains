@@ -48,7 +48,7 @@ public class Mailuebersicht {
 		properties.put("mail.pop3s.host", konto.getPop3Server());
 		properties.put("mail.pop3s.port", "995");
 		properties.put("mail.pop3s.starttls.enable", "true");
-
+//
 		//Session erstellen
 		Session session = Session.getDefaultInstance(properties, konto.getPasswordAuthentication());
 		try {
