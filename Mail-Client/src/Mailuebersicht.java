@@ -4,15 +4,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.Scanner;
+import java.util.*;
 
 import javax.mail.*;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import javax.mail.internet.*;
 
 import org.jdom.*;
 import org.jdom.input.SAXBuilder;
@@ -20,7 +15,7 @@ import org.jdom.output.*;
 
 import java.net.ConnectException;
 import java.util.Properties;
- 
+
 
 import java.util.Scanner;
 
@@ -42,20 +37,24 @@ public class Mailuebersicht {
 	private static ArrayList<String> kommandoliste;
 	private static Scanner sc;
 
-	private static void holeMails(){
+	private static void holeMails()throws AuthenticationFailedException{
 		//Die folgenden Zeilen vllt auch lieber in ein Methode (wie bei getSession nur halt für pop3)
-		Properties properties = System.getProperties();
-		properties.put("mail.pop3s.host", konto.getPop3Server());
-		properties.put("mail.pop3s.port", "995");
-		properties.put("mail.pop3s.starttls.enable", "true");
-////
+		Properties props = System.getProperties();
+		props.setProperty("mail.pop3.host", konto.getPop3Server());
+		props.setProperty( "mail.pop3.port", "995" );
+		props.setProperty("mail.pop3.auth", "true");
+		props.put("mail.pop3.starttls.enable", "true");
+		//Brauch man folgende props überhaupt??
+		props.setProperty("mail.pop3.socketFactory.fallback", "false");
+		props.setProperty("mail.pop3.socketFactory.class","javax.net.ssl.SSLSocketFactory");
+
 		//Session erstellen
-		Session session = Session.getDefaultInstance(properties, konto.getPasswordAuthentication());
+		Session session = Session.getInstance(props, konto.getPasswordAuthentication());
 		try {
-			Store store = session.getStore("pop3");
-			store.connect(konto.getPop3Server(),konto.getName(),konto.getPassword());
-			Folder folder=store.getDefaultFolder();
-			Folder inboxfolder=folder.getFolder("INBOX");
+			Store store = session.getStore("pop3"); // -->no such provider exception
+			store.connect(konto.getAdress(),konto.getPassword()); // --> authentication failed exception
+
+			Folder inboxfolder=store.getDefaultFolder().getFolder("INBOX");
 			inboxfolder.open(Folder.READ_ONLY);
 			Message [] msg=inboxfolder.getMessages();
 
@@ -64,14 +63,32 @@ public class Mailuebersicht {
 				try {
 					//Empfangsdatum von Typ Date zu String
 					DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-					String reportDate = df.format(msg[i].getReceivedDate());
-					//Erstellen der Mail
-					Mail m = new Mail(msg[i].getFrom()[0].toString(), msg[i].getSubject(), String.valueOf(msg[i].getContent()), reportDate); //weiß nicht ob das mit dem Contetn so klappt ist eigl von Typ Object
-					mails.set(i, m);
+					Date d=msg[i].getSentDate();
+					String reportDate = df.format(d);
+
+					//Wie mit Mulitpart Nachrichten umgehen?
+					MimeBodyPart part=null;
+					if ( msg[i].isMimeType("multipart/*") ) {
+						Multipart mp = (Multipart) msg[i].getContent();
+						// Der erste Part ist immer die Hauptnachricht
+						part = (MimeBodyPart)mp.getBodyPart(0);
+						//Erstellen der Mail
+						if ( part.isMimeType( "text/xml" ) ) {
+							Mail m = new Mail(msg[i].getFrom()[0].toString(), msg[i].getSubject(), String.valueOf(part.getContent()), reportDate);
+							mails.add(m);
+						}
+					}else{
+						Mail m = new Mail(msg[i].getFrom()[0].toString(), msg[i].getSubject(), String.valueOf(msg[i].getContent()), reportDate);
+						mails.add(m);
+					}
 				}catch(IOException e){
 					System.out.println("Der Content der Mail verursacht IO Probleme.");
 				}
 			}
+			inboxfolder.close(false);
+			inboxfolder.getStore().close();
+		}catch (AuthenticationFailedException e) {
+			throw new AuthenticationFailedException(e.getMessage());
 		}catch(NoSuchProviderException e){
 			System.out.println("Die Mails konnten nicht vom Server geholt werden, das der Server nicht existiert.");
 		}catch(MessagingException e2){
@@ -84,10 +101,10 @@ public class Mailuebersicht {
 		sc=new Scanner(System.in);
 		kommandoliste=new ArrayList<String>();
 		konto=k;
-		mails= new ArrayList<Mail>(); //Mails m�ssen vom Server geholt werden
+		mails= new ArrayList<Mail>();
 		offlineMails=new File(datName);
 		aktuelleSeite=1;
-		
+
 		// Initalisierung der kommandoliste
 		kommandoliste.add("kommandos");
 		kommandoliste.add("ausloggen");
@@ -167,8 +184,11 @@ public class Mailuebersicht {
 			System.out.println(e);
 			System.out.println("Mail-Uebersicht-init: offline-Mails-Datei Fehlerhaft oder nicht gefunden");
 		}
-
-		holeMails();
+		try {
+			holeMails();
+		}catch(AuthenticationFailedException e){
+			System.out.println("Das eingebene Passwort ist falsch!");
+		}
 		for(int i=0;i<mails.size()&&i<25;i++) {
 			Mail tmp = mails.get(i);
 			System.out.println(i+1 + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
@@ -179,7 +199,13 @@ public class Mailuebersicht {
 	public static void auswaehlen() {
 		System.out.println("Wählen Sie durch Eingabe der jeweiligen Zahl über die Tastatur den gewünschten Menüpunkt");
 		kommandos();
-		int eingabe=Integer.parseInt(sc.nextLine());
+		int eingabe=-1;
+		try {
+			eingabe = Integer.parseInt(sc.nextLine());
+		}catch(NumberFormatException e){
+			System.out.println("Bitte geben Sie Ihre Wahl erneut an.");
+			auswaehlen();
+		}
 
 		switch(eingabe){
 			case 1: kommandos(); auswaehlen();
@@ -194,7 +220,8 @@ public class Mailuebersicht {
 				verfassen();
 			} catch (Exception e) {
 				e.printStackTrace();
-			}auswaehlen();
+			}
+				auswaehlen();
 				break;
 			case 6: loeschen(); auswaehlen();
 				break;
@@ -246,16 +273,20 @@ public class Mailuebersicht {
 	}
 
 	public static void anzeigen(){
-		System.out.println("Bitte geben Sie die Nummer der Mail an, die Sie sehen möchten.");
-		for(int i=0;i<mails.size()&&i<25;i++) {
-			Mail tmp = mails.get(i);
-			System.out.println(i+1 + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
+		if(mails.size()<1){
+			System.out.println("Es sind keine Mails vorhanden.");
+		}else {
+			System.out.println("Bitte geben Sie die Nummer der Mail an, die Sie sehen möchten.");
+			for (int i = 0; i < mails.size() && i < 25; i++) {
+				Mail tmp = mails.get(i);
+				System.out.println(i + 1 + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
+			}
+			Scanner sc = new Scanner(System.in);
+			int nummer = Integer.parseInt(sc.nextLine());
+			System.out.println(mails.get(nummer - 1).getNachricht());
 		}
-		Scanner sc=new Scanner(System.in);
-		int nummer=Integer.parseInt(sc.nextLine());
-		System.out.println(mails.get(nummer-1).getNachricht());
 	}
-	
+
 	public static void seite(){
 		System.out.println("Bitte geben Sie die Nummer der Seite an, zu der Sie springen möchten");
 		int nummer=Integer.parseInt(sc.nextLine());
@@ -265,7 +296,7 @@ public class Mailuebersicht {
 			System.out.println(i+"\t"+tmp.getAdresse()+"\t"+tmp.getBetreff()+"\t"+tmp.getEmpfangsdatum());
 		}
 	}
-	
+
 	public static void naechste(){
 		aktuelleSeite++;
 		for(int i=(aktuelleSeite-1)*25;i<mails.size()&&i<i+25;i++){
@@ -273,7 +304,7 @@ public class Mailuebersicht {
 			System.out.println(i+"\t"+tmp.getAdresse()+"\t"+tmp.getBetreff()+"\t"+tmp.getEmpfangsdatum());
 		}
 	}
-	
+
 	public static void vorherige(){
 		aktuelleSeite--;
 		for(int i=(aktuelleSeite-1)*25;i<mails.size()&&i<i+25;i++){
@@ -283,18 +314,22 @@ public class Mailuebersicht {
 	}
 
 	public static void aktualisieren(){
-
-		//TODO
+		try {
+			mails.clear();
+			holeMails();
+		}catch(Exception e){
+			System.out.println("Die Mails konnten nicht aktualisiert werden");
+		}
 	}
 
-	public static Session getSession(){ 
+	public static Session getSession(){
 		Properties properties = System.getProperties();
         properties.setProperty("mail.smtp.host", konto.getSmtpServer());
         properties.setProperty("mail.smtp.port", String.valueOf(konto.getPort()));
         properties.setProperty("mail.smtp.auth", "true");
-         
+
         properties.put("mail.smtp.starttls.enable", "true");
-        
+
         // session erstellen
         Session session = Session.getDefaultInstance(properties, konto.getPasswordAuthentication());
 		return session;
@@ -310,18 +345,18 @@ public class Mailuebersicht {
 		System.out.println("Betreff:");
 		String betreff=sc.nextLine();
 		System.out.println("Nachricht:");
-		String text=sc.next();
-		
+		String text=sc.nextLine(); // wenn man hier nur next macht kommt ne fehlermeldung beim int parsen in der methode auswaehlen, wie können wir das hier aber trz aendern
+
         MimeMessage msg = new MimeMessage(session);
         msg.setFrom(new InternetAddress(konto.getAdress()));
         msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(empfaenger, false));
- 
+
         // Betreff
         msg.setSubject(betreff);
-         
+
         // Nachricht
         msg.setText(text);
-         
+
         // E-Mail versenden
         Transport.send(msg);
     }
@@ -346,7 +381,7 @@ public class Mailuebersicht {
 		}
 	}
 
-	public static void loeschen(){		
+	public static void loeschen(){
 		System.out.println("was wollen Sie loeschen?");
 		int i = -1;
 		try{
@@ -366,7 +401,7 @@ public class Mailuebersicht {
             // Das Dokument erstellen
             SAXBuilder builder = new SAXBuilder();
             doc = builder.build(Startfenster.inXML);
-            
+
             // Wurzelelement wird auf root gesetzt
             Element root = doc.getRootElement();
             List children = root.getChildren();
@@ -379,13 +414,13 @@ public class Mailuebersicht {
 			System.out.println("Fehler beim loeschen von Konto");
 		}
 	}
-	public static void loeschen(int i){		
+	public static void loeschen(int i){
 		Document doc = null;
 		try {
             // Das Dokument erstellen
             SAXBuilder builder = new SAXBuilder();
             doc = builder.build(Startfenster.inXML);
-            
+
             // Wurzelelement wird auf root gesetzt
             Element root = doc.getRootElement();
             List children = root.getChildren();
@@ -499,7 +534,7 @@ public class Mailuebersicht {
             }
 	        loeschen(nr);
 	        Startfenster.speichereKonto(neuesKonto);
-            
+
 		}
 		catch(Exception e){
 			System.out.println("Fehler bei aendern des Attributs");

@@ -154,15 +154,15 @@ public class Startfenster{
 		
 		
 		Konto konto = new Konto(name, adresse, passwort, refRate);
-		Mailuebersicht.konto=new Konto(name, adresse, passwort, refRate);
+		Mailuebersicht.konto=konto;
 		Session s=Mailuebersicht.getSession();
 		
 		Transport tr = s.getTransport("smtp");
-		
+
 		try{
-			tr.connect(konto.getSmtpServer(), konto.getAdress(), passwort);
+			tr.connect(konto.getAdress(), passwort);
 		}catch (AuthenticationFailedException e){
-			System.out.println("Verbindung konnte nicht hergestellt werden, bitte ueberpruefen sie ihre Eingaben");
+			System.out.println("Startfenster_neuesKonto: Verbindung konnte nicht hergestellt werden, bitte ueberpruefen sie ihre Eingaben");
 			neuesKonto();
 		}
 		System.out.println("Verbindung hergestellt");
@@ -205,7 +205,7 @@ public class Startfenster{
 			System.out.println("Fehler beim schreiben eines neuen Kontos");
 		}
 	}
-////
+
 	private static void holeKonten(){
 		Document doc = null;
 		konten.clear();
@@ -247,8 +247,10 @@ public class Startfenster{
 		for(int i = 0; i  < konten.size(); i++){
 			System.out.println(i+1 + ")\t" + konten.get(i).getName() + "\t" + konten.get(i).getAdress());
 		}
-		int i = sc.nextInt();
+		int i =Integer.parseInt(sc.nextLine());
 		Konto konto=konten.get(i-1);
+		System.out.println("Bitte geben Sie Ihr Passwort ein.");
+		konto.setPassword(sc.nextLine());
 		Mailuebersicht.init(konto);
 	}
 
