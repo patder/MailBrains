@@ -1,7 +1,4 @@
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -18,6 +15,7 @@ import java.util.Properties;
 
 
 import java.util.Scanner;
+import java.util.concurrent.Exchanger;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -67,21 +65,33 @@ public class Mailuebersicht {
 					String reportDate = df.format(d);
 
 					//Wie mit Mulitpart Nachrichten umgehen?
-					MimeBodyPart part=null;
-					if ( msg[i].isMimeType("multipart/*") ) {
-						Multipart mp = (Multipart) msg[i].getContent();
-						// Der erste Part ist immer die Hauptnachricht
-						part = (MimeBodyPart)mp.getBodyPart(0);
-						//Erstellen der Mail
-						if ( part.isMimeType( "text/xml" ) ) {
-							Mail m = new Mail(msg[i].getFrom()[0].toString(), msg[i].getSubject(), String.valueOf(part.getContent()), reportDate);
+						if ( msg[i].isMimeType( "multipart/*" ) ) {
+							Multipart mp = (Multipart) msg[i].getContent();
+							if (mp.getCount() > 1) {
+								Part part = mp.getBodyPart(0);
+							}
+
+							// Laufe über alle Teile (Anhänge)
+							String inhalt="";
+							Part part = mp.getBodyPart(0);
+							String disp = part.getDisposition();
+							if (disp == null || disp.equalsIgnoreCase(Part.ATTACHMENT)) {
+								MimeBodyPart mimePart = (MimeBodyPart) part;
+								if (mimePart.isMimeType("text/xml")) {
+									inhalt+=String.valueOf(msg[i].getContent());
+								}
+								else{
+									inhalt+="Multipart Nachricht. Anzeigen des Inhalts nicht moeglich.";
+								}
+								Mail m = new Mail(msg[i].getFrom()[0].toString(), msg[i].getSubject(), inhalt, reportDate);
+								mails.add(m);
+							}
+						}
+						else{
+							Mail m = new Mail(msg[i].getFrom()[0].toString(), msg[i].getSubject(), String.valueOf(msg[i].getContent()), reportDate);
 							mails.add(m);
 						}
-					}else{
-						Mail m = new Mail(msg[i].getFrom()[0].toString(), msg[i].getSubject(), String.valueOf(msg[i].getContent()), reportDate);
-						mails.add(m);
-					}
-				}catch(IOException e){
+				}catch(Exception e){
 					System.out.println("Der Content der Mail verursacht IO Probleme.");
 				}
 			}
@@ -266,7 +276,7 @@ public class Mailuebersicht {
 			Element root = doc.getRootElement();
 
 			//Die mail an das aktuelle konto anhengen
-			Mail tmp=mails.get(nummer-1);
+			Mail tmp = mails.get(nummer - 1);
 			Element akt = root.getChild((konto.getAdress()).replace('@', 'p'));
 			if (akt != null) {
 				Element neu = new Element(tmp.getAdresse().replace('@', 'p'));
