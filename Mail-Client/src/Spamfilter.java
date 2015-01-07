@@ -16,7 +16,7 @@ public class Spamfilter {
 		kommandoliste=new ArrayList<String>();
 		adressen=new ArrayList<String>();
 		output=new File("Spamfilter.txt");
-		sc= new Scanner(System.in);
+		sc=Startfenster.sc;
 
 		// Initalisierung der kommandoliste
 		kommandoliste.add("hinzufuegen");
@@ -25,6 +25,7 @@ public class Spamfilter {
 		kommandoliste.add("zurueck");
 		kommandoliste.add("anzeigen");
 
+		//
 		holeSpam();
 		auswaehlen();
 	}
@@ -35,8 +36,9 @@ public class Spamfilter {
 			while(tmp.hasNextLine()){
 				adressen.add(tmp.nextLine());
 			}
+			tmp.close();
 		}catch(FileNotFoundException e){
-			System.out.println("Die Spamfilter-Datei konnte nicht geöffnet werden");
+			//ist normal wenn noch keine Mails als Spam gespeichert werden
 		}
 	}
 
@@ -59,8 +61,13 @@ public class Spamfilter {
 	}
 
 	private static void anzeigen(){
-		for(int i=0;i<adressen.size();i++){
-			System.out.println(i+1+") "+adressen.get(i));
+		if(0<adressen.size()) {
+			System.out.println("Folgende Mails haben Sie als Spam markiert.");
+			for (int i = 0; i < adressen.size(); i++) {
+				System.out.println(i + 1 + ": " + adressen.get(i));
+			}
+		}else{
+			System.out.println("Sie haben noch keine Mails als Spam markiert.");
 		}
 	}
 
@@ -85,7 +92,7 @@ public class Spamfilter {
 		int nummer=Integer.parseInt(sc.nextLine()); //Bedingungen für die Nummer ergaenzen
 		adressen.remove(nummer-1);
 		try{
-			File kopie = new File("kopie.txt");
+			File kopie=new File("kopie.txt");
 			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(output)));
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(kopie)));
 			int counter = 1;
@@ -99,9 +106,12 @@ public class Spamfilter {
 			}
 			bw.close();
 			br.close();
-		 	output=kopie; //geht das oder geht das nicht weil das iwie mit referenz oder sowat nicht funkt
+			String dest=output.getPath();
+			System.out.println(dest);
+			output.delete();
+			kopie.renameTo(new File(dest));
 		}catch(Exception e){
-			System.out.println("Der Spamfilter konnte nicht ge�ffnet werden.");
+			System.out.println(e.getMessage()+"Der Spamfilter konnte nicht geoeffnet werden.");
 		}
 	}
 	
@@ -122,6 +132,5 @@ public class Spamfilter {
 
 	public static void zurueck(){
 		//absichtlich leer
-		sc.close();
 	}
 }

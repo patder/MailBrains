@@ -25,10 +25,11 @@ public class Startfenster{
 	static File inXML;
 	static ArrayList<String> elemList = new ArrayList<String>();
 	private static ArrayList<String> kommandoliste=new ArrayList<String>();
-	private static Scanner sc = new Scanner(System.in);
+	public static Scanner sc;
 	static String datName = "KontenListe.xml";
 
 	public static void init(){
+		sc=new Scanner(System.in);
 		inXML=new File(datName);
 
 		//Erster Aufbau von KontenListe-Datei
@@ -102,7 +103,6 @@ public class Startfenster{
 			System.out.print(i+": "+kommandoliste.get(i-1)+"\n");
 		}
 		int eingabe=Integer.parseInt(sc.nextLine());
-		
 		switch(eingabe){
 		case 1:
 				try {
@@ -118,6 +118,7 @@ public class Startfenster{
 		case 4: verlassen();
 			    break;
 		}
+		//Warum nicht statt dem auswaehlen endlosschleife drum herum??!
 	}
 
 	public static void kommandos() {
@@ -145,7 +146,7 @@ public class Startfenster{
 		}
 		else{
 			System.out.println("Fehler bei Passworteingabe");
-			System.exit(1);
+			System.exit(1); nicht exit alle nachfolgende muss dann auch ins if
 		}*/
 		passwort=sc.nextLine();
 
@@ -245,7 +246,7 @@ public class Startfenster{
 	public static void kontoWaehlen(){
 		System.out.println("Sie koennen aus folgenden Konten auswaehlen: ");
 		for(int i = 0; i  < konten.size(); i++){
-			System.out.println(i+1 + ")\t" + konten.get(i).getName() + "\t" + konten.get(i).getAdress());
+			System.out.println(i+1 + ": " + konten.get(i).getName() + "\t" + konten.get(i).getAdress());
 		}
 		int i =Integer.parseInt(sc.nextLine());
 		Konto konto=konten.get(i-1);

@@ -98,7 +98,7 @@ public class Mailuebersicht {
 	}
 	public static void init(Konto k){
 		//Initialisierung der Attribute
-		sc=new Scanner(System.in);
+		sc=Startfenster.sc;
 		kommandoliste=new ArrayList<String>();
 		konto=k;
 		mails= new ArrayList<Mail>();
@@ -167,7 +167,6 @@ public class Mailuebersicht {
 
 			boolean vorhanden=false;
 			for(int i=0;i<alleKonten.size();i++){
-				System.out.println(alleKonten.get(i));
 				if(alleKonten.get(i).getName().equals(konto.getAdress().replace('@','p'))){
 					vorhanden=true;
 					break;
@@ -184,16 +183,21 @@ public class Mailuebersicht {
 			System.out.println(e);
 			System.out.println("Mail-Uebersicht-init: offline-Mails-Datei Fehlerhaft oder nicht gefunden");
 		}
+
+		//Mails vom Server holen
 		try {
 			holeMails();
+			for(int i=0;i<mails.size()&&i<25;i++) {
+				Mail tmp = mails.get(i);
+				System.out.println(i+1 + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
+			}
+			System.out.println("");
+			auswaehlen();
 		}catch(AuthenticationFailedException e){
 			System.out.println("Das eingebene Passwort ist falsch!");
+
 		}
-		for(int i=0;i<mails.size()&&i<25;i++) {
-			Mail tmp = mails.get(i);
-			System.out.println(i+1 + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
-		}
-		auswaehlen();
+
 	}
 
 	public static void auswaehlen() {
@@ -231,7 +235,7 @@ public class Mailuebersicht {
 				break;
 			case 9: adressbuch(); auswaehlen();
 				break;
-			case 10: spamfilter();
+			case 10: spamfilter(); auswaehlen();
 				break;
 			case 11: aktualisieren(); auswaehlen();
 				break;
@@ -247,28 +251,38 @@ public class Mailuebersicht {
 
 	public static void speichern(){
 		System.out.println("Bitte geben Sie die Nummer der Mail an, die sie offline speichern möchten");
+		for(int i=0;i<mails.size()&&i<25;i++) {
+			Mail tmp = mails.get(i);
+			System.out.println(i+1 + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
+		}
 		int nummer=Integer.parseInt(sc.nextLine());
 		Document doc = null;
 		try {
-			//TODO hier muss noch der xml outputter benutzt werden
 			// Das Dokument erstellen
 			SAXBuilder builder = new SAXBuilder();
 			doc = builder.build(offlineMails);
 			XMLOutputter fmt = new XMLOutputter();
 			// Wurzelelement wird auf root gesetzt
 			Element root = doc.getRootElement();
-			//Liste aller vorhandenen Adressen als Elemente
-			List alleAdressen = root.getChildren();
 
-			Mail tmp=mails.get(nummer);
-			Element e1=new Element("person");
-			root.getChild(konto.getName()).addContent(e1);
-			e1.addContent(new Element("adresse").addContent(tmp.getAdresse()));
-			e1.addContent(new Element("betreff").addContent(tmp.getBetreff()));
-			e1.addContent(new Element("nachricht").addContent(tmp.getNachricht()));
-			e1.addContent(new Element("empfangsdatum").addContent(tmp.getEmpfangsdatum()));
+			//Die mail an das aktuelle konto anhengen
+			Mail tmp=mails.get(nummer-1);
+			Element akt = root.getChild((konto.getAdress()).replace('@', 'p'));
+			if (akt != null) {
+				Element neu = new Element(tmp.getAdresse().replace('@', 'p'));
+				neu.addContent(new Element("adresse").addContent(tmp.getAdresse()));
+				neu.addContent(new Element("betreff").addContent(tmp.getBetreff()));
+				neu.addContent(new Element("nachricht").addContent(tmp.getNachricht()));
+				neu.addContent(new Element("empfangsdatum").addContent(tmp.getEmpfangsdatum()));
+				akt.addContent(neu);
+				XMLOutputter outp = new XMLOutputter();
+				outp.setFormat(Format.getPrettyFormat());
+				outp.output(doc, new FileOutputStream(offlineMails));
+			} else {
+				System.out.println("Fehler: Warum gibt es das aktuelle Konto nicht als Kind vom root?");
+			}
 		}catch(Exception e){
-			System.out.println("Das Konto konnte nicht offline gespeichert werden.");
+			System.out.println(e.getMessage()+"Die Mail konnte nicht offline gespeichert werden.");
 		}
 	}
 
@@ -281,9 +295,8 @@ public class Mailuebersicht {
 				Mail tmp = mails.get(i);
 				System.out.println(i + 1 + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
 			}
-			Scanner sc = new Scanner(System.in);
 			int nummer = Integer.parseInt(sc.nextLine());
-			System.out.println(mails.get(nummer - 1).getNachricht());
+			System.out.println(mails.get(nummer - 1).getNachricht()+"\n");
 		}
 	}
 
@@ -298,18 +311,26 @@ public class Mailuebersicht {
 	}
 
 	public static void naechste(){
-		aktuelleSeite++;
-		for(int i=(aktuelleSeite-1)*25;i<mails.size()&&i<i+25;i++){
-			Mail tmp=mails.get(i);
-			System.out.println(i+"\t"+tmp.getAdresse()+"\t"+tmp.getBetreff()+"\t"+tmp.getEmpfangsdatum());
+		if(aktuelleSeite!=0&&aktuelleSeite>=mails.size()) {
+			for (int i = (aktuelleSeite - 1) * 25; i < mails.size() && i < i + 25; i++) {
+				Mail tmp = mails.get(i);
+				System.out.println(i + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
+			}
+			aktuelleSeite++;
+		}else{
+			System.out.println("Die angezeigten Mails sind bereits die aeltesten.\n");
 		}
 	}
 
 	public static void vorherige(){
-		aktuelleSeite--;
-		for(int i=(aktuelleSeite-1)*25;i<mails.size()&&i<i+25;i++){
-			Mail tmp=mails.get(i);
-			System.out.println(i+"\t"+tmp.getAdresse()+"\t"+tmp.getBetreff()+"\t"+tmp.getEmpfangsdatum());
+		if(aktuelleSeite!=0&&aktuelleSeite>=mails.size()) {
+			for (int i = aktuelleSeite * 25; i < mails.size() && i < i + 25; i++) {
+				Mail tmp = mails.get(i);
+				System.out.println(i + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
+			}
+			aktuelleSeite--;
+		}else{
+			System.out.println("Die angezeigten Mails sind bereits die aktuellsten.\n");
 		}
 	}
 
@@ -363,7 +384,6 @@ public class Mailuebersicht {
 
 	public static void ausloggen(){
 		// absichtlich leer
-		sc.close();
 	}
 
 	public static void spamfilter(){
