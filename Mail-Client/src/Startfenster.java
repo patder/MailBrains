@@ -95,29 +95,44 @@ public class Startfenster{
 		kommandoliste.add("beenden");
 		auswaehlen();
 	}
-	
+
 	public static void auswaehlen() {
-		holeKonten();
-		System.out.println("Sie haben die Moeglichkeit folgende Kommandos einzugeben: ");
-		for (int i = 1; i <= kommandoliste.size(); i++) {
-			System.out.print(i+": "+kommandoliste.get(i-1)+"\n");
-		}
-		int eingabe=Integer.parseInt(sc.nextLine());
-		switch(eingabe){
-		case 1:
-				try {
-					neuesKonto(); // kein 'auswaehlen' danach, weil am Ende der Methode wird init von Mailuebersicht aufgerufen
-				} catch (MessagingException e) {
-					e.printStackTrace();
+		while(true){
+			holeKonten();
+			System.out.println("Sie haben die Moeglichkeit folgende Kommandos einzugeben: ");
+			for (int i = 1; i <= kommandoliste.size(); i++) {
+				System.out.print(i+": "+kommandoliste.get(i-1)+"\n");
+			}
+			int eingabe = -1;
+			while(eingabe < 1 || eingabe > 4){
+				try{
+					eingabe=Integer.parseInt(sc.nextLine());
+					if(eingabe < 1 || eingabe > 4){
+						System.out.println("Fehlerhafte Eingabe, bitte geben gueltigen Befehl eingaben:");
+					}
 				}
-				break;
-		case 2: kontoWaehlen(); auswaehlen();
-				break;
-			case 3: kommandos(); auswaehlen();
-				break;
-		case 4: verlassen();
-			    break;
+				catch(Exception e){
+					System.out.println("Fehlerhafte Eingabe, bitte geben gueltigen Befehl eingaben:");
+				}
+
+			}//schleife zur sicheren Befehlseingabe
+			switch(eingabe){
+				case 1:
+					try {
+						neuesKonto(); // kein 'auswaehlen' danach, weil am Ende der Methode wird init von Mailuebersicht aufgerufen
+					} catch (MessagingException e) {
+						e.printStackTrace();
+					}
+					break;
+				case 2: kontoWaehlen();
+					break;
+				case 3: clearAll();
+					break;
+				case 4: verlassen();
+					break;
+			}
 		}
+
 		//Warum nicht statt dem auswaehlen endlosschleife drum herum??!
 	}
 
@@ -136,6 +151,7 @@ public class Startfenster{
 		String adresse = sc.nextLine();
 		String st = adresse.replace('@', 'p');
 		if(elemList.contains(st)){
+			clearAll();
 			System.out.println("Adresse ist schon vorhanden");
 			return;
 		}		
@@ -162,20 +178,18 @@ public class Startfenster{
 
 		try{
 			tr.connect(konto.getAdress(), passwort);
-		}catch (AuthenticationFailedException e){
-			System.out.println("Startfenster_neuesKonto: Verbindung konnte nicht hergestellt werden, bitte ueberpruefen sie ihre Eingaben");
-			neuesKonto();
-		}
-		System.out.println("Verbindung hergestellt");
-		try {
+			System.out.println("Verbindung hergestellt...");
 			speichereKonto(konto);
+		}catch (AuthenticationFailedException e){
+			clearAll();
+			System.out.println("Startfenster_neuesKonto: Verbindung konnte nicht hergestellt werden, bitte ueberpruefen sie ihre Eingaben");
 		} catch (JDOMException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}	
-
+		}
 		Mailuebersicht.init(konto);
+
 	}
 
 	public static void speichereKonto(Konto k) throws JDOMException, IOException{
@@ -202,6 +216,7 @@ public class Startfenster{
 	        outp.output( doc, new FileOutputStream(inXML));
 		}
 		catch(Exception e){
+			clearAll();
 			System.out.println(e);
 			System.out.println("Fehler beim schreiben eines neuen Kontos");
 		}
@@ -244,18 +259,44 @@ public class Startfenster{
 	}
 
 	public static void kontoWaehlen(){
+		clearAll();
 		System.out.println("Sie koennen aus folgenden Konten auswaehlen: ");
+		System.out.println("0: abbrechen");
 		for(int i = 0; i  < konten.size(); i++){
 			System.out.println(i+1 + ": " + konten.get(i).getName() + "\t" + konten.get(i).getAdress());
 		}
-		int i =Integer.parseInt(sc.nextLine());
-		Konto konto=konten.get(i-1);
-		System.out.println("Bitte geben Sie Ihr Passwort ein.");
-		konto.setPassword(sc.nextLine());
-		Mailuebersicht.init(konto);
+		int i = -1;
+		while(i < 0 || i > konten.size()){
+			try{
+				i =Integer.parseInt(sc.nextLine());
+				if(i < 0 || i > konten.size()){
+					System.out.println("Falsche Eingabe, bitte geben sie einen gueltigen Befehl ein:");
+				}
+			}
+			catch(Exception e){
+				System.out.println("Falsche Eingabe, bitte geben sie einen gueltigen Befehl ein:");
+			}
+		}
+		if(i == 0){
+			clearAll();
+		}
+		else{
+			Konto konto=konten.get(i-1);
+			System.out.println("Bitte geben Sie Ihr Passwort ein.");
+			konto.setPassword(sc.nextLine());
+			Mailuebersicht.init(konto);
+		}
+
 	}
 
+
+	public static void clearAll(){
+		for(int i = 0; i < 41; i++){
+			System.out.println();
+		}
+	}
 	public static void verlassen(){
+		System.out.println("Auf Wiedersehen");
 		System.exit(1);
 	}
 }
