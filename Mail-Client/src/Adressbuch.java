@@ -36,12 +36,6 @@ public class Adressbuch {
 		//Anzeigen der Adressen
 		adressDat=new File(datName);
 		holeAdressen();
-		System.out.println("In Ihrem Adressbuch sind folgende Adressen enthalten");
-		for(int i=0;i<adressen.size()&&i<25;i++){
-			String tmp=adressen.get(i);
-			System.out.println(i+1+":"+tmp);
-		}
-		System.out.println("");
 		anzeigen();
 		auswaehlen();
 	}
@@ -82,9 +76,13 @@ public class Adressbuch {
 		System.out.println("");
 	}
 
+
+
 	public static void hinzufuegen(){
-		System.out.println("Bitte geben Sie den Namen und die Adresse ein, die Sie hinzufuegen moechten.");
+		System.out.println("Bitte geben Sie den Namen ein, den Sie hinzufuegen moechten.");
 		String name=sc.nextLine();
+
+		System.out.println("Bitte geben Sie nun die zugehörige Adresse ein.");
 		String adr=sc.nextLine();
 		Document doc = null;
 		if(!adressen.contains(adr)) {

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="apidocs">
+    <CLASSES />
+    <JAVADOC>
+      <root url="file://$USER_HOME$/workspace1/jdom/build/apidocs" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="file://$USER_HOME$/workspace1/jdom/package" />
+      <root url="file://$USER_HOME$/workspace1/jdom/samples" />
+      <root url="file://$USER_HOME$/workspace1/jdom/src/java" />
+    </SOURCES>
+  </library>
+</component>

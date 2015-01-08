@@ -57,10 +57,12 @@ public class Spamfilter {
 				break;
 			case 5: anzeigen();auswaehlen();
 				break;
+			default: System.out.println("Keine gueltige Eingabe, wählen Sie erneut:"); auswaehlen();
 		}
 	}
 
 	private static void anzeigen(){
+		System.out.println("");
 		if(0<adressen.size()) {
 			System.out.println("Folgende Mails haben Sie als Spam markiert.");
 			for (int i = 0; i < adressen.size(); i++) {
@@ -69,11 +71,12 @@ public class Spamfilter {
 		}else{
 			System.out.println("Sie haben noch keine Mails als Spam markiert.");
 		}
+		System.out.println("");
 	}
 
 	public static void hinzufuegen(){
 		System.out.println("Bitte geben Sie die Adresse ein, die Sie hinzufuegen wollen.");
-		String adresse=sc.nextLine(); //Bedingungen für die Adresse ergaenzen
+		String adresse=sc.nextLine();
 		adressen.add(adresse);
 		BufferedWriter fw;
 		try{
@@ -82,14 +85,23 @@ public class Spamfilter {
 			fw.newLine();
 			fw.close();
 		}catch(Exception e){
-			System.out.println("Der Spamfilter konnte nicht ge�ffnet werden.");
+			System.out.println("Der Spamfilter konnte nicht geoeffnet werden.");
 		}
 	}
 	
 	public static void loeschen(){
-		System.out.println("Bitte geben Sie die Nummer der Adresse ein, die Sie loeschen wollen.");
-		anzeigen();
-		int nummer=Integer.parseInt(sc.nextLine()); //Bedingungen für die Nummer ergaenzen
+		int nummer;
+		while(true) {
+			System.out.println("Bitte geben Sie die Nummer der Adresse ein, die Sie loeschen wollen.");
+			anzeigen();
+			nummer = Integer.parseInt(sc.nextLine()); //Bedingungen für die Nummer ergaenzen
+			if (nummer <= 0 || nummer > adressen.size()) {
+				System.out.println("Keine gültige Eingabe");
+			}
+			else
+				break;
+		}
+
 		adressen.remove(nummer-1);
 		try{
 			File kopie=new File("kopie.txt");
@@ -107,7 +119,6 @@ public class Spamfilter {
 			bw.close();
 			br.close();
 			String dest=output.getPath();
-			System.out.println(dest);
 			output.delete();
 			kopie.renameTo(new File(dest));
 		}catch(Exception e){
