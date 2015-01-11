@@ -95,10 +95,10 @@ public class OfflineMails {
                     }
                     break;
                 case 2:
-                    weiter(1);
+                    weiter();
                     break;
                 case 3:
-                    zurueck(-1);
+                    zurueck();
                     break;
                 case 4:
                     boo = false;
@@ -111,10 +111,15 @@ public class OfflineMails {
 
     public static void zeigeMail(){
         int eingabe = -1;
-        while (eingabe < 0 || eingabe > 25) {
+        if(mailList.size() < 1){
+            System.out.println("Es sins keine Mials gespeichert");
+            return;
+        }
+        System.out.println("Nummer auswaehlen: ");
+        while (eingabe < 0 || eingabe > mailList.size()) {
             try {
                 eingabe = Integer.parseInt(sc.nextLine());
-                if (eingabe < 0 || eingabe > 25) {
+                if (eingabe < 0 || eingabe > mailList.size()) {
                     System.out.println("Fehlerhafte Eingabe, bitte geben gueltigen Befehl eingeben:\n0: abbrechen");
                 }
             } catch (Exception e) {
@@ -145,16 +150,48 @@ public class OfflineMails {
 
 
 
-    private static void weiter(int i){
-        if(true){
-
+    private static void weiter(){
+        if(upper == mailList.size()){
+            System.out.println("keine weiteren Seiten vorhanden");
+            return;
         }
+        if(seite+1 <= mailList.size()/25){
+            seite +=1;
+            upper += 25;
+            lower += 25;
+            System.out.println(" Seiten vorhanden");
+            return;
+        }
+        if(seite + 1 > mailList.size()/25 +1){
+            seite +=1;
+            upper = mailList.size();
+            lower += 25;
+            System.out.println(" asdsd");
+            return;
+        }
+
+
     }
 
 
-    private static void zurueck(int i){
-        if(true){
-
+    private static void zurueck(){
+        if(lower == 1){
+            System.out.println("dies ist die aktuellste Seite");
+            return;
+        }
+        if(lower - 25 >= 1){
+            if(upper % 25 == 0){
+                lower -=25;
+                upper -=25;
+                seite -= 1;
+                return;
+            }
+            else{
+                lower -= 25;
+                seite -= 1;
+                upper = seite * 25;
+                return;
+            }
         }
     }
 }
