@@ -9,6 +9,7 @@ import javax.mail.internet.*;
 import org.jdom.*;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.*;
+import sun.awt.Mutex;
 
 import java.net.ConnectException;
 import java.util.Properties;
@@ -16,6 +17,7 @@ import java.util.Properties;
 
 import java.util.Scanner;
 import java.util.concurrent.Exchanger;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -34,6 +36,10 @@ public class Mailuebersicht {
 	public static Konto konto;
 	private static ArrayList<String> kommandoliste;
 	private static Scanner sc;
+	private static int  messageCounter;
+
+	private static ReentrantLock muhtex;
+
 
  	private static void holeMails(String met)throws AuthenticationFailedException{
 		//Die folgenden Zeilen vllt auch lieber in ein Methode (wie bei getSession nur halt für pop3)
@@ -53,6 +59,17 @@ public class Mailuebersicht {
 			store.connect(konto.getAdress(),konto.getPassword()); // --> authentication failed exception
 
 			Folder inboxfolder=store.getDefaultFolder().getFolder("INBOX");
+
+
+
+			//--->noch nicht getestet worden!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			if(messageCounter == inboxfolder.getMessageCount() && met.equals("aktualisieren")){
+				inboxfolder.close(false);
+				inboxfolder.getStore().close();
+				return;//--> wenn sich die anzahl der mails nicht verändert hat werden keine neuen mails geholt
+			}
+			messageCounter = inboxfolder.getMessageCount();
+
 			inboxfolder.open(Folder.READ_ONLY);
 			Message[] msg=null;
 			if(met.equals("naechste")) {
@@ -167,6 +184,10 @@ public class Mailuebersicht {
 	}
 	public static void init(Konto k){
 		//Initialisierung der Attribute
+
+		muhtex= new ReentrantLock();
+	 	messageCounter = 0;
+
 		sc=Startfenster.sc;
 		kommandoliste=new ArrayList<String>();
 		konto=k;
@@ -273,6 +294,8 @@ public class Mailuebersicht {
 	}
 
 	private static void auswaehlen() {
+		Thread t = new Thread(new loopThread());
+		t.start();
 		while(true){
 			kommandos();
 			int eingabe=-1;
@@ -281,15 +304,15 @@ public class Mailuebersicht {
 			}catch(NumberFormatException e){
 				System.out.println("Ungueltige Eingabe.");
 			}
-
+			muhtex.lock();
 			switch(eingabe){
-				case 1: kommandos();;
+				case 1: kommandos();
 					break;
 				case 2: return;
 
-				case 3: naechste();;
+				case 3: naechste();
 					break;
-				case 4: vorherige();;
+				case 4: vorherige();
 					break;
 				case 5: try {
 					verfassen();
@@ -297,9 +320,11 @@ public class Mailuebersicht {
 					e.printStackTrace();
 				}
 					break;
-				case 6: loeschen(); return;
+				case 6:
+					loeschen(); return;
 
-				case 7: anzeigen();
+				case 7:
+					anzeigen();
 					break;
 				case 8: seite();
 					break;
@@ -314,6 +339,7 @@ public class Mailuebersicht {
 				case 13: aendern();
 					break;
 			}
+			muhtex.unlock();
 		}
 	}
 	public static ArrayList<Mail> getMails() {
@@ -443,7 +469,7 @@ public class Mailuebersicht {
 				System.out.println("Die Mails konnten nicht aktualisiert werden");
 			}
 		}else{
-			System.out.println("Ihre Mails sind bereits die aktuellsten");
+			System.out.println("Ihre Mails sind bereits die Aktuellsten");
 		}
 	}
 
@@ -560,6 +586,7 @@ public class Mailuebersicht {
 		}
 	}
 	private static void loeschen(int i){
+
 		Document doc = null;
 		try {
 			// Das Dokument erstellen
@@ -678,4 +705,24 @@ public class Mailuebersicht {
 	}
 
 
+
+
+	private static class loopThread implements Runnable{
+		public void run(){
+			while(true){
+				try {
+					Thread.sleep((long)konto.getRefRate()*1000);
+					if(muhtex.isLocked()){
+						holeMails("aktualisieren");
+					}
+					else {
+						aktualisieren();
+					}
+
+				} catch (Exception e) {
+					System.out.println("Thread Probleme...");
+				}
+			}
+		}
+	}
 }
