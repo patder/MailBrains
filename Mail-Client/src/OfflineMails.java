@@ -12,7 +12,7 @@ import java.util.Scanner;
  * Created by Patrick on 08.01.2015.
  */
 public class OfflineMails {
-    private static ArrayList <Mail> mailList = new ArrayList<Mail>();
+    private static ArrayList <Mail>mailList;
     private static ArrayList<String> kommandoliste;
     private static Scanner sc;
     private static int seite = 1;
@@ -20,9 +20,11 @@ public class OfflineMails {
     private static int lower = 1;
 
     public static void initOffline(String mailAdresse){
+        mailAdresse = mailAdresse.replace('@', 'p');
         Document doc = null;
         sc=Startfenster.sc;
         kommandoliste=new ArrayList<String>();
+        mailList = new ArrayList<Mail>();
 
         try {
             //TODO XMLoutputter benutzen
@@ -61,7 +63,7 @@ public class OfflineMails {
         auswaehlen();
     }
 
-    public static void auswaehlen(){
+    private static void auswaehlen(){
         for (int i = lower-1; i < upper; i++) {
             Mail tmp = mailList.get(i);
             System.out.println(i + 1 + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
@@ -110,7 +112,7 @@ public class OfflineMails {
 
 
 
-    public static void zeigeMail(){
+    private static void zeigeMail(){
         int eingabe = -1;
         if(mailList.size() < 1){
             System.out.println("Es sins keine Mails gespeichert.");

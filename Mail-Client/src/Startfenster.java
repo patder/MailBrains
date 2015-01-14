@@ -96,7 +96,7 @@ public class Startfenster{
 		auswaehlen();
 	}
 
-	public static void auswaehlen() {
+	private static void auswaehlen() {
 		while(true){
 			holeKonten();
 			System.out.println("Sie haben die Moeglichkeit folgende Kommandos einzugeben: ");
@@ -136,7 +136,7 @@ public class Startfenster{
 		//Warum nicht statt dem auswaehlen endlosschleife drum herum??!
 	}
 
-	public static void kommandos() {
+	private static void kommandos() {
 		System.out.println("Sie haben die Moeglichkeit folgende Kommandos einzugeben: ");
 		for (int i = 1; i < kommandoliste.size(); i++) {
 			System.out.print(i+": "+kommandoliste.get(i-1)+"\n");
@@ -192,7 +192,7 @@ public class Startfenster{
 
 	}
 
-	public static void speichereKonto(Konto k) throws JDOMException, IOException{
+	private static void speichereKonto(Konto k) throws JDOMException, IOException{
 		try{
 			Document doc = null;
 	        SAXBuilder builder = new SAXBuilder();
@@ -258,7 +258,7 @@ public class Startfenster{
         }
 	}
 
-	public static void kontoWaehlen(){
+	private static void kontoWaehlen(){
 		clearAll();
 		System.out.println("Sie koennen aus folgenden Konten auswaehlen: ");
 		System.out.println("0: abbrechen");
@@ -286,7 +286,7 @@ public class Startfenster{
 			String st = sc.nextLine();
 			if(st.equals("")){
 				clearAll();
-				OfflineMails.initOffline(konto.getAdress().replace('@', 'p'));
+				OfflineMails.initOffline(konto.getAdress());
 				clearAll();
 				return;
 			}
@@ -298,11 +298,11 @@ public class Startfenster{
 
 
 	public static void clearAll(){
-		for(int i = 0; i < 41; i++){
+		for(int i = 0; i < 53; i++){
 			System.out.println();
 		}
 	}
-	public static void verlassen(){
+	private static void verlassen(){
 		System.out.println("Auf Wiedersehen");
 		System.exit(1);
 	}
