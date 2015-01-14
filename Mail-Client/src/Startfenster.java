@@ -17,8 +17,13 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter; 
+import org.jdom.output.XMLOutputter;
 
+/**
+ * Die Klasse Startfenster repräsentiert die Ansicht, in die man kommt, sobald das Programm gestartet wird.
+ * Man kann ein neues Konto anlegen, ein bereits gespeichertes Konto auswaehlen, sich die Kommandos anzeigen lassen, sowie das Programm beenden.
+ * Außerdem kann man sich seine offline-Mails anzeigen lassen.
+ */
 public class Startfenster{
 
 	static ArrayList<Konto> konten;
