@@ -108,11 +108,11 @@ public class Startfenster{
 				try{
 					eingabe=Integer.parseInt(sc.nextLine());
 					if(eingabe < 1 || eingabe > 4){
-						System.out.println("Fehlerhafte Eingabe, bitte geben gueltigen Befehl eingaben:");
+						System.out.println("Fehlerhafte Eingabe, bitte geben gueltigen Befehl eingeben:");
 					}
 				}
 				catch(Exception e){
-					System.out.println("Fehlerhafte Eingabe, bitte geben gueltigen Befehl eingaben:");
+					System.out.println("Fehlerhafte Eingabe, bitte geben gueltigen Befehl eingeben:");
 				}
 
 			}//schleife zur sicheren Befehlseingabe
@@ -282,8 +282,15 @@ public class Startfenster{
 		}
 		else{
 			Konto konto=konten.get(i-1);
-			System.out.println("Bitte geben Sie Ihr Passwort ein.");
-			konto.setPassword(sc.nextLine());
+			System.out.println("\nEinloggen: Passowrt eingeben\nOfflinemails anzeigen: ohne Eingabe bestätigen");
+			String st = sc.nextLine();
+			if(st.equals("")){
+				clearAll();
+				OfflineMails.initOffline(konto.getAdress().replace('@', 'p'));
+				clearAll();
+				return;
+			}
+			konto.setPassword(st);
 			Mailuebersicht.init(konto);
 		}
 

@@ -35,7 +35,7 @@ public class Mailuebersicht {
 	private static ArrayList<String> kommandoliste;
 	private static Scanner sc;
 
-	private static void holeMails()throws AuthenticationFailedException{
+	private static void holeMails(String met)throws AuthenticationFailedException{
 		//Die folgenden Zeilen vllt auch lieber in ein Methode (wie bei getSession nur halt für pop3)
 		Properties props = System.getProperties();
 		props.setProperty("mail.pop3.host", konto.getPop3Server());
@@ -54,10 +54,36 @@ public class Mailuebersicht {
 
 			Folder inboxfolder=store.getDefaultFolder().getFolder("INBOX");
 			inboxfolder.open(Folder.READ_ONLY);
-			Message [] msg=inboxfolder.getMessages();
+			Message[] msg=null;
+			if(met.equals("naechste")) {
+				int bis=inboxfolder.getMessageCount()-(aktuelleSeite-1)*25;
+				int von=inboxfolder.getMessageCount()-(aktuelleSeite-1)*25-24;
+				if(von!=inboxfolder.getMessageCount()&&bis<inboxfolder.getMessageCount()&&von>0){
+					msg = inboxfolder.getMessages(von, bis);
+				}else{
+					msg = inboxfolder.getMessages(von, inboxfolder.getMessageCount());
+				}
+			}else if(met.equals("vorherige")){
+				int von=inboxfolder.getMessageCount()-(aktuelleSeite-2)*25-24;
+				int bis=inboxfolder.getMessageCount()-(aktuelleSeite-2)*25;
+				if(von!=inboxfolder.getMessageCount()&&bis<inboxfolder.getMessageCount()&&von>0){
+					msg = inboxfolder.getMessages(von, bis);
+				}else{
+					msg = inboxfolder.getMessages(von, inboxfolder.getMessageCount());
+				}
+			}else if(met.equals("aktualisieren")) {
+				int bis=inboxfolder.getMessageCount()-(aktuelleSeite-1)*25;
+				int von=inboxfolder.getMessageCount()-(aktuelleSeite-1)*25-24;
+				if(bis>0&&von>0){
+					msg = inboxfolder.getMessages(von, bis);
+				}
+			}else{
+				System.out.println("Es werden bereits die aeltesten Mails angezeigt");
+				return;
+			}
 
 			//Einlesen in die Arraylist mails (ist Attribut dieser Klasse)
-			for(int i=0;i<msg.length;i++){
+			for(int i=msg.length-1;i>=0;i--){
 				try {
 					//Empfangsdatum von Typ Date zu String
 					DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
@@ -65,32 +91,25 @@ public class Mailuebersicht {
 					String reportDate = df.format(d);
 
 					//Wie mit Mulitpart Nachrichten umgehen?
-						if ( msg[i].isMimeType( "multipart/*" ) ) {
-							Multipart mp = (Multipart) msg[i].getContent();
-							if (mp.getCount() > 1) {
-								Part part = mp.getBodyPart(0);
-							}
-
-							// Laufe über alle Teile (Anhänge)
-							String inhalt="";
-							Part part = mp.getBodyPart(0);
-							String disp = part.getDisposition();
-							if (disp == null || disp.equalsIgnoreCase(Part.ATTACHMENT)) {
-								MimeBodyPart mimePart = (MimeBodyPart) part;
-								if (mimePart.isMimeType("text/xml")) {
-									inhalt+=String.valueOf(msg[i].getContent());
-								}
-								else{
-									inhalt+="Multipart Nachricht. Anzeigen des Inhalts nicht moeglich.";
-								}
-								Mail m = new Mail(msg[i].getFrom()[0].toString(), msg[i].getSubject(), inhalt, reportDate);
-								mails.add(m);
-							}
+					if ( msg[i].isMimeType( "multipart/*" ) ) {
+						Multipart mp = (Multipart) msg[i].getContent();
+						String inhalt="";
+						Part part = mp.getBodyPart(0);
+						String disp = part.getDisposition();
+						MimeBodyPart mimePart = (MimeBodyPart) part;
+						if (mimePart.isMimeType("text/xml")) {
+							inhalt+=String.valueOf(msg[i].getContent());
 						}
 						else{
-							Mail m = new Mail(msg[i].getFrom()[0].toString(), msg[i].getSubject(), String.valueOf(msg[i].getContent()), reportDate);
-							mails.add(m);
+							inhalt+="Multipart Nachricht. Anzeigen des Inhalts nicht moeglich.";
 						}
+						Mail m = new Mail(msg[i].getFrom()[0].toString(), msg[i].getSubject(), inhalt, reportDate);
+						mails.add(m);
+					}
+					else{
+						Mail m = new Mail(msg[i].getFrom()[0].toString(), msg[i].getSubject(), String.valueOf(msg[i].getContent()), reportDate);
+						mails.add(m);
+					}
 				}catch(Exception e){
 					System.out.println("Der Content der Mail verursacht IO Probleme.");
 				}
@@ -196,8 +215,8 @@ public class Mailuebersicht {
 
 		//Mails vom Server holen
 		try {
-			holeMails();
-			for(int i=0;i<mails.size()&&i<25;i++) {
+			holeMails("aktualisieren");
+			for(int i=0;i<mails.size();i++) {
 				Mail tmp = mails.get(i);
 				System.out.println(i+1 + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
 			}
@@ -321,33 +340,43 @@ public class Mailuebersicht {
 	}
 
 	public static void naechste(){
-		if(aktuelleSeite!=0&&aktuelleSeite>=mails.size()) {
-			for (int i = (aktuelleSeite - 1) * 25; i < mails.size() && i < i + 25; i++) {
+		aktuelleSeite++;
+		try {
+			mails.clear();
+			holeMails("naechste");
+			for (int i =0; i < mails.size(); i++) {
 				Mail tmp = mails.get(i);
-				System.out.println(i + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
+				System.out.println(i+1 + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
 			}
-			aktuelleSeite++;
-		}else{
-			System.out.println("Die angezeigten Mails sind bereits die aeltesten.\n");
+			System.out.println("");
+		}catch(Exception e){
+			System.out.println("Die Mails konnten nicht aktualisiert werden");
+			aktuelleSeite--;
 		}
 	}
 
 	public static void vorherige(){
-		if(aktuelleSeite!=0&&aktuelleSeite>=mails.size()) {
-			for (int i = aktuelleSeite * 25; i < mails.size() && i < i + 25; i++) {
-				Mail tmp = mails.get(i);
-				System.out.println(i + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
+		if(aktuelleSeite!=1) {
+			try {
+				mails.clear();
+				holeMails("vorherige");
+				aktuelleSeite--;
+				for (int i = 0; i < mails.size(); i++) {
+					Mail tmp = mails.get(i);
+					System.out.println(i+1 + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
+				}
+			} catch (Exception e) {
+				System.out.println("Die Mails konnten nicht aktualisiert werden");
 			}
-			aktuelleSeite--;
 		}else{
-			System.out.println("Die angezeigten Mails sind bereits die aktuellsten.\n");
+			System.out.println("Ihre Mails sind bereits die aktuellsten");
 		}
 	}
 
 	public static void aktualisieren(){
 		try {
 			mails.clear();
-			holeMails();
+			holeMails("aktualisieren"); //funnktioniert das so?
 		}catch(Exception e){
 			System.out.println("Die Mails konnten nicht aktualisiert werden");
 		}
@@ -355,21 +384,21 @@ public class Mailuebersicht {
 
 	public static Session getSession(){
 		Properties properties = System.getProperties();
-        properties.setProperty("mail.smtp.host", konto.getSmtpServer());
-        properties.setProperty("mail.smtp.port", String.valueOf(konto.getPort()));
-        properties.setProperty("mail.smtp.auth", "true");
+		properties.setProperty("mail.smtp.host", konto.getSmtpServer());
+		properties.setProperty("mail.smtp.port", String.valueOf(konto.getPort()));
+		properties.setProperty("mail.smtp.auth", "true");
 
-        properties.put("mail.smtp.starttls.enable", "true");
+		properties.put("mail.smtp.starttls.enable", "true");
 
-        // session erstellen
-        Session session = Session.getDefaultInstance(properties, konto.getPasswordAuthentication());
+		// session erstellen
+		Session session = Session.getDefaultInstance(properties, konto.getPasswordAuthentication());
 		return session;
 	}
 
 	public static void verfassen() throws AddressException, MessagingException
-    {
+	{
 		Session session=getSession();
-        // nachricht erzeugen
+		// nachricht erzeugen
 
 		System.out.println("Empfaenger:");
 		String empfaenger=sc.nextLine();
@@ -378,19 +407,19 @@ public class Mailuebersicht {
 		System.out.println("Nachricht:");
 		String text=sc.nextLine(); // wenn man hier nur next macht kommt ne fehlermeldung beim int parsen in der methode auswaehlen, wie können wir das hier aber trz aendern
 
-        MimeMessage msg = new MimeMessage(session);
-        msg.setFrom(new InternetAddress(konto.getAdress()));
-        msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(empfaenger, false));
+		MimeMessage msg = new MimeMessage(session);
+		msg.setFrom(new InternetAddress(konto.getAdress()));
+		msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(empfaenger, false));
 
-        // Betreff
-        msg.setSubject(betreff);
+		// Betreff
+		msg.setSubject(betreff);
 
-        // Nachricht
-        msg.setText(text);
+		// Nachricht
+		msg.setText(text);
 
-        // E-Mail versenden
-        Transport.send(msg);
-    }
+		// E-Mail versenden
+		Transport.send(msg);
+	}
 
 	public static void ausloggen(){
 		// absichtlich leer
@@ -428,17 +457,17 @@ public class Mailuebersicht {
 		sc.close();
 		Document doc = null;
 		try {
-            // Das Dokument erstellen
-            SAXBuilder builder = new SAXBuilder();
-            doc = builder.build(Startfenster.inXML);
+			// Das Dokument erstellen
+			SAXBuilder builder = new SAXBuilder();
+			doc = builder.build(Startfenster.inXML);
 
-            // Wurzelelement wird auf root gesetzt
-            Element root = doc.getRootElement();
-            List children = root.getChildren();
-            root.removeContent(((Element)children.get(i-1)));
-	        XMLOutputter outp = new XMLOutputter();
-	        outp.setFormat( Format.getPrettyFormat() );
-	        outp.output( doc, new FileOutputStream(Startfenster.datName));
+			// Wurzelelement wird auf root gesetzt
+			Element root = doc.getRootElement();
+			List children = root.getChildren();
+			root.removeContent(((Element)children.get(i-1)));
+			XMLOutputter outp = new XMLOutputter();
+			outp.setFormat( Format.getPrettyFormat() );
+			outp.output( doc, new FileOutputStream(Startfenster.datName));
 		}
 		catch(Exception e){
 			System.out.println("Fehler beim loeschen von Konto");
@@ -447,17 +476,17 @@ public class Mailuebersicht {
 	public static void loeschen(int i){
 		Document doc = null;
 		try {
-            // Das Dokument erstellen
-            SAXBuilder builder = new SAXBuilder();
-            doc = builder.build(Startfenster.inXML);
+			// Das Dokument erstellen
+			SAXBuilder builder = new SAXBuilder();
+			doc = builder.build(Startfenster.inXML);
 
-            // Wurzelelement wird auf root gesetzt
-            Element root = doc.getRootElement();
-            List children = root.getChildren();
-            root.removeContent(((Element)children.get(i-1)));
-	        XMLOutputter outp = new XMLOutputter();
-	        outp.setFormat( Format.getPrettyFormat() );
-	        outp.output( doc, new FileOutputStream(Startfenster.datName));
+			// Wurzelelement wird auf root gesetzt
+			Element root = doc.getRootElement();
+			List children = root.getChildren();
+			root.removeContent(((Element)children.get(i-1)));
+			XMLOutputter outp = new XMLOutputter();
+			outp.setFormat( Format.getPrettyFormat() );
+			outp.output( doc, new FileOutputStream(Startfenster.datName));
 		}
 		catch(Exception e){
 			System.out.println("Fehler beim loeschen von Konto");
@@ -537,33 +566,33 @@ public class Mailuebersicht {
 			//Liste aller vorhandenen Mailkonten als Elemente
 			String st = Startfenster.konten.get(i-1).getAdress().replace('@', 'p');
 
-            Konto neuesKonto = new Konto(Startfenster.konten.get(nr-1).getName(), Startfenster.konten.get(nr-1).getAdress(), Startfenster.konten.get(nr-1).getServer(), Startfenster.konten.get(nr-1).getSmtpServer(), Startfenster.konten.get(nr-1).getPop3Server(),  Startfenster.konten.get(nr-1).getPort(), Startfenster.konten.get(nr-1).getProtocol(), Startfenster.konten.get(nr-1).getRefRate());
-            switch(i){
+			Konto neuesKonto = new Konto(Startfenster.konten.get(nr-1).getName(), Startfenster.konten.get(nr-1).getAdress(), Startfenster.konten.get(nr-1).getServer(), Startfenster.konten.get(nr-1).getSmtpServer(), Startfenster.konten.get(nr-1).getPop3Server(),  Startfenster.konten.get(nr-1).getPort(), Startfenster.konten.get(nr-1).getProtocol(), Startfenster.konten.get(nr-1).getRefRate());
+			switch(i){
 				case 1:		konto.setName(neu);
-							neuesKonto.setName(neu);
-							break;
+					neuesKonto.setName(neu);
+					break;
 				case 2:		konto.setServer(neu);
-							neuesKonto.setAdress(neu);
-							break;
+					neuesKonto.setAdress(neu);
+					break;
 				case 3:		konto.setSmtpServer(neu);
-							neuesKonto.setServer(neu);
-							break;
+					neuesKonto.setServer(neu);
+					break;
 				case 4:		konto.setSmtpServer(neu);
-							neuesKonto.setSmtpServer(neu);
-							break;
+					neuesKonto.setSmtpServer(neu);
+					break;
 				case 5:		konto.setProtocol(neu);
-							neuesKonto.setProtocol(neu);
-							break;
+					neuesKonto.setProtocol(neu);
+					break;
 				case 6:		konto.setPort(port);
-							neuesKonto.setPort(port);
-							break;
+					neuesKonto.setPort(port);
+					break;
 				case 7:		konto.setRefRate(ref);
-							neuesKonto.setRefRate(ref);
-							break;
+					neuesKonto.setRefRate(ref);
+					break;
 				default:	break;
-            }
-	        loeschen(nr);
-	        Startfenster.speichereKonto(neuesKonto);
+			}
+			loeschen(nr);
+			Startfenster.speichereKonto(neuesKonto);
 
 		}
 		catch(Exception e){
