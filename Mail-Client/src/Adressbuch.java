@@ -10,6 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Das Adressbuch realisiert die Ansicht in der man Kontakte speichern kann.
+ * Es ist außerdem moeglich, Kontakte zu loeschen oder zu aendern,
+ * sich die bereits gespeichtern Kontakte anzeigen zu lassen,
+ * sich die moeglichen Kommandos anzeigen zu lassen und in
+ * die vorherige Ansicht zurueckzukehren.
+ */
 public class Adressbuch {
 
 	//enthaelt alle Adressen des aktuellen Kontos
@@ -19,6 +26,14 @@ public class Adressbuch {
 	private static Konto konto;
 	private static Scanner sc;
 	public static String datName="adressbuch.xml";
+
+	/**
+	 * Die Methode init wird aufgerufen, wenn man in die Startfenster-Ansicht gelangen will.
+	 * Die Klassenattribute werden mit Werten belegt.
+	 * Dafür werden u.a. die Adressen aus der XML-Datei eingelesen.
+	 * Die bereits gespeicherten Adressen werden einmal ausgegeben.
+	 * @param k
+	 */
 	public static void init(Konto k){
 		sc=Startfenster.sc;
 		konto=k;
@@ -36,12 +51,6 @@ public class Adressbuch {
 		//Anzeigen der Adressen
 		adressDat=new File(datName);
 		holeAdressen();
-		System.out.println("In Ihrem Adressbuch sind folgende Adressen enthalten");
-		for(int i=0;i<adressen.size()&&i<25;i++){
-			String tmp=adressen.get(i);
-			System.out.println(i+1+":"+tmp);
-		}
-		System.out.println("");
 		anzeigen();
 		auswaehlen();
 	}
