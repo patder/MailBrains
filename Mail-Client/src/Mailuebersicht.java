@@ -524,20 +524,21 @@ public class Mailuebersicht {
 	}
 
 	public static void loeschen(){
-		System.out.println("Was wollen Sie loeschen?");
 		int i = -1;
-		try{
-			i = sc.nextInt();
-			if(i > Startfenster.konten.size() || i < 1){
-				sc.close();
-				throw new Exception();
+		while(true){
+			System.out.println("Sind Sie sicher das sie dieses Konto loeschen wollen? (0)ja, (1)nein");
+
+			try{
+				i = sc.nextInt();
+				if(!(i == 1 || i == 0)){
+					throw new Exception();
+				}
+			}
+			catch(Exception e){
+				System.out.println("Ungueltige Eingabe");
 			}
 		}
-		catch(Exception e){
-			System.out.println("Ungueltige Eingabe");
-			return;
-		}
-		sc.close();
+
 		Document doc = null;
 		try {
 			// Das Dokument erstellen

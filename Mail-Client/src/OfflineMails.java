@@ -24,9 +24,8 @@ public class OfflineMails {
 
 
     /**
-     * InitOffline initializes the offlinemail-view, in which the user can see his saved offlinemails.
-     * You can switch between the pages, which show max. 25 mails at once.
-     * @param mailAdresse mailadress which ownes the mails that will be shown
+     * initOffline initialisiert die Offlineansicht in der man seine offline gespeicherten Mails ansehen kann
+     * @param mailAdresse die Mailadresse von der die gespeicherten Mails angezeigt werden sollen
      */
     public static void initOffline(String mailAdresse){
         mailAdresse = mailAdresse.replace('@', 'p');
