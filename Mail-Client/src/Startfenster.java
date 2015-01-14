@@ -282,7 +282,7 @@ public class Startfenster{
 		}
 		else{
 			Konto konto=konten.get(i-1);
-			System.out.println("\nEinloggen: Passowrt eingeben\nOfflinemails anzeigen: ohne Eingabe bestätigen");
+			System.out.println("\nEinloggen: Passwort eingeben\nOfflinemails anzeigen: ohne Eingabe bestätigen");
 			String st = sc.nextLine();
 			if(st.equals("")){
 				clearAll();
