@@ -13,12 +13,12 @@ import java.util.Scanner;
 public class Adressbuch {
 
 	//enthaelt alle Adressen des aktuellen Kontos
-	public static ArrayList<String> adressen;
-	public static File adressDat;
+	private static ArrayList<String> adressen;
+	private static File adressDat;
 	private static ArrayList<String> kommandoliste;
 	private static Konto konto;
 	private static Scanner sc;
-	public static String datName="adressbuch.xml";
+	private static String datName="adressbuch.xml";
 	public static void init(Konto k){
 		sc=Startfenster.sc;
 		konto=k;
