@@ -42,7 +42,7 @@ public class Spamfilter {
 		}
 	}
 
-	public static void auswaehlen() {
+	private static void auswaehlen() {
 		System.out.println("Wählen Sie durch Eingabe der jeweiligen Zahl über die Tastatur den gewünschten Menüpunkt");
 		kommandos();
 		int eingabe=Integer.parseInt(sc.nextLine());
@@ -71,7 +71,7 @@ public class Spamfilter {
 		}
 	}
 
-	public static void hinzufuegen(){
+	private static void hinzufuegen(){
 		System.out.println("Bitte geben Sie die Adresse ein, die Sie hinzufuegen wollen.");
 		String adresse=sc.nextLine(); //Bedingungen für die Adresse ergaenzen
 		adressen.add(adresse);
@@ -85,8 +85,8 @@ public class Spamfilter {
 			System.out.println("Der Spamfilter konnte nicht ge�ffnet werden.");
 		}
 	}
-	
-	public static void loeschen(){
+
+	private static void loeschen(){
 		System.out.println("Bitte geben Sie die Nummer der Adresse ein, die Sie loeschen wollen.");
 		anzeigen();
 		int nummer=Integer.parseInt(sc.nextLine()); //Bedingungen für die Nummer ergaenzen
@@ -114,23 +114,23 @@ public class Spamfilter {
 			System.out.println(e.getMessage()+"Der Spamfilter konnte nicht geoeffnet werden.");
 		}
 	}
-	
-	public ArrayList<String> getAdressen() {
+
+	private ArrayList<String> getAdressen() {
 		return adressen;
 	}
 
-	public  void setAdressen(ArrayList<String> adressen) {
+	private  void setAdressen(ArrayList<String> adressen) {
 		this.adressen = adressen;
 	}
 
-	public static void kommandos() {
+	private static void kommandos() {
 		System.out.println("Sie haben die Moeglichkeit folgende Kommandos einzugeben: ");
 		for (int i = 0; i < kommandoliste.size(); i++) {
 			System.out.print(i+1+": "+kommandoliste.get(i)+"\n");
 		}
 	}
 
-	public static void zurueck(){
+	private static void zurueck(){
 		//absichtlich leer
 	}
 }
