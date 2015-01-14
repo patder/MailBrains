@@ -34,6 +34,7 @@ public class Mailuebersicht {
 	public static Konto konto;
 	private static ArrayList<String> kommandoliste;
 	private static Scanner sc;
+	private static int anzahlMails;
 
  	private static void holeMails(String met)throws AuthenticationFailedException{
 		//Die folgenden Zeilen vllt auch lieber in ein Methode (wie bei getSession nur halt für pop3)
@@ -54,6 +55,7 @@ public class Mailuebersicht {
 
 			Folder inboxfolder=store.getDefaultFolder().getFolder("INBOX");
 			inboxfolder.open(Folder.READ_ONLY);
+			anzahlMails=inboxfolder.getMessageCount();
 			Message[] msg=null;
 			if(met.equals("naechste")) {
 				int bis=inboxfolder.getMessageCount()-(aktuelleSeite-1)*25;
@@ -256,15 +258,7 @@ public class Mailuebersicht {
 		//Mails vom Server holen
 		try {
 			holeMails("aktualisieren");
-			for(int i=0;i<mails.size();i++) {
-				Mail tmp = mails.get(i);
-				if(tmp.getOffline()==true) {
-					System.out.println(i + 1 + "\tX\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
-				}else{
-					System.out.println(i + 1 + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
-				}
-			}
-			System.out.println("");
+			alle();
 			auswaehlen();
 		}catch(AuthenticationFailedException e){
 			System.out.println("Das eingebene Passwort ist falsch!");
@@ -272,6 +266,18 @@ public class Mailuebersicht {
 		}
 	}
 
+	public static void alle(){
+		for(int i=0;i<mails.size();i++) {
+			Mail tmp = mails.get(i);
+			if(tmp.getOffline()==true) {
+				System.out.println(i + 1 + "\tX\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
+			}else{
+				System.out.println(i + 1 + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
+			}
+		}
+		System.out.println("");
+		System.out.println("Mailanzahl: "+anzahlMails+" Seitenanzahl: "+new Double(Math.ceil(anzahlMails/25)).intValue()+" aktuelle Seite: "+aktuelleSeite);
+	}
 	private static void auswaehlen() {
 		while(true){
 			kommandos();

@@ -111,7 +111,7 @@ public class Startfenster{
 	private static void auswaehlen() {
 		while(true){
 			holeKonten();
-			System.out.println("Wir heißen Sie herzlich Willkommen im Mailprogramm MailBrains.© /nSie haben die Moeglichkeit folgende Kommandos einzugeben: ");
+			System.out.println("Wir heißen Sie herzlich Willkommen im Mailprogramm MailBrains.© \nSie haben die Moeglichkeit folgende Kommandos einzugeben: ");
 			for (int i = 1; i <= kommandoliste.size(); i++) {
 				System.out.print(i+": "+kommandoliste.get(i-1)+"\n");
 			}
