@@ -9,7 +9,6 @@ import javax.mail.internet.*;
 import org.jdom.*;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.*;
-import sun.awt.Mutex;
 
 import java.net.ConnectException;
 import java.util.Properties;
@@ -37,6 +36,7 @@ public class Mailuebersicht {
 	private static ArrayList<String> kommandoliste;
 	private static Scanner sc;
 	private static int  messageCounter;
+	private static int anzahlMails;
 
 	private static ReentrantLock muhtex;
 
@@ -59,9 +59,13 @@ public class Mailuebersicht {
 			store.connect(konto.getAdress(),konto.getPassword()); // --> authentication failed exception
 
 			Folder inboxfolder=store.getDefaultFolder().getFolder("INBOX");
+			
 
 
-
+			inboxfolder.open(Folder.READ_ONLY);
+			anzahlMails=inboxfolder.getMessageCount();
+			
+			
 			//--->noch nicht getestet worden!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			if(messageCounter == inboxfolder.getMessageCount() && met.equals("aktualisieren")){
 				inboxfolder.close(false);
@@ -70,7 +74,8 @@ public class Mailuebersicht {
 			}
 			messageCounter = inboxfolder.getMessageCount();
 
-			inboxfolder.open(Folder.READ_ONLY);
+			
+			
 			Message[] msg=null;
 			if(met.equals("naechste")) {
 				int bis=inboxfolder.getMessageCount()-(aktuelleSeite-1)*25;
@@ -277,15 +282,7 @@ public class Mailuebersicht {
 		//Mails vom Server holen
 		try {
 			holeMails("aktualisieren");
-			for(int i=0;i<mails.size();i++) {
-				Mail tmp = mails.get(i);
-				if(tmp.getOffline()==true) {
-					System.out.println(i + 1 + "\tX\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
-				}else{
-					System.out.println(i + 1 + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
-				}
-			}
-			System.out.println("");
+			alle();
 			auswaehlen();
 		}catch(AuthenticationFailedException e){
 			System.out.println("Das eingebene Passwort ist falsch!");
@@ -293,6 +290,18 @@ public class Mailuebersicht {
 		}
 	}
 
+	public static void alle(){
+		for(int i=0;i<mails.size();i++) {
+			Mail tmp = mails.get(i);
+			if(tmp.getOffline()==true) {
+				System.out.println(i + 1 + "\tX\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
+			}else{
+				System.out.println(i + 1 + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
+			}
+		}
+		System.out.println("");
+		System.out.println("Mailanzahl: "+anzahlMails+" Seitenanzahl: "+new Double(Math.ceil(anzahlMails/25)).intValue()+" aktuelle Seite: "+aktuelleSeite);
+	}
 	private static void auswaehlen() {
 		Thread t = new Thread(new loopThread());
 		t.start();
@@ -320,11 +329,9 @@ public class Mailuebersicht {
 					e.printStackTrace();
 				}
 					break;
-				case 6:
-					loeschen(); return;
+				case 6: loeschen(); return;
 
-				case 7:
-					anzeigen();
+				case 7: anzeigen();
 					break;
 				case 8: seite();
 					break;
@@ -586,7 +593,6 @@ public class Mailuebersicht {
 		}
 	}
 	private static void loeschen(int i){
-
 		Document doc = null;
 		try {
 			// Das Dokument erstellen

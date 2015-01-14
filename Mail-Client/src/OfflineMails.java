@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * Diese Klasse representiert die Ansicht der OfflineMails, welche der User zufor offline gespeichert hat.
+ * Diese Klasse repräsentiert die Ansicht der OfflineMails, welche der User zuvor offline gespeichert hat.
  * Max 25 Mails werden auf einer Seite angezeigt.
- * Angezeigt wird: Absender, Betreff, Empfangsdatum und Zeit.
- * Man kann Seiten vor und zurück blättern, sich den Inhalt einer Mail anzeigen lassen und zurück zum Startfenster gehen
+ * Angezeigt wird: Absender, Betreff, Empfangsdatum und -zeit.
+ * Man kann Seiten vor und zurück blättern, sich den Inhalt einer Mail anzeigen lassen und zurück zum Startfenster gehen.
  */
 public class OfflineMails {
     private static ArrayList <Mail>mailList;
@@ -24,7 +24,8 @@ public class OfflineMails {
 
 
     /**
-     * initOffline initialisiert die Offlineansicht in der man seine offline gespeicherten Mails ansehen kann
+     * Die Klassenattribute werden mit Werten belegt.
+     * Dabei werden unter anderem die gespeicherten Mails aus der XML-Datei eingelesen.
      * @param mailAdresse die Mailadresse von der die gespeicherten Mails angezeigt werden sollen
      */
     public static void initOffline(String mailAdresse){

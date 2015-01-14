@@ -4,14 +4,24 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-
+/**
+ * Die Klasse Spamfilter realisiert eine weitere Ansicht des Programms.
+ * Man kann Adressen in seinen Spamfilter hinzufuegen, gespeicherte Adressen loeschen,
+ * sich die moeglichen Kommandos anzeigen lassen, in die vorherige Ansicht zurueckkehren
+ * und sich die bereits gespeicherten Adressen anzeigen lassen.
+ */
 public class Spamfilter {
-	////
+
 	private static ArrayList<String> adressen;
 	private static File output;
 	private static ArrayList<String> kommandoliste;
 	private static Scanner sc;
-	
+
+	/**
+	 * Die Methode init wird aufgerufen, um in die Spamfilteransicht zu gelangen.
+	 * Sie belegt die Klassenattribute mit Werten.
+	 * Dafür werden u.a. die Adressen aus der Text-Datei eingelesen.
+	 */
 	public static void init(){
 		kommandoliste=new ArrayList<String>();
 		adressen=new ArrayList<String>();
@@ -25,7 +35,6 @@ public class Spamfilter {
 		kommandoliste.add("zurueck");
 		kommandoliste.add("anzeigen");
 
-		//
 		holeSpam();
 		auswaehlen();
 	}

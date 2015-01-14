@@ -17,8 +17,13 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter; 
+import org.jdom.output.XMLOutputter;
 
+/**
+ * Die Klasse Startfenster repräsentiert die Ansicht, in die man kommt, sobald das Programm gestartet wird.
+ * Man kann ein neues Konto anlegen, ein bereits gespeichertes Konto auswaehlen, sich die Kommandos anzeigen lassen, sowie das Programm beenden.
+ * Außerdem kann man sich seine offline-Mails anzeigen lassen.
+ */
 public class Startfenster{
 
 	static ArrayList<Konto> konten;
@@ -106,7 +111,7 @@ public class Startfenster{
 	private static void auswaehlen() {
 		while(true){
 			holeKonten();
-			System.out.println("Wir heißen Sie herzlich Willkommen im Mailprogramm MailBrains.© /nSie haben die Moeglichkeit folgende Kommandos einzugeben: ");
+			System.out.println("Wir heißen Sie herzlich Willkommen im Mailprogramm MailBrains.© \nSie haben die Moeglichkeit folgende Kommandos einzugeben: ");
 			for (int i = 1; i <= kommandoliste.size(); i++) {
 				System.out.print(i+": "+kommandoliste.get(i-1)+"\n");
 			}
