@@ -272,56 +272,55 @@ public class Mailuebersicht {
 		}
 	}
 
-	public static void auswaehlen() {
-		System.out.println("Wählen Sie durch Eingabe der jeweiligen Zahl über die Tastatur den gewünschten Menüpunkt");
-		kommandos();
-		int eingabe=-1;
-		try {
-			eingabe = Integer.parseInt(sc.nextLine());
-		}catch(NumberFormatException e){
-			System.out.println("Bitte geben Sie Ihre Wahl erneut an.");
-			auswaehlen();
-		}
-
-		switch(eingabe){
-			case 1: kommandos(); auswaehlen();
-				break;
-			case 2: ausloggen();
-				break;
-			case 3: naechste(); auswaehlen();
-				break;
-			case 4: vorherige(); auswaehlen();
-				break;
-			case 5: try {
-				verfassen();
-			} catch (Exception e) {
-				e.printStackTrace();
+	private static void auswaehlen() {
+		while(true){
+			kommandos();
+			int eingabe=-1;
+			try {
+				eingabe = Integer.parseInt(sc.nextLine());
+			}catch(NumberFormatException e){
+				System.out.println("Ungueltige Eingabe.");
 			}
-				auswaehlen();
-				break;
-			case 6: loeschen(); auswaehlen();
-				break;
-			case 7: anzeigen(); auswaehlen();
-				break;
-			case 8: seite(); auswaehlen();
-				break;
-			case 9: adressbuch(); auswaehlen();
-				break;
-			case 10: spamfilter(); auswaehlen();
-				break;
-			case 11: aktualisieren(); auswaehlen();
-				break;
-			case 12: speichern(); auswaehlen();
-				break;
-			case 13: aendern(); auswaehlen();
-				break;
+
+			switch(eingabe){
+				case 1: kommandos();;
+					break;
+				case 2: return;
+
+				case 3: naechste();;
+					break;
+				case 4: vorherige();;
+					break;
+				case 5: try {
+					verfassen();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+					break;
+				case 6: loeschen(); return;
+
+				case 7: anzeigen();
+					break;
+				case 8: seite();
+					break;
+				case 9: adressbuch();
+					break;
+				case 10: spamfilter();
+					break;
+				case 11: aktualisieren();
+					break;
+				case 12: speichern();
+					break;
+				case 13: aendern();
+					break;
+			}
 		}
 	}
 	public static ArrayList<Mail> getMails() {
 		return mails;
 	}
 
-	public static void speichern(){
+	private static void speichern(){
 		System.out.println("Bitte geben Sie die Nummer der Mail an, die sie offline speichern möchten");
 		for(int i=0;i<mails.size()&&i<25;i++) {
 			Mail tmp = mails.get(i);
@@ -374,7 +373,7 @@ public class Mailuebersicht {
 		}
 	}
 
-	public static void anzeigen(){
+	private static void anzeigen(){
 		if(mails.size()<1){
 			System.out.println("Es sind keine Mails vorhanden.");
 		}else {
@@ -392,7 +391,7 @@ public class Mailuebersicht {
 		}
 	}
 
-	public static void seite(){
+	private static void seite(){
 		System.out.println("Bitte geben Sie die Nummer der Seite an, zu der Sie springen möchten");
 		int nummer=Integer.parseInt(sc.nextLine());
 		aktuelleSeite=nummer;
@@ -406,7 +405,7 @@ public class Mailuebersicht {
 		}
 	}
 
-	public static void naechste(){
+	private static void naechste(){
 		aktuelleSeite++;
 		try {
 			mails.clear();
@@ -426,7 +425,7 @@ public class Mailuebersicht {
 		}
 	}
 
-	public static void vorherige(){
+	private static void vorherige(){
 		if(aktuelleSeite!=1) {
 			try {
 				mails.clear();
@@ -448,7 +447,7 @@ public class Mailuebersicht {
 		}
 	}
 
-	public static void aktualisieren(){
+	private static void aktualisieren(){
 		try {
 			mails.clear();
 			holeMails("aktualisieren");
@@ -465,7 +464,7 @@ public class Mailuebersicht {
 		}
 	}
 
-	public static Session getSession(){
+	private static Session getSession(){
 		Properties properties = System.getProperties();
 		properties.setProperty("mail.smtp.host", konto.getSmtpServer());
 		properties.setProperty("mail.smtp.port", String.valueOf(konto.getPort()));
@@ -478,7 +477,7 @@ public class Mailuebersicht {
 		return session;
 	}
 
-	public static void verfassen() throws AddressException, MessagingException
+	private static void verfassen() throws AddressException, MessagingException
 	{
 		Session session=getSession();
 		// nachricht erzeugen
@@ -504,29 +503,25 @@ public class Mailuebersicht {
 		Transport.send(msg);
 	}
 
-	public static void ausloggen(){
-		// absichtlich leer
-	}
-
-	public static void spamfilter(){
+	private static void spamfilter(){
 		Spamfilter.init();
 	}
 
-	public static void adressbuch(){
+	private static void adressbuch(){
 		Adressbuch.init(konto);
 	}
 
-	public static void kommandos() {
+	private static void kommandos() {
 		System.out.println("Sie haben die Moeglichkeit folgende Kommandos einzugeben: ");
 		for (int i = 0; i < kommandoliste.size(); i++) {
 			System.out.print(i+1+": "+kommandoliste.get(i)+"\n");
 		}
 	}
 
-	public static void loeschen(){
+	private static void loeschen(){
 		int i = -1;
 		while(true){
-			System.out.println("Sind Sie sicher das sie dieses Konto loeschen wollen? (0)ja, (1)nein");
+			System.out.println("Sind Sie sicher das sie dieses Konto loeschen wollen? (0)ja, (1)abbrechen");
 
 			try{
 				i = sc.nextInt();
@@ -537,7 +532,14 @@ public class Mailuebersicht {
 			catch(Exception e){
 				System.out.println("Ungueltige Eingabe");
 			}
+			if(i == 1){
+				return;
+			}
+			if(i == 0){
+				break;
+			}
 		}
+
 
 		Document doc = null;
 		try {
@@ -548,7 +550,7 @@ public class Mailuebersicht {
 			// Wurzelelement wird auf root gesetzt
 			Element root = doc.getRootElement();
 			List children = root.getChildren();
-			root.removeContent(((Element)children.get(i-1)));
+			root.removeContent(root.getChild(konto.getAdress().replace("@", "p")));
 			XMLOutputter outp = new XMLOutputter();
 			outp.setFormat( Format.getPrettyFormat() );
 			outp.output( doc, new FileOutputStream(Startfenster.datName));
@@ -557,7 +559,7 @@ public class Mailuebersicht {
 			System.out.println("Fehler beim Loeschen von Konto");
 		}
 	}
-	public static void loeschen(int i){
+	private static void loeschen(int i){
 		Document doc = null;
 		try {
 			// Das Dokument erstellen
@@ -577,42 +579,34 @@ public class Mailuebersicht {
 		}
 	}
 
-	public static void aendern(){
+	private static void aendern(){
 		System.out.println("Welchen Eintrag wollen Sie aendern?");
 		int i = -2;
 		int port = 25;
 		double ref = 10.0;
-		try{
-			i =sc.nextInt();
-			if(i < 1 || i > Startfenster.konten.size()){
-				sc.close();
-				throw new Exception();
+		System.out.println("1) Kontoname: " + konto.getName());
+		System.out.println("2) Adresse: " + konto.getAdress());
+		System.out.println("3) Ausgangsserver: " + konto.getServer());
+		System.out.println("4) SMTP-Server: " + konto.getSmtpServer());
+		System.out.println("5) Protokol: " + konto.getProtocol());
+		System.out.println("6) Port: " + konto.getPort());
+		System.out.println("7) Aktualisierungsrate: " + konto.getRefRate());
+
+		while(true){
+			System.out.println("Welchen Eintrag wollen Sie aendern?");
+			try{
+				i =sc.nextInt();
+				if(i < 1 || i > 7){
+					throw new Exception();
+				}else{
+					break;
+				}
+			}
+			catch(Exception e){
+				System.out.println("Ungueltige Eingabe");
 			}
 		}
-		catch(Exception e){
-			System.out.println("Ungueltige Eingabe");
-			return;
-		}
-		int nr = i;
-		System.out.println("1) Kontoname: " + Startfenster.konten.get(i-1).getName());
-		System.out.println("2) Adresse: " + Startfenster.konten.get(i-1).getAdress());
-		System.out.println("3) Ausgangsserver: " + Startfenster.konten.get(i-1).getServer());
-		System.out.println("4) SMTP-Server: " + Startfenster.konten.get(i-1).getSmtpServer());
-		System.out.println("5) Protokol: " + Startfenster.konten.get(i-1).getProtocol());
-		System.out.println("6) Port: " + Startfenster.konten.get(i-1).getPort());
-		System.out.println("7) Aktualisierungsrate: " + Startfenster.konten.get(i-1).getRefRate());
-		System.out.println("Welchen Eintrag wollen Sie aendern?");
-		try{
-			i =sc.nextInt();
-			if(i < 1 || i > 7){
-				sc.close();
-				throw new Exception();
-			}
-		}
-		catch(Exception e){
-			System.out.println("Ungueltige Eingabe");
-			return;
-		}
+
 		System.out.println("Geben Sie den neuen Wert ein: ");
 		String neu = "";
 		try{
@@ -635,7 +629,6 @@ public class Mailuebersicht {
 			System.out.println("Fehler beim Aendern eines Eintrags, ungueltige Eingabe");
 			return;
 		}
-		sc.close();
 		Document doc = null;
 		try {
 			// Das Dokument erstellen
@@ -650,7 +643,7 @@ public class Mailuebersicht {
 			//Liste aller vorhandenen Mailkonten als Elemente
 			String st = Startfenster.konten.get(i-1).getAdress().replace('@', 'p');
 
-			Konto neuesKonto = new Konto(Startfenster.konten.get(nr-1).getName(), Startfenster.konten.get(nr-1).getAdress(), Startfenster.konten.get(nr-1).getServer(), Startfenster.konten.get(nr-1).getSmtpServer(), Startfenster.konten.get(nr-1).getPop3Server(),  Startfenster.konten.get(nr-1).getPort(), Startfenster.konten.get(nr-1).getProtocol(), Startfenster.konten.get(nr-1).getRefRate());
+			Konto neuesKonto = new Konto(konto.getName(), konto.getAdress(), konto.getServer(),konto.getSmtpServer(), konto.getPop3Server(),  konto.getPort(), konto.getProtocol(), konto.getRefRate());
 			switch(i){
 				case 1:		konto.setName(neu);
 					neuesKonto.setName(neu);
@@ -675,7 +668,7 @@ public class Mailuebersicht {
 					break;
 				default:	break;
 			}
-			loeschen(nr);
+			loeschen();
 			Startfenster.speichereKonto(neuesKonto);
 
 		}

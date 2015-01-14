@@ -33,7 +33,6 @@ public class OfflineMails {
         sc=Startfenster.sc;
         kommandoliste=new ArrayList<String>();
         mailList = new ArrayList<Mail>();
-
         try {
             //TODO XMLoutputter benutzen
             // Das Dokument erstellen
