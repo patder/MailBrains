@@ -35,7 +35,7 @@ public class Mailuebersicht {
 	private static ArrayList<String> kommandoliste;
 	private static Scanner sc;
 
-	private static void holeMails(String met)throws AuthenticationFailedException{
+ 	private static void holeMails(String met)throws AuthenticationFailedException{
 		//Die folgenden Zeilen vllt auch lieber in ein Methode (wie bei getSession nur halt für pop3)
 		Properties props = System.getProperties();
 		props.setProperty("mail.pop3.host", konto.getPop3Server());
@@ -227,6 +227,10 @@ public class Mailuebersicht {
 
 		}
 
+		//holen der offline-Mails
+
+
+
 	}
 
 	public static void auswaehlen() {
@@ -298,7 +302,14 @@ public class Mailuebersicht {
 			Mail tmp = mails.get(nummer - 1);
 			Element akt = root.getChild((konto.getAdress()).replace('@', 'p'));
 			if (akt != null) {
-				Element neu = new Element(tmp.getAdresse().replace('@', 'p'));
+				String s="";
+				if(tmp.getAdresse().contains("<")&&tmp.getAdresse().contains(">")){
+					s=tmp.getAdresse().substring(tmp.getAdresse().indexOf("<")+1,tmp.getAdresse().indexOf(">"));
+				}else{
+					s=tmp.getAdresse();
+				}
+				System.out.println(s.replace('@','p'));
+				Element neu = new Element(s.replace('@','p'));
 				neu.addContent(new Element("adresse").addContent(tmp.getAdresse()));
 				neu.addContent(new Element("betreff").addContent(tmp.getBetreff()));
 				neu.addContent(new Element("nachricht").addContent(tmp.getNachricht()));
@@ -313,6 +324,7 @@ public class Mailuebersicht {
 		}catch(Exception e){
 			System.out.println(e.getMessage()+"Die Mail konnte nicht offline gespeichert werden.");
 		}
+		mails.get(nummer-1).setOffline(true);
 	}
 
 	public static void anzeigen(){
