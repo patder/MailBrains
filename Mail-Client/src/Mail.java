@@ -38,7 +38,7 @@ public class Mail {
 		this.nachricht = nachricht;
 	}
 
-	public boolean isOffline() {
+	public boolean getOffline() {
 		return offline;
 	}
 
