@@ -464,7 +464,7 @@ public class Mailuebersicht {
 		}
 	}
 
-	private static Session getSession(){
+	public static Session getSession(){
 		Properties properties = System.getProperties();
 		properties.setProperty("mail.smtp.host", konto.getSmtpServer());
 		properties.setProperty("mail.smtp.port", String.valueOf(konto.getPort()));
