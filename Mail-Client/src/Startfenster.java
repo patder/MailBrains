@@ -192,7 +192,7 @@ public class Startfenster{
 
 	}
 
-	private static void speichereKonto(Konto k) throws JDOMException, IOException{
+	public static void speichereKonto(Konto k) throws JDOMException, IOException{
 		try{
 			Document doc = null;
 	        SAXBuilder builder = new SAXBuilder();
