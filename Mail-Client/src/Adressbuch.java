@@ -14,11 +14,11 @@ public class Adressbuch {
 
 	//enthaelt alle Adressen des aktuellen Kontos
 	private static ArrayList<String> adressen;
-	private static File adressDat;
+	public static File adressDat;
 	private static ArrayList<String> kommandoliste;
 	private static Konto konto;
 	private static Scanner sc;
-	private static String datName="adressbuch.xml";
+	public static String datName="adressbuch.xml";
 	public static void init(Konto k){
 		sc=Startfenster.sc;
 		konto=k;

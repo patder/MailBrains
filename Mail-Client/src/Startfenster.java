@@ -28,6 +28,13 @@ public class Startfenster{
 	public static Scanner sc;
 	static String datName = "KontenListe.xml";
 
+	/**
+	 * Die Methode wird zum Start des Programms aufgerufen.
+	 * Falls die Kontenliste-Datei nicht existiert, wird sie neu erstellt.
+	 * Falls die Adressbuch-Datei nicht existiert, wird sie neu erstellt.
+	 * Falls die Offlinemails-Datei nicht existiert, wird sie neu erstellt.
+	 * Die Klassenattribute werden mit Werten belegt.
+	 */
 	public static void init(){
 		sc=new Scanner(System.in);
 		inXML=new File(datName);
@@ -99,7 +106,7 @@ public class Startfenster{
 	private static void auswaehlen() {
 		while(true){
 			holeKonten();
-			System.out.println("Sie haben die Moeglichkeit folgende Kommandos einzugeben: ");
+			System.out.println("Wir heißen Sie herzlich Willkommen im Mailprogramm MailBrains.© /nSie haben die Moeglichkeit folgende Kommandos einzugeben: ");
 			for (int i = 1; i <= kommandoliste.size(); i++) {
 				System.out.print(i+": "+kommandoliste.get(i-1)+"\n");
 			}
@@ -192,6 +199,12 @@ public class Startfenster{
 
 	}
 
+	/**
+	 * Es wird ein neues Konto gespeichert
+	 * @param k Das Konto wird übergeben mitsamt Name, Adresse, SmtpServer, Pop3Server, Port, Protokoll und Aktualisierungsrate.
+	 * @throws JDOMException
+	 * @throws IOException
+	 */
 	public static void speichereKonto(Konto k) throws JDOMException, IOException{
 		try{
 			Document doc = null;
@@ -296,7 +309,9 @@ public class Startfenster{
 
 	}
 
-
+	/**
+	 * Die Konsole wird geleert.
+	 */
 	public static void clearAll(){
 		for(int i = 0; i < 53; i++){
 			System.out.println();
