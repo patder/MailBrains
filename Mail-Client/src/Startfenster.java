@@ -17,8 +17,13 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter; 
+import org.jdom.output.XMLOutputter;
 
+/**
+ * Die Klasse Startfenster repräsentiert die Ansicht, in die man kommt, sobald das Programm gestartet wird.
+ * Man kann ein neues Konto anlegen, ein bereits gespeichertes Konto auswaehlen, sich die Kommandos anzeigen lassen, sowie das Programm beenden.
+ * Außerdem kann man sich seine offline-Mails anzeigen lassen.
+ */
 public class Startfenster{
 
 	static ArrayList<Konto> konten;
@@ -28,6 +33,13 @@ public class Startfenster{
 	public static Scanner sc;
 	static String datName = "KontenListe.xml";
 
+	/**
+	 * Die Methode wird zum Start des Programms aufgerufen.
+	 * Falls die Kontenliste-Datei nicht existiert, wird sie neu erstellt.
+	 * Falls die Adressbuch-Datei nicht existiert, wird sie neu erstellt.
+	 * Falls die Offlinemails-Datei nicht existiert, wird sie neu erstellt.
+	 * Die Klassenattribute werden mit Werten belegt.
+	 */
 	public static void init(){
 		sc=new Scanner(System.in);
 		inXML=new File(datName);
@@ -96,10 +108,10 @@ public class Startfenster{
 		auswaehlen();
 	}
 
-	public static void auswaehlen() {
+	private static void auswaehlen() {
 		while(true){
 			holeKonten();
-			System.out.println("Sie haben die Moeglichkeit folgende Kommandos einzugeben: ");
+			System.out.println("Wir heißen Sie herzlich Willkommen im Mailprogramm MailBrains.© \nSie haben die Moeglichkeit folgende Kommandos einzugeben: ");
 			for (int i = 1; i <= kommandoliste.size(); i++) {
 				System.out.print(i+": "+kommandoliste.get(i-1)+"\n");
 			}
@@ -136,7 +148,7 @@ public class Startfenster{
 		//Warum nicht statt dem auswaehlen endlosschleife drum herum??!
 	}
 
-	public static void kommandos() {
+	private static void kommandos() {
 		System.out.println("Sie haben die Moeglichkeit folgende Kommandos einzugeben: ");
 		for (int i = 1; i < kommandoliste.size(); i++) {
 			System.out.print(i+": "+kommandoliste.get(i-1)+"\n");
@@ -192,6 +204,12 @@ public class Startfenster{
 
 	}
 
+	/**
+	 * Es wird ein neues Konto gespeichert
+	 * @param k Das Konto wird übergeben mitsamt Name, Adresse, SmtpServer, Pop3Server, Port, Protokoll und Aktualisierungsrate.
+	 * @throws JDOMException
+	 * @throws IOException
+	 */
 	public static void speichereKonto(Konto k) throws JDOMException, IOException{
 		try{
 			Document doc = null;
@@ -258,7 +276,7 @@ public class Startfenster{
         }
 	}
 
-	public static void kontoWaehlen(){
+	private static void kontoWaehlen(){
 		clearAll();
 		System.out.println("Sie koennen aus folgenden Konten auswaehlen: ");
 		System.out.println("0: abbrechen");
@@ -282,11 +300,11 @@ public class Startfenster{
 		}
 		else{
 			Konto konto=konten.get(i-1);
-			System.out.println("\nEinloggen: Passowrt eingeben\nOfflinemails anzeigen: ohne Eingabe bestätigen");
+			System.out.println("\nEinloggen: Passwort eingeben\nOfflinemails anzeigen: ohne Eingabe bestätigen");
 			String st = sc.nextLine();
 			if(st.equals("")){
 				clearAll();
-				OfflineMails.initOffline(konto.getAdress().replace('@', 'p'));
+				OfflineMails.initOffline(konto.getAdress());
 				clearAll();
 				return;
 			}
@@ -296,13 +314,15 @@ public class Startfenster{
 
 	}
 
-
+	/**
+	 * Die Konsole wird geleert.
+	 */
 	public static void clearAll(){
-		for(int i = 0; i < 41; i++){
+		for(int i = 0; i < 53; i++){
 			System.out.println();
 		}
 	}
-	public static void verlassen(){
+	private static void verlassen(){
 		System.out.println("Auf Wiedersehen");
 		System.exit(1);
 	}

@@ -1,4 +1,6 @@
-////
+/**
+ *
+ */
 public class Mail {
 	private String adresse;
 	private String betreff;
@@ -38,7 +40,7 @@ public class Mail {
 		this.nachricht = nachricht;
 	}
 
-	public boolean isOffline() {
+	public boolean getOffline() {
 		return offline;
 	}
 

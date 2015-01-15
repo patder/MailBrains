@@ -10,15 +10,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Das Adressbuch realisiert die Ansicht in der man Kontakte speichern kann.
+ * Es ist außerdem moeglich, Kontakte zu loeschen oder zu aendern,
+ * sich die bereits gespeichtern Kontakte anzeigen zu lassen,
+ * sich die moeglichen Kommandos anzeigen zu lassen und in
+ * die vorherige Ansicht zurueckzukehren.
+ */
 public class Adressbuch {
 
 	//enthaelt alle Adressen des aktuellen Kontos
-	public static ArrayList<String> adressen;
+	private static ArrayList<String> adressen;
 	public static File adressDat;
 	private static ArrayList<String> kommandoliste;
 	private static Konto konto;
 	private static Scanner sc;
 	public static String datName="adressbuch.xml";
+
+	/**
+	 * Die Methode init wird aufgerufen, wenn man in die Startfenster-Ansicht gelangen will.
+	 * Die Klassenattribute werden mit Werten belegt.
+	 * Dafür werden u.a. die Adressen aus der XML-Datei eingelesen.
+	 * Die bereits gespeicherten Adressen werden einmal ausgegeben.
+	 * @param k
+	 */
 	public static void init(Konto k){
 		sc=Startfenster.sc;
 		konto=k;
@@ -40,7 +55,7 @@ public class Adressbuch {
 		auswaehlen();
 	}
 
-	public static void auswaehlen() {
+	private static void auswaehlen() {
 		System.out.println("Wählen Sie durch Eingabe der jeweiligen Zahl über die Tastatur den gewünschten Menüpunkt");
 		kommandos();
 		int eingabe=Integer.parseInt(sc.nextLine());
@@ -61,14 +76,14 @@ public class Adressbuch {
 		}
 	}
 
-	public ArrayList<String> getAdressen() {
+	private ArrayList<String> getAdressen() {
 		return adressen;
 	}
-	public void setAdressen(ArrayList<String> adr) {
+	private void setAdressen(ArrayList<String> adr) {
 		adressen = adr;
 	}
 
-	public static void anzeigen(){
+	private static void anzeigen(){
 		System.out.println("Ihr Adressbuch enthält folgende Adressen: ");
 		for (int i = 0; i <adressen.size(); i++) {
 			System.out.println(i + 1 + ": " + adressen.get(i));
@@ -76,13 +91,9 @@ public class Adressbuch {
 		System.out.println("");
 	}
 
-
-
-	public static void hinzufuegen(){
-		System.out.println("Bitte geben Sie den Namen ein, den Sie hinzufuegen moechten.");
+	private static void hinzufuegen(){
+		System.out.println("Bitte geben Sie den Namen und die Adresse ein, die Sie hinzufuegen moechten.");
 		String name=sc.nextLine();
-
-		System.out.println("Bitte geben Sie nun die zugehörige Adresse ein.");
 		String adr=sc.nextLine();
 		Document doc = null;
 		if(!adressen.contains(adr)) {
@@ -116,7 +127,7 @@ public class Adressbuch {
 		}
 	}
 
-	public static void loeschen(){
+	private static void loeschen(){
 		System.out.println("Bitte geben Sie die Nummer der Person ein, die Sie aus Ihrem Adressbuch loeschen wollen.");
 		anzeigen();
 		int nummer=Integer.parseInt(sc.nextLine());
@@ -142,7 +153,7 @@ public class Adressbuch {
 		}
 	}
 
-	public static void aendern(){
+	private static void aendern(){
 		System.out.println("Bitte geben Sie die Nummer des Eintrags ein, dessen Adresse Sie aendern wollen.");
 		int nummer=Integer.parseInt(sc.nextLine());
 		System.out.println("Bitte geben Sie die neue Adresse ein.");
@@ -176,14 +187,14 @@ public class Adressbuch {
 		}
 	}
 
-	public static void kommandos() {
+	private static void kommandos() {
 		System.out.println("Sie haben die Moeglichkeit folgende Kommandos einzugeben: ");
 		for (int i = 0; i < kommandoliste.size(); i++) {
 			System.out.print(i+1+": "+kommandoliste.get(i)+"\n");
 		}
 	}
 
-	public static void zurueck(){
+	private static void zurueck(){
 		//absichtlich leer
 	}
 

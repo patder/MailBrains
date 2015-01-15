@@ -9,20 +9,31 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * Created by Patrick on 08.01.2015.
+ * Diese Klasse repräsentiert die Ansicht der OfflineMails, welche der User zuvor offline gespeichert hat.
+ * Max 25 Mails werden auf einer Seite angezeigt.
+ * Angezeigt wird: Absender, Betreff, Empfangsdatum und -zeit.
+ * Man kann Seiten vor und zurück blättern, sich den Inhalt einer Mail anzeigen lassen und zurück zum Startfenster gehen.
  */
 public class OfflineMails {
-    private static ArrayList <Mail> mailList = new ArrayList<Mail>();
-    private static ArrayList<String> kommandoliste=new ArrayList<String>();
+    private static ArrayList <Mail>mailList;
+    private static ArrayList<String> kommandoliste;
     private static Scanner sc;
     private static int seite = 1;
     private static int upper = 25;
     private static int lower = 1;
 
+
+    /**
+     * Die Klassenattribute werden mit Werten belegt.
+     * Dabei werden unter anderem die gespeicherten Mails aus der XML-Datei eingelesen.
+     * @param mailAdresse die Mailadresse von der die gespeicherten Mails angezeigt werden sollen
+     */
     public static void initOffline(String mailAdresse){
+        mailAdresse = mailAdresse.replace('@', 'p');
         Document doc = null;
         sc=Startfenster.sc;
-
+        kommandoliste=new ArrayList<String>();
+        mailList = new ArrayList<Mail>();
         try {
             //TODO XMLoutputter benutzen
             // Das Dokument erstellen
@@ -60,7 +71,7 @@ public class OfflineMails {
         auswaehlen();
     }
 
-    public static void auswaehlen(){
+    private static void auswaehlen(){
         for (int i = lower-1; i < upper; i++) {
             Mail tmp = mailList.get(i);
             System.out.println(i + 1 + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
@@ -109,10 +120,10 @@ public class OfflineMails {
 
 
 
-    public static void zeigeMail(){
+    private static void zeigeMail(){
         int eingabe = -1;
         if(mailList.size() < 1){
-            System.out.println("Es sins keine Mials gespeichert");
+            System.out.println("Es sins keine Mails gespeichert.");
             return;
         }
         System.out.println("Nummer auswaehlen: ");
@@ -130,6 +141,7 @@ public class OfflineMails {
         if(eingabe == 0){
             return;
         }
+        eingabe=eingabe-1;
         System.out.println(mailList.get(eingabe).getAdresse() + "\t" + mailList.get(eingabe).getBetreff() + "\t" + mailList.get(eingabe).getEmpfangsdatum());
         System.out.println("\n" + mailList.get(eingabe).getNachricht());
         System.out.println("\n\n0: zurück");
