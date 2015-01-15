@@ -355,14 +355,7 @@ public class Mailuebersicht {
 
 	private static void speichern(){
 		System.out.println("Bitte geben Sie die Nummer der Mail an, die sie offline speichern möchten");
-		for(int i=0;i<mails.size()&&i<25;i++) {
-			Mail tmp = mails.get(i);
-			if(tmp.getOffline()==true) {
-				System.out.println(i + 1 + "\tX\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
-			}else{
-				System.out.println(i + 1 + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
-			}
-		}
+		alle();
 		int nummer=Integer.parseInt(sc.nextLine());
 		Document doc = null;
 		if(mails.get(nummer-1).getOffline()==false) {
@@ -411,14 +404,7 @@ public class Mailuebersicht {
 			System.out.println("Es sind keine Mails vorhanden.");
 		}else {
 			System.out.println("Bitte geben Sie die Nummer der Mail an, die Sie sehen möchten.");
-			for (int i = 0; i < mails.size() && i < 25; i++) {
-				Mail tmp = mails.get(i);
-				if(tmp.getOffline()==true) {
-					System.out.println(i + 1 + "\tX\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
-				}else{
-					System.out.println(i + 1 + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
-				}
-			}
+			alle();
 			int nummer = Integer.parseInt(sc.nextLine());
 			System.out.println(mails.get(nummer - 1).getNachricht()+"\n");
 		}
@@ -428,14 +414,7 @@ public class Mailuebersicht {
 		System.out.println("Bitte geben Sie die Nummer der Seite an, zu der Sie springen möchten");
 		int nummer=Integer.parseInt(sc.nextLine());
 		aktuelleSeite=nummer;
-		for(int i=(nummer-1)*25;i<mails.size()&&i<i+25;i++){
-			Mail tmp=mails.get(i);
-			if(tmp.getOffline()==true) {
-				System.out.println(i + 1 + "\tX\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
-			}else{
-				System.out.println(i + 1 + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
-			}
-		}
+		alle();
 	}
 
 	private static void naechste(){
@@ -443,14 +422,7 @@ public class Mailuebersicht {
 		try {
 			mails.clear();
 			holeMails("naechste");
-			for (int i =0; i < mails.size(); i++) {
-				Mail tmp = mails.get(i);
-				if(tmp.getOffline()==true) {
-					System.out.println(i + 1 + "\tX\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
-				}else{
-					System.out.println(i + 1 + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
-				}
-			}
+			alle();
 			System.out.println("");
 		}catch(Exception e){
 			System.out.println("Die Mails konnten nicht aktualisiert werden");
@@ -464,14 +436,7 @@ public class Mailuebersicht {
 				mails.clear();
 				holeMails("vorherige");
 				aktuelleSeite--;
-				for (int i = 0; i < mails.size(); i++) {
-					Mail tmp = mails.get(i);
-					if(tmp.getOffline()==true) {
-						System.out.println(i + 1 + "\tX\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
-					}else{
-						System.out.println(i + 1 + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
-					}
-				}
+				alle();
 			} catch (Exception e) {
 				System.out.println("Die Mails konnten nicht aktualisiert werden");
 			}
@@ -484,14 +449,7 @@ public class Mailuebersicht {
 		try {
 			mails.clear();
 			holeMails("aktualisieren");
-			for (int i = 0; i < mails.size() && i < 25; i++) {
-				Mail tmp = mails.get(i);
-				if(tmp.getOffline()==true) {
-					System.out.println(i + 1 + "\tX\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
-				}else{
-					System.out.println(i + 1 + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
-				}
-			}
+			alle();
 		}catch(Exception e){
 			System.out.println("Die Mails konnten nicht aktualisiert werden");
 		}
@@ -709,9 +667,6 @@ public class Mailuebersicht {
 			System.out.println("Fehler beim Aendern des Attributs");
 		}
 	}
-
-
-
 
 	private static class loopThread implements Runnable{
 		public void run(){
