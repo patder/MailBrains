@@ -39,9 +39,12 @@ public class Mailuebersicht {
 	private static int anzahlMails;
 
 	private static ReentrantLock muhtex;
+	private static ReentrantLock kuhtex;
+	private static Thread t;
 
 
  	private static void holeMails(String met)throws AuthenticationFailedException{
+		kuhtex.lock();
 		//Die folgenden Zeilen vllt auch lieber in ein Methode (wie bei getSession nur halt für pop3)
 		Properties props = System.getProperties();
 		props.setProperty("mail.pop3.host", konto.getPop3Server());
@@ -102,6 +105,7 @@ public class Mailuebersicht {
 				}
 			}else{
 				System.out.println("Es werden bereits die aeltesten Mails angezeigt");
+				kuhtex.unlock();
 				return;
 			}
 
@@ -186,12 +190,13 @@ public class Mailuebersicht {
 				}
 			}
 		}
-
+		kuhtex.unlock();
 	}
 	public static void init(Konto k){
 		//Initialisierung der Attribute
 
 		muhtex= new ReentrantLock();
+		kuhtex = new ReentrantLock();
 	 	messageCounter = 0;
 
 		sc=Startfenster.sc;
@@ -304,7 +309,7 @@ public class Mailuebersicht {
 		System.out.println("Mailanzahl: "+anzahlMails+" Seitenanzahl: "+new Double(Math.ceil(anzahlMails/25)).intValue()+" aktuelle Seite: "+aktuelleSeite);
 	}
 	private static void auswaehlen() {
-		Thread t = new Thread(new loopThread());
+		t = new Thread(new loopThread());
 		t.start();
 		while(true){
 			kommandos();
@@ -318,7 +323,7 @@ public class Mailuebersicht {
 			switch(eingabe){
 				case 1: kommandos();
 					break;
-				case 2: return;
+				case 2: t.interrupt(); return;
 
 				case 3: naechste();
 					break;
@@ -330,7 +335,7 @@ public class Mailuebersicht {
 					e.printStackTrace();
 				}
 					break;
-				case 6: loeschen(); return;
+				case 6: loeschen(true); return;
 
 				case 7: anzeigen();
 					break;
@@ -473,26 +478,55 @@ public class Mailuebersicht {
 	{
 		Session session=getSession();
 		// nachricht erzeugen
+		System.out.println("Geben Sie den gewuenschten Empfaenger an: ");
+		try {
+			Adressbuch.konto=konto;
+			Adressbuch.setAdressen(new ArrayList<String>());
+			Adressbuch.adressDat=new File("adressbuch.xml");
+			Adressbuch.holeAdressen();
+			System.out.println("Sie koennen folgende Adresse aus ihrem Adressbuch auswaehlen: \n0: nicht gespeicherte Adresse eingeben");
+			for (int i = 0; i < Adressbuch.getAdressen().size(); i++) {
+				System.out.println(i + 1 + ": " + Adressbuch.getAdressen().get(i));
+			}
+			System.out.println("");
+		}catch(Exception e){
+			System.out.println("\nSie haben noch keine Eintraege im Adressbuch.\n0: nicht gespeicherte Adresse eingeben");
+		}
+		System.out.println("Empfaenger: ");
+		String empfaenger="";
+		int eingabe=-1;
+		try {
+			eingabe = Integer.parseInt(sc.nextLine());
+		}catch(NumberFormatException e){
+			System.out.println("Keine gueltige Eingabe");
+			return;
+		}
+		if(eingabe==0) {
+			empfaenger = sc.nextLine();
+		}else {
+			empfaenger = Adressbuch.getAdressen().get(eingabe - 1);
+		}
 
-		System.out.println("Empfaenger:");
-		String empfaenger=sc.nextLine();
 		System.out.println("Betreff:");
 		String betreff=sc.nextLine();
 		System.out.println("Nachricht:");
 		String text=sc.nextLine(); // wenn man hier nur next macht kommt ne fehlermeldung beim int parsen in der methode auswaehlen, wie können wir das hier aber trz aendern
+		try {
+			MimeMessage msg = new MimeMessage(session);
+			msg.setFrom(new InternetAddress(konto.getAdress()));
+			msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(empfaenger, false));
 
-		MimeMessage msg = new MimeMessage(session);
-		msg.setFrom(new InternetAddress(konto.getAdress()));
-		msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(empfaenger, false));
+			// Betreff
+			msg.setSubject(betreff);
 
-		// Betreff
-		msg.setSubject(betreff);
+			// Nachricht
+			msg.setText(text);
 
-		// Nachricht
-		msg.setText(text);
-
-		// E-Mail versenden
-		Transport.send(msg);
+			// E-Mail versenden
+			Transport.send(msg);
+		}catch(Exception e){
+			System.out.println("Die Mail konnte aus uns unerklärlichen Gründen nicht gesendet werden. \n Bitte versuchen Sie es erneut.");
+		}
 	}
 
 	private static void spamfilter(){
@@ -510,24 +544,29 @@ public class Mailuebersicht {
 		}
 	}
 
-	private static void loeschen(){
+	private static void loeschen(boolean boohoo){
 		int i = -1;
 		while(true){
-			System.out.println("Sind Sie sicher das sie dieses Konto loeschen wollen? (0)ja, (1)abbrechen");
-
-			try{
-				i = sc.nextInt();
-				if(!(i == 1 || i == 0)){
-					throw new Exception();
+			if(boohoo){
+				System.out.println("Sind Sie sicher das sie dieses Konto loeschen wollen? (0)ja, (1)abbrechen");
+				try{
+					i = sc.nextInt();
+					if(!(i == 1 || i == 0)){
+						throw new Exception();
+					}
+				}
+				catch(Exception e){
+					System.out.println("Ungueltige Eingabe bem loeschen");
 				}
 			}
-			catch(Exception e){
-				System.out.println("Ungueltige Eingabe");
-			}
+
 			if(i == 1){
 				return;
 			}
-			if(i == 0){
+			if(i == -1 || i == 0){
+				if(i == 0){
+					t.interrupt();
+				}
 				break;
 			}
 		}
@@ -587,7 +626,7 @@ public class Mailuebersicht {
 		while(true){
 			System.out.println("Welchen Eintrag wollen Sie aendern?");
 			try{
-				i =sc.nextInt();
+				i =Integer.parseInt(sc.nextLine());
 				if(i < 1 || i > 7){
 					throw new Exception();
 				}else{
@@ -595,7 +634,7 @@ public class Mailuebersicht {
 				}
 			}
 			catch(Exception e){
-				System.out.println("Ungueltige Eingabe");
+				System.out.println("Ungueltige Eingabe beum waehlen des Eintrags");
 			}
 		}
 
@@ -603,16 +642,16 @@ public class Mailuebersicht {
 		String neu = "";
 		try{
 			if(i == 6){
-				neu = sc.next();
+				neu = sc.nextLine();
 				port = Integer.parseInt(neu);
 			}
 			else{
 				if(i == 7){
-					neu = sc.next();
+					neu = sc.nextLine();
 					ref = Double.parseDouble(neu);
 				}
 				else{
-					neu = sc.next();
+					neu = sc.nextLine();
 				}
 
 			}
@@ -633,7 +672,7 @@ public class Mailuebersicht {
 			Element root = doc.getRootElement();
 
 			//Liste aller vorhandenen Mailkonten als Elemente
-			String st = Startfenster.konten.get(i-1).getAdress().replace('@', 'p');
+			String st = konto.getAdress().replace('@', 'p');
 
 			Konto neuesKonto = new Konto(konto.getName(), konto.getAdress(), konto.getServer(),konto.getSmtpServer(), konto.getPop3Server(),  konto.getPort(), konto.getProtocol(), konto.getRefRate());
 			switch(i){
@@ -660,11 +699,12 @@ public class Mailuebersicht {
 					break;
 				default:	break;
 			}
-			loeschen();
+			loeschen(false);
 			Startfenster.speichereKonto(neuesKonto);
 
 		}
 		catch(Exception e){
+			e.printStackTrace();
 			System.out.println("Fehler beim Aendern des Attributs");
 		}
 	}
@@ -674,11 +714,15 @@ public class Mailuebersicht {
 			while(true){
 				try {
 					Thread.sleep((long)konto.getRefRate()*1000);
+					if(kuhtex.isLocked()){
+						continue;
+					}
 					if(muhtex.isLocked()){
 						holeMails("aktualisieren");
 					}
 					else {
 						aktualisieren();
+						kommandos();
 					}
 
 				} catch (Exception e) {

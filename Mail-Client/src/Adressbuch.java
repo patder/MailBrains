@@ -23,7 +23,7 @@ public class Adressbuch {
 	private static ArrayList<String> adressen;
 	public static File adressDat;
 	private static ArrayList<String> kommandoliste;
-	private static Konto konto;
+	public static Konto konto;
 	private static Scanner sc;
 	public static String datName="adressbuch.xml";
 
@@ -50,7 +50,11 @@ public class Adressbuch {
 
 		//Anzeigen der Adressen
 		adressDat=new File(datName);
-		holeAdressen();
+		try {
+			holeAdressen();
+		}catch(Exception e){
+			System.out.println("Die Adressbuch-Datei konnte nicht geoeffnet werde.");
+		}
 		anzeigen();
 		auswaehlen();
 	}
@@ -76,10 +80,10 @@ public class Adressbuch {
 		}
 	}
 
-	private ArrayList<String> getAdressen() {
+	public static ArrayList<String> getAdressen() {
 		return adressen;
 	}
-	private void setAdressen(ArrayList<String> adr) {
+	public static void setAdressen(ArrayList<String> adr) {
 		adressen = adr;
 	}
 
@@ -198,19 +202,20 @@ public class Adressbuch {
 		//absichtlich leer
 	}
 
-	private static void holeAdressen(){
+	public static void holeAdressen()throws Exception{
 		Document doc = null;
 		adressen.clear();
 		try {
 			// Das Dokument erstellen
 			SAXBuilder builder = new SAXBuilder();
-			doc = builder.build(adressDat);
+			doc = builder.build("adressbuch.xml");
 
 			// Wurzelelement wird auf root gesetzt
 			Element root = doc.getRootElement();
 
 			//Liste aller aller gespeicherten Adressen des aktuellen Kontos
 			Element akt=root.getChild(konto.getAdress().replace('@','p'));
+
 			List alleKonten;
 			if(akt!=null) {
 				alleKonten = akt.getChildren();
@@ -224,8 +229,7 @@ public class Adressbuch {
 			}
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
-			System.out.println("Adressbuch-hole-Adressen: Datei Fehlerhaft oder nicht gefunden");
+			throw new Exception(e.getMessage()+"hi");
 		}
 	}
 }
