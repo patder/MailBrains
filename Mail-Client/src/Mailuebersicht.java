@@ -39,9 +39,11 @@ public class Mailuebersicht {
 	private static int anzahlMails;
 
 	private static ReentrantLock muhtex;
+	private static ReentrantLock kuhtex;
 
 
  	private static void holeMails(String met)throws AuthenticationFailedException{
+		kuhtex.lock();
 		//Die folgenden Zeilen vllt auch lieber in ein Methode (wie bei getSession nur halt für pop3)
 		Properties props = System.getProperties();
 		props.setProperty("mail.pop3.host", konto.getPop3Server());
@@ -102,6 +104,7 @@ public class Mailuebersicht {
 				}
 			}else{
 				System.out.println("Es werden bereits die aeltesten Mails angezeigt");
+				kuhtex.unlock();
 				return;
 			}
 
@@ -186,12 +189,13 @@ public class Mailuebersicht {
 				}
 			}
 		}
-
+		kuhtex.unlock();
 	}
 	public static void init(Konto k){
 		//Initialisierung der Attribute
 
 		muhtex= new ReentrantLock();
+		kuhtex = new ReentrantLock();
 	 	messageCounter = 0;
 
 		sc=Startfenster.sc;
@@ -330,7 +334,7 @@ public class Mailuebersicht {
 					e.printStackTrace();
 				}
 					break;
-				case 6: loeschen(); return;
+				case 6: loeschen(true); return;
 
 				case 7: anzeigen();
 					break;
@@ -510,20 +514,22 @@ public class Mailuebersicht {
 		}
 	}
 
-	private static void loeschen(){
-		int i = -1;
+	private static void loeschen(boolean boohoo){
+		int i = 0;
 		while(true){
-			System.out.println("Sind Sie sicher das sie dieses Konto loeschen wollen? (0)ja, (1)abbrechen");
-
-			try{
-				i = sc.nextInt();
-				if(!(i == 1 || i == 0)){
-					throw new Exception();
+			if(boohoo){
+				System.out.println("Sind Sie sicher das sie dieses Konto loeschen wollen? (0)ja, (1)abbrechen");
+				try{
+					i = sc.nextInt();
+					if(!(i == 1 || i == 0)){
+						throw new Exception();
+					}
+				}
+				catch(Exception e){
+					System.out.println("Ungueltige Eingabe bem loeschen");
 				}
 			}
-			catch(Exception e){
-				System.out.println("Ungueltige Eingabe");
-			}
+
 			if(i == 1){
 				return;
 			}
@@ -587,7 +593,7 @@ public class Mailuebersicht {
 		while(true){
 			System.out.println("Welchen Eintrag wollen Sie aendern?");
 			try{
-				i =sc.nextInt();
+				i =Integer.parseInt(sc.nextLine());
 				if(i < 1 || i > 7){
 					throw new Exception();
 				}else{
@@ -595,7 +601,7 @@ public class Mailuebersicht {
 				}
 			}
 			catch(Exception e){
-				System.out.println("Ungueltige Eingabe");
+				System.out.println("Ungueltige Eingabe beum waehlen des Eintrags");
 			}
 		}
 
@@ -603,16 +609,16 @@ public class Mailuebersicht {
 		String neu = "";
 		try{
 			if(i == 6){
-				neu = sc.next();
+				neu = sc.nextLine();
 				port = Integer.parseInt(neu);
 			}
 			else{
 				if(i == 7){
-					neu = sc.next();
+					neu = sc.nextLine();
 					ref = Double.parseDouble(neu);
 				}
 				else{
-					neu = sc.next();
+					neu = sc.nextLine();
 				}
 
 			}
@@ -633,7 +639,7 @@ public class Mailuebersicht {
 			Element root = doc.getRootElement();
 
 			//Liste aller vorhandenen Mailkonten als Elemente
-			String st = Startfenster.konten.get(i-1).getAdress().replace('@', 'p');
+			String st = konto.getAdress().replace('@', 'p');
 
 			Konto neuesKonto = new Konto(konto.getName(), konto.getAdress(), konto.getServer(),konto.getSmtpServer(), konto.getPop3Server(),  konto.getPort(), konto.getProtocol(), konto.getRefRate());
 			switch(i){
@@ -660,11 +666,12 @@ public class Mailuebersicht {
 					break;
 				default:	break;
 			}
-			loeschen();
+			loeschen(false);
 			Startfenster.speichereKonto(neuesKonto);
 
 		}
 		catch(Exception e){
+			e.printStackTrace();
 			System.out.println("Fehler beim Aendern des Attributs");
 		}
 	}
@@ -674,11 +681,15 @@ public class Mailuebersicht {
 			while(true){
 				try {
 					Thread.sleep((long)konto.getRefRate()*1000);
+					if(kuhtex.isLocked()){
+						continue;
+					}
 					if(muhtex.isLocked()){
 						holeMails("aktualisieren");
 					}
 					else {
 						aktualisieren();
+						kommandos();
 					}
 
 				} catch (Exception e) {
