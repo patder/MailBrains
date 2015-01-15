@@ -12,8 +12,8 @@ import java.util.Scanner;
  */
 public class Spamfilter {
 
-	private static ArrayList<String> adressen;
-	private static File output;
+	public static ArrayList<String> adressen;
+	public static File output;
 	private static ArrayList<String> kommandoliste;
 	private static Scanner sc;
 
@@ -36,10 +36,11 @@ public class Spamfilter {
 		kommandoliste.add("anzeigen");
 
 		holeSpam();
+		Startfenster.clearAll();
 		auswaehlen();
 	}
 
-	private static void holeSpam(){
+	public static void holeSpam(){
 		try {
 			Scanner tmp = new Scanner(output);
 			while(tmp.hasNextLine()){
@@ -49,40 +50,62 @@ public class Spamfilter {
 		}catch(FileNotFoundException e){
 			//ist normal wenn noch keine Mails als Spam gespeichert werden
 		}
+		Startfenster.clearAll();
 	}
 
 	private static void auswaehlen() {
-		System.out.println("Wählen Sie durch Eingabe der jeweiligen Zahl über die Tastatur den gewünschten Menüpunkt");
-		kommandos();
-		int eingabe=Integer.parseInt(sc.nextLine());
-		switch(eingabe){
-			case 1: hinzufuegen(); auswaehlen();
-				break;
-			case 2:loeschen(); auswaehlen();
-				break;
-			case 3: kommandos(); auswaehlen();
-				break;
-			case 4: zurueck();
-				break;
-			case 5: anzeigen();auswaehlen();
-				break;
+
+		while(true){
+			int eingabe = -1;
+			anzeigen();
+			kommandos();
+			while(eingabe < 1 || eingabe > 5) {
+				try {
+					eingabe = Integer.parseInt(sc.nextLine());
+					if (eingabe < 1 || eingabe > 5) {
+						System.out.println("Fehlerhafte Eingabe, bitte geben gueltigen Befehl eingeben:");
+					}
+				} catch (Exception e) {
+					System.out.println("Fehlerhafte Eingabe, bitte geben gueltigen Befehl eingeben:");
+				}
+			}
+
+			switch(eingabe){
+				case 1:
+					hinzufuegen();
+					break;
+				case 2:loeschen();
+					break;
+				case 3: Startfenster.clearAll();
+					break;
+				case 4: return;
+
+				case 5:Startfenster.clearAll();
+					break;
+			}
 		}
+
 	}
 
 	private static void anzeigen(){
+		Startfenster.clearAll();
 		if(0<adressen.size()) {
-			System.out.println("Folgende Mails haben Sie als Spam markiert.");
+			System.out.println("Folgende Mailadressen haben Sie als Spam markiert.");
 			for (int i = 0; i < adressen.size(); i++) {
 				System.out.println(i + 1 + ": " + adressen.get(i));
 			}
+			System.out.println();
 		}else{
 			System.out.println("Sie haben noch keine Mails als Spam markiert.");
 		}
 	}
 
 	private static void hinzufuegen(){
-		System.out.println("Bitte geben Sie die Adresse ein, die Sie hinzufuegen wollen.");
+		System.out.println("Bitte geben Sie die Adresse ein, die Sie hinzufuegen wollen(0: abbrechen).");
 		String adresse=sc.nextLine(); //Bedingungen für die Adresse ergaenzen
+		if(adresse.equals("0")){
+			return;
+		}
 		adressen.add(adresse);
 		BufferedWriter fw;
 		try{
@@ -96,9 +119,25 @@ public class Spamfilter {
 	}
 
 	private static void loeschen(){
-		System.out.println("Bitte geben Sie die Nummer der Adresse ein, die Sie loeschen wollen.");
-		anzeigen();
-		int nummer=Integer.parseInt(sc.nextLine()); //Bedingungen für die Nummer ergaenzen
+		Startfenster.clearAll();
+		System.out.println("Bitte geben Sie die Nummer der Adresse ein, die Sie loeschen wollen(0: abbrechen).");
+
+		int nummer = -1;
+		while(nummer <0 || nummer > adressen.size()){
+			try{
+				nummer=Integer.parseInt(sc.nextLine());
+				if(nummer <0 || nummer > adressen.size()){
+					throw new Exception();
+				}
+			}
+			catch(Exception e){
+				System.out.println("Ungueltige Eingabe, bitte erneut versuchen.");
+			}
+		}
+		if(nummer == 0){
+			return;
+		}
+
 		adressen.remove(nummer-1);
 		try{
 			File kopie=new File("kopie.txt");

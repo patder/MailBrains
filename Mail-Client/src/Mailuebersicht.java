@@ -297,16 +297,35 @@ public class Mailuebersicht {
 	}
 
 	public static void alle(){
-		for(int i=0;i<mails.size();i++) {
-			Mail tmp = mails.get(i);
-			if(tmp.getOffline()==true) {
-				System.out.println(i + 1 + "\tX\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
-			}else{
-				System.out.println(i + 1 + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
+		try{
+			Spamfilter.output = new File("Spamfilter.txt");
+			Spamfilter.adressen = new ArrayList<String>();
+			Spamfilter.holeSpam();
+			System.out.println(Spamfilter.adressen.get(Spamfilter.adressen.size()-1));
+
+			for(int i=0;i<mails.size();i++) {
+				if(Spamfilter.adressen.contains(mails.get(i).getAdresse())){
+					System.out.println(i + 1 + "\tX\t<----Spam----->"  + "\t\t\t" + "\t" + mails.get(i).getEmpfangsdatum());
+				}
+				else{
+					Mail tmp = mails.get(i);
+					if(tmp.getOffline()==true) {
+						System.out.println(i + 1 + "\tX\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
+					}else{
+						System.out.println(i + 1 + "\t" + tmp.getAdresse() + "\t" + tmp.getBetreff() + "\t" + tmp.getEmpfangsdatum());
+					}
+				}
+
 			}
+			System.out.println("");
+			System.out.println("Mailanzahl: "+anzahlMails+" Seitenanzahl: "+new Double(Math.ceil(anzahlMails/25)).intValue()+" aktuelle Seite: "+aktuelleSeite);
+
 		}
-		System.out.println("");
-		System.out.println("Mailanzahl: "+anzahlMails+" Seitenanzahl: "+new Double(Math.ceil(anzahlMails/25)).intValue()+" aktuelle Seite: "+aktuelleSeite);
+		catch(Exception e){
+			System.out.println("Was ist denn los mit dir(Spamfilter filtern...)");
+		}
+
+
 	}
 	private static void auswaehlen() {
 		t = new Thread(new loopThread());

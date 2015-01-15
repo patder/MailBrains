@@ -68,6 +68,7 @@ public class OfflineMails {
         kommandoliste.add("naechste Seite");
         kommandoliste.add("vorherige Seite");
         kommandoliste.add("zum Startfenster");
+        Startfenster.clearAll();
         auswaehlen();
     }
 
@@ -121,6 +122,7 @@ public class OfflineMails {
 
 
     private static void zeigeMail(){
+        Startfenster.clearAll();
         int eingabe = -1;
         if(mailList.size() < 1){
             System.out.println("Es sins keine Mails gespeichert.");
@@ -163,6 +165,7 @@ public class OfflineMails {
 
 
     private static void weiter(){
+        Startfenster.clearAll();
         if(upper == mailList.size()){
             System.out.println("keine weiteren Seiten vorhanden");
             return;
@@ -174,19 +177,18 @@ public class OfflineMails {
             System.out.println(" Seiten vorhanden");
             return;
         }
-        if(seite + 1 > mailList.size()/25 +1){
-            seite +=1;
+        if(seite + 1 > mailList.size()/25 +1) {
+            seite += 1;
             upper = mailList.size();
             lower += 25;
             System.out.println(" asdsd");
             return;
         }
-
-
     }
 
 
     private static void zurueck(){
+        Startfenster.clearAll();
         if(lower == 1){
             System.out.println("dies ist die aktuellste Seite");
             return;
