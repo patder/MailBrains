@@ -40,6 +40,7 @@ public class Mailuebersicht {
 
 	private static ReentrantLock muhtex;
 	private static ReentrantLock kuhtex;
+	private static Thread t;
 
 
  	private static void holeMails(String met)throws AuthenticationFailedException{
@@ -308,7 +309,7 @@ public class Mailuebersicht {
 		System.out.println("Mailanzahl: "+anzahlMails+" Seitenanzahl: "+new Double(Math.ceil(anzahlMails/25)).intValue()+" aktuelle Seite: "+aktuelleSeite);
 	}
 	private static void auswaehlen() {
-		Thread t = new Thread(new loopThread());
+		t = new Thread(new loopThread());
 		t.start();
 		while(true){
 			kommandos();
@@ -322,7 +323,7 @@ public class Mailuebersicht {
 			switch(eingabe){
 				case 1: kommandos();
 					break;
-				case 2: return;
+				case 2: t.interrupt(); return;
 
 				case 3: naechste();
 					break;
@@ -544,7 +545,7 @@ public class Mailuebersicht {
 	}
 
 	private static void loeschen(boolean boohoo){
-		int i = 0;
+		int i = -1;
 		while(true){
 			if(boohoo){
 				System.out.println("Sind Sie sicher das sie dieses Konto loeschen wollen? (0)ja, (1)abbrechen");
@@ -562,7 +563,10 @@ public class Mailuebersicht {
 			if(i == 1){
 				return;
 			}
-			if(i == 0){
+			if(i == -1 || i == 0){
+				if(i == 0){
+					t.interrupt();
+				}
 				break;
 			}
 		}
