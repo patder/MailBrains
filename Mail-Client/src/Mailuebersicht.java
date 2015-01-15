@@ -65,13 +65,14 @@ public class Mailuebersicht {
 			inboxfolder.open(Folder.READ_ONLY);
 			anzahlMails=inboxfolder.getMessageCount();
 			
-			
+			/**
 			//--->noch nicht getestet worden!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			if(messageCounter == inboxfolder.getMessageCount() && met.equals("aktualisieren")){
 				inboxfolder.close(false);
 				inboxfolder.getStore().close();
 				return;//--> wenn sich die anzahl der mails nicht verändert hat werden keine neuen mails geholt
 			}
+			 **/
 			messageCounter = inboxfolder.getMessageCount();
 
 			
