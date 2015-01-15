@@ -477,26 +477,55 @@ public class Mailuebersicht {
 	{
 		Session session=getSession();
 		// nachricht erzeugen
+		System.out.println("Geben Sie den gewuenschten Empfaenger an: ");
+		try {
+			Adressbuch.konto=konto;
+			Adressbuch.setAdressen(new ArrayList<String>());
+			Adressbuch.adressDat=new File("adressbuch.xml");
+			Adressbuch.holeAdressen();
+			System.out.println("Sie koennen folgende Adresse aus ihrem Adressbuch auswaehlen: \n0: nicht gespeicherte Adresse eingeben");
+			for (int i = 0; i < Adressbuch.getAdressen().size(); i++) {
+				System.out.println(i + 1 + ": " + Adressbuch.getAdressen().get(i));
+			}
+			System.out.println("");
+		}catch(Exception e){
+			System.out.println("\nSie haben noch keine Eintraege im Adressbuch.\n0: nicht gespeicherte Adresse eingeben");
+		}
+		System.out.println("Empfaenger: ");
+		String empfaenger="";
+		int eingabe=-1;
+		try {
+			eingabe = Integer.parseInt(sc.nextLine());
+		}catch(NumberFormatException e){
+			System.out.println("Keine gueltige Eingabe");
+			return;
+		}
+		if(eingabe==0) {
+			empfaenger = sc.nextLine();
+		}else {
+			empfaenger = Adressbuch.getAdressen().get(eingabe - 1);
+		}
 
-		System.out.println("Empfaenger:");
-		String empfaenger=sc.nextLine();
 		System.out.println("Betreff:");
 		String betreff=sc.nextLine();
 		System.out.println("Nachricht:");
 		String text=sc.nextLine(); // wenn man hier nur next macht kommt ne fehlermeldung beim int parsen in der methode auswaehlen, wie können wir das hier aber trz aendern
+		try {
+			MimeMessage msg = new MimeMessage(session);
+			msg.setFrom(new InternetAddress(konto.getAdress()));
+			msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(empfaenger, false));
 
-		MimeMessage msg = new MimeMessage(session);
-		msg.setFrom(new InternetAddress(konto.getAdress()));
-		msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(empfaenger, false));
+			// Betreff
+			msg.setSubject(betreff);
 
-		// Betreff
-		msg.setSubject(betreff);
+			// Nachricht
+			msg.setText(text);
 
-		// Nachricht
-		msg.setText(text);
-
-		// E-Mail versenden
-		Transport.send(msg);
+			// E-Mail versenden
+			Transport.send(msg);
+		}catch(Exception e){
+			System.out.println("Die Mail konnte aus uns unerklärlichen Gründen nicht gesendet werden. \n Bitte versuchen Sie es erneut.");
+		}
 	}
 
 	private static void spamfilter(){
