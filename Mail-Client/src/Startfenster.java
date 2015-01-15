@@ -169,15 +169,14 @@ public class Startfenster{
 		}		
 		System.out.println("Bitte geben Sie Ihr Passwort ein:");
 		String passwort="";
-
-		if ( System.console() != null ){
+		/*if ( System.console() != null ){
 			passwort = new String( System.console().readPassword() );
 		}
 		else{
 			System.out.println("Fehler bei Passworteingabe");
-			System.exit(1);
-		}
-		//passwort=sc.nextLine();
+			System.exit(1); nicht exit alle nachfolgende muss dann auch ins if
+		}*/
+		passwort=sc.nextLine();
 
 		System.out.println("Bitte geben Sie die gewuenschte Aktualisierungsrate ein(in sek)");
 		double refRate =Double.parseDouble(sc.nextLine());
@@ -302,18 +301,7 @@ public class Startfenster{
 		else{
 			Konto konto=konten.get(i-1);
 			System.out.println("\n0: abbrechen\nPasswort: einloggen\ndefault: Offlinemails anzeigen");
-			String st="";
-
-			if ( System.console() != null ){
-				st = new String( System.console().readPassword() );
-			}
-			else{
-				System.out.println("Fehler bei Passworteingabe");
-				System.exit(1);
-			}
-			//passwort=sc.nextLine();
-
-			//String st = sc.nextLine();
+			String st = sc.nextLine();
 			if(st.equals("")){
 				clearAll();
 				OfflineMails.initOffline(konto.getAdress());

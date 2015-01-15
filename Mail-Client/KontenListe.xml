@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kontenListe>
+  <patder830pgmail.com>
+    <name>Patrick</name>
+    <adresse>patder830@gmail.com</adresse>
+    <server />
+    <smtpServer>smtp.googlemail.com</smtpServer>
+    <pop3Server>pop.gmail.com</pop3Server>
+    <port>25</port>
+    <protocol />
+    <refRate>5.0</refRate>
+  </patder830pgmail.com>
+  <svorderwuelbeckepweb.de>
+    <name>SDFDSGHHJ</name>
+    <adresse>svorderwuelbecke@web.de</adresse>
+    <server />
+    <smtpServer>smtp.web.de</smtpServer>
+    <pop3Server>pop3.web.de</pop3Server>
+    <port>25</port>
+    <protocol>1</protocol>
+    <refRate>60.0</refRate>
+  </svorderwuelbeckepweb.de>
+</kontenListe>
+
