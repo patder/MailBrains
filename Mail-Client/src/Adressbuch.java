@@ -55,6 +55,7 @@ public class Adressbuch {
 		}catch(Exception e){
 			System.out.println("Die Adressbuch-Datei konnte nicht geoeffnet werde.");
 		}
+		Startfenster.clearAll();
 		anzeigen();
 		auswaehlen();
 	}
